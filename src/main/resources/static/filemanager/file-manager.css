@@ -1,0 +1,14 @@
+html, body {
+    background-color: black;
+    color: white;
+}
+
+a {
+    color: green;
+}
+
+*, input[type="file"]::-webkit-file-upload-button {
+    font-family: monospace;
+    font-size: 20px;
+    line-height: 30px;
+}
