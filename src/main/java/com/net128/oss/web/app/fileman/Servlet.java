@@ -113,11 +113,6 @@ public class Servlet extends HttpServlet {
 			final PrintWriter writer = response.getWriter();
 			writer.println("<!DOCTYPE html><html><head><link rel=\"stylesheet\" href=\"file-manager.css\"></head><body>");
 			writer.println("<p>Current directory: "+files+"</p><pre>");
-			if(!(files instanceof Roots)) {
-				writer.print("<form method=\"post\"><label for=\"search\">Search Files:</label> <input type=\"text\" name=\"search\" id=\"search\" value=\""+(search!=null?search:"")+"\"> <button type=\"submit\">Search</button></form>");
-				writer.print("<form method=\"post\" enctype=\"multipart/form-data\"><label for=\"upload\">Upload Files:</label> <button type=\"submit\">Upload</button> <button type=\"submit\" name=\"unzip\">Upload & Unzip</button> <input type=\"file\" name=\"upload[]\" id=\"upload\" multiple></form>");
-				writer.println();
-			}
 			if(files instanceof Directory) {
 				writer.println("+ <a href=\"?path="+URLEncoder.encode(path,ENCODING)+"\">.</a>");
 				if((parent=file.getParentFile())!=null)
@@ -128,6 +123,10 @@ public class Servlet extends HttpServlet {
 			File [] fileList=files.listFiles();
 			if(fileList!=null)
 				for(File child:fileList) {
+					//hide dot files
+					if(child.getName().matches("^[.]+[^.]+.*")) {
+						continue;
+					}
 					writer.print(child.isDirectory()?"+ ":"  ");
 					writer.print("<a href=\"?path="+URLEncoder.encode(child.getAbsolutePath(),ENCODING)+"\" title=\""+child.getAbsolutePath()+"\">"+child.getName()+"</a>");
 					if(child.isDirectory())
@@ -138,8 +137,13 @@ public class Servlet extends HttpServlet {
 				}
 			else if(search!=null && !search.isEmpty() && path!=null && !path.isEmpty()) {
 				writer.print(" <p id=\"no-files\">No files found. ");
-				writer.print(" <a href=\"?path="+URLEncoder.encode(path,ENCODING)+"\">back</a>");
-				writer.print(" </p");
+				writer.print(" <a href=\"?path="+URLEncoder.encode(path,ENCODING)+"\">back</a>\n");
+				writer.print(" </p>");
+			}
+			if(!(files instanceof Roots)) {
+				writer.print("\n\n<form method=\"post\"><label for=\"search\">Search Files:</label> <input type=\"text\" name=\"search\" id=\"search\" value=\""+(search!=null?search:"")+"\"> <button type=\"submit\">Search</button></form>");
+				writer.print("<form method=\"post\" enctype=\"multipart/form-data\"><label for=\"upload\">Upload Files:</label> <button type=\"submit\">Upload</button> <button type=\"submit\" name=\"unzip\">Upload & Unzip</button> <input type=\"file\" name=\"upload[]\" id=\"upload\" multiple></form>");
+				writer.println();
 			}
 			writer.print("</pre></body></html>"); writer.flush();
 		}

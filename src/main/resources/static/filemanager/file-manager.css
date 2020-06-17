@@ -1,10 +1,16 @@
 html, body {
-    background-color: black;
+    background-color: rgb(30, 30, 30);
     color: white;
 }
 
 a {
-    color: green;
+    color: rgb(102, 149, 184);
+    text-decoration: none;
+}
+
+button, input[type="file"]::-webkit-file-upload-button {
+    background-color: #a7a7a7;
+    olor: black;
 }
 
 *, input[type="file"]::-webkit-file-upload-button {
