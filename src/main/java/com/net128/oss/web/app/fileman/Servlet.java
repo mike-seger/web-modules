@@ -2,14 +2,7 @@ package com.net128.oss.web.app.fileman;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
 
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
@@ -62,91 +55,158 @@ public class Servlet extends HttpServlet {
 		if(path==null||!(file=new File(path)).exists())
 			files = new Roots();
 		else if(request.getParameter("zip")!=null) {
-			File zipFile = File.createTempFile(file.getName()+"-",".zip");
-			if(file.isFile())
-				ZipUtil.addEntry(zipFile, file.getName(), file);
-			else if(file.isDirectory())
-				ZipUtil.pack(file, zipFile);
-			downloadFile(response, zipFile, permamentName(zipFile.getName()), "application/zip");
+			zipFile(file, response);
 		} else if(request.getParameter("delete")!=null) {
-			if(file.isFile())
-				file.delete();
-			else if(file.isDirectory()) {
-				java.nio.file.Files.walkFileTree(file.toPath(),new SimpleFileVisitor<Path>() {
-				   @Override public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-				   	java.nio.file.Files.delete(file);
-					   return FileVisitResult.CONTINUE;
-				   }
-				   @Override public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-				   	java.nio.file.Files.delete(dir);
-					   return FileVisitResult.CONTINUE;
-				   }
-			   });
-			}
+			deleteFileOrDirectory(file);
 		} else if((mode=request.getParameter("mode"))!=null) {
-			boolean add = mode.startsWith("+");
-			if(mode.indexOf('r')>-1)
-				file.setReadable(add);
-			if(mode.indexOf('w')>-1)
-				file.setWritable(add);
-			if(mode.indexOf('x')>-1)
-				file.setExecutable(add);
+			changeMode(file, mode);
 		} else if(file.isFile())
 			downloadFile(response, file);
 		else if(file.isDirectory()) {
 			if(search!=null&&!search.isEmpty())
 			     files = new Search(file.toPath(), search);
 			else if(type!=null&&type.startsWith("multipart/form-data")) {
-				for(Part part:request.getParts()) {
-					String name;
-					if((name=partFileName(part))==null) //retrieves <input type="file" name="...">, no other (e.g. input) form fields
-						continue;
-					if(request.getParameter("unzip")==null)
-						try(OutputStream output=new FileOutputStream(new File(file,name))) {
-							copyStream(part.getInputStream(), output); }
-					else ZipUtil.unpack(part.getInputStream(), file);
-				}
+				receiveUpload(file, request);
 			} else files = new Directory(file);
 		} else throw new ServletException("Unknown type of file or folder.");
 		
 		if(files!=null) {
 			final PrintWriter writer = response.getWriter();
-			writer.println("<!DOCTYPE html><html><head><link rel=\"stylesheet\" href=\"file-manager.css\"></head><body>");
-			writer.println("<p>Current directory: "+files+"</p><pre>");
+			writer.println(header());
+			writer.println(breadCrumb(files));
 			if(files instanceof Directory) {
-				writer.println("+ <a href=\"?path="+URLEncoder.encode(path,ENCODING)+"\">.</a>");
-				if((parent=file.getParentFile())!=null)
-				     writer.println("+ <a href=\"?path="+URLEncoder.encode(parent.getAbsolutePath(),ENCODING)+"\">..</a>");
-				else writer.println("+ <a href=\"?path=\">..</a>");
+				writer.print(getDotLinks(file, path));
 			}
 
 			File [] fileList=files.listFiles();
-			if(fileList!=null)
-				for(File child:fileList) {
-					//hide dot files
-					if(child.getName().matches("^[.]+[^.]+.*")) {
+			if(fileList!=null) {
+				for (File child : fileList) {
+					if(!child.isDirectory()) {
 						continue;
 					}
-					writer.print(child.isDirectory()?"+ ":"  ");
-					writer.print("<a href=\"?path="+URLEncoder.encode(child.getAbsolutePath(),ENCODING)+"\" title=\""+child.getAbsolutePath()+"\">"+child.getName()+"</a>");
-					if(child.isDirectory())
-						writer.print(" <a href=\"?path="+URLEncoder.encode(child.getAbsolutePath(),ENCODING)+"&zip\" title=\"download\">&#8681;</a>");
-					if(search!=null&&!search.isEmpty())
-						writer.print(" <a href=\"?path="+URLEncoder.encode(child.getParentFile().getAbsolutePath(),ENCODING)+"\" title=\"go to parent folder\">&#128449;</a>");
-					writer.println();
+					writer.print(getFileLink(child, search != null && !search.isEmpty()));
 				}
+				for (File child : fileList) {
+					if(child.isDirectory()) {
+						continue;
+					}
+					writer.print(getFileLink(child, search != null && !search.isEmpty()));
+				}
+			}
 			else if(search!=null && !search.isEmpty() && path!=null && !path.isEmpty()) {
-				writer.print(" <p id=\"no-files\">No files found. ");
-				writer.print(" <a href=\"?path="+URLEncoder.encode(path,ENCODING)+"\">back</a>\n");
-				writer.print(" </p>");
+				writer.print(noResults(path));
 			}
 			if(!(files instanceof Roots)) {
-				writer.print("\n\n<form method=\"post\"><label for=\"search\">Search Files:</label> <input type=\"text\" name=\"search\" id=\"search\" value=\""+(search!=null?search:"")+"\"> <button type=\"submit\">Search</button></form>");
-				writer.print("<form method=\"post\" enctype=\"multipart/form-data\"><label for=\"upload\">Upload Files:</label> <button type=\"submit\">Upload</button> <button type=\"submit\" name=\"unzip\">Upload & Unzip</button> <input type=\"file\" name=\"upload[]\" id=\"upload\" multiple></form>");
-				writer.println();
+				writer.print(getTools(search));
 			}
-			writer.print("</pre></body></html>"); writer.flush();
+			writer.print(footer());
+			writer.flush();
 		}
+	}
+
+	private String header() {
+		return "<!DOCTYPE html><html><head><link rel=\"stylesheet\" href=\"file-manager.css\"></head><body>";
+	}
+
+	private String breadCrumb(Files files) {
+		return "<p>Current directory: "+files+"</p><pre>";
+	}
+
+	private String footer() {
+		return "</pre></body></html>";
+	}
+
+	private String noResults(String path) throws UnsupportedEncodingException {
+		StringBuilder sb=new StringBuilder();
+		sb.append(" <p id=\"no-files\">No files found. ");
+		sb.append(" <a href=\"?path=").append(URLEncoder.encode(path,ENCODING)).append("\">back</a>\n");
+		sb.append(" </p>");
+		return sb.toString();
+	}
+
+	private void zipFile(File file, HttpServletResponse response) throws IOException {
+		File zipFile = File.createTempFile(file.getName()+"-",".zip");
+		if(file.isFile())
+			ZipUtil.addEntry(zipFile, file.getName(), file);
+		else if(file.isDirectory())
+			ZipUtil.pack(file, zipFile);
+		downloadFile(response, zipFile, permamentName(zipFile.getName()), "application/zip");
+	}
+
+	private void deleteFileOrDirectory(File fileOrDirectory) throws IOException {
+		if(fileOrDirectory.isFile())
+			fileOrDirectory.delete();
+		else if(fileOrDirectory.isDirectory()) {
+			java.nio.file.Files.walkFileTree(fileOrDirectory.toPath(),new SimpleFileVisitor<Path>() {
+				@Override public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+					java.nio.file.Files.delete(file);
+					return FileVisitResult.CONTINUE;
+				}
+				@Override public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+					java.nio.file.Files.delete(dir);
+					return FileVisitResult.CONTINUE;
+				}
+			});
+		}
+	}
+
+	private void changeMode(File file, String mode) {
+		boolean add = mode.startsWith("+");
+		if(mode.indexOf('r')>-1)
+			file.setReadable(add);
+		if(mode.indexOf('w')>-1)
+			file.setWritable(add);
+		if(mode.indexOf('x')>-1)
+			file.setExecutable(add);
+	}
+
+	private void receiveUpload(File file, HttpServletRequest request) throws IOException, ServletException {
+		for(Part part:request.getParts()) {
+			String name;
+			if((name=partFileName(part))==null) //retrieves <input type="file" name="...">, no other (e.g. input) form fields
+				continue;
+			if(request.getParameter("unzip")==null)
+				try(OutputStream output=new FileOutputStream(new File(file,name))) {
+					copyStream(part.getInputStream(), output); }
+			else ZipUtil.unpack(part.getInputStream(), file);
+		}
+	}
+
+	private String getFileLink(File child, boolean searchResult) throws UnsupportedEncodingException {
+		//hide dot files
+		if (child.getName().matches("^[.]+[^.]+.*")) {
+			return "";
+		}
+		StringBuilder sb = new StringBuilder();
+		sb.append(child.isDirectory() ? "+ " : "  ");
+		if (child.isDirectory()) {
+			sb.append("<a href=\"?path=" + URLEncoder.encode(child.getAbsolutePath(), ENCODING) + "\" title=\"" + child.getAbsolutePath() + "\">" + child.getName() + "</a>");
+			sb.append(" <a href=\"?path=" + URLEncoder.encode(child.getAbsolutePath(), ENCODING) + "&zip\" title=\"download\">&#8681;</a>");
+		} else {
+			sb.append("<span class=\"file\">" + child.getName() + "</span>");
+			sb.append(" <a href=\"?path=" + URLEncoder.encode(child.getAbsolutePath(), ENCODING) + "\" title=\"download\">&#8681;</a>");
+		}
+
+		if(searchResult)
+			sb.append(" <a href=\"?path="+URLEncoder.encode(child.getParentFile().getAbsolutePath(),ENCODING)+"\" title=\"go to parent folder\">&#128449;</a>");
+		sb.append("\n");
+		return sb.toString();
+	}
+
+	private String getDotLinks(File file, String path) throws UnsupportedEncodingException {
+		StringBuilder sb=new StringBuilder();
+		sb.append("+ <a href=\"?path="+URLEncoder.encode(path,ENCODING)+"\">.</a>\n");
+		if((file.getParentFile())!=null)
+			sb.append("+ <a href=\"?path="+URLEncoder.encode(file.getParentFile().getAbsolutePath(),ENCODING)+"\">..</a>\n");
+		else sb.append("+ <a href=\"?path=\">..</a>\n");
+		return sb.toString();
+	}
+
+	private String getTools(String search) {
+		StringBuilder sb=new StringBuilder();
+		sb.append("\n<form method=\"post\"><label for=\"search\">Search Files:</label> <input type=\"text\" name=\"search\" id=\"search\" value=\""+(search!=null?search:"")+"\"> <button type=\"submit\">Search</button></form>");
+		sb.append("<form method=\"post\" enctype=\"multipart/form-data\"><label for=\"upload\">Upload Files:</label> <button type=\"submit\">Upload</button> <button type=\"submit\" name=\"unzip\">Upload & Unzip</button> <input type=\"file\" name=\"upload[]\" id=\"upload\" multiple></form>\n");
+		return sb.toString();
 	}
 
 	protected interface Files {

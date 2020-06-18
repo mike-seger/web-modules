@@ -1,5 +1,4 @@
 spring.resources.static-locations:
   - classpath:/static/
   - file:src/main/resources/static/
-#spring.resources.static-locations[0]=file:src/main/resources/static/
-#spring.resources.static-locations[1]=classpath:/static/
+
