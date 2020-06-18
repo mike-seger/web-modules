@@ -1,0 +1,158 @@
+html, body {
+    background-color: rgb(30, 30, 30);
+    color: white;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+a {
+    color: rgb(102, 149, 184);
+    text-decoration: none;
+}
+
+button, input[type="file"]::-webkit-file-upload-button {
+    background-color: #a7a7a7;
+    olor: black;
+}
+
+*, input[type="file"]::-webkit-file-upload-button {
+    font-family: monospace;
+    font-size: 20px;
+    line-height: 30px;
+}
+
+.file-list {
+    -ms-word-break: break-all;
+    /* This is the dangerous one in WebKit, as it breaks things wherever */
+    word-break: break-all;
+    break-after: auto;
+    padding: 10px;
+    xxwhite-space: pre;
+    -webkit-column-count: 3;
+    -moz-column-count: 3;
+    column-count: 3;
+
+    -webkit-column-gap: 20px;
+    -moz-column-gap: 20px;
+    column-gap: 20px;
+
+    min-height: calc(100vh - 300px);
+    height: calc(100vh - 300px);
+    overflow-y: hidden;
+
+    -webkit-column-span: 1;
+    column-span: none;
+    //break-inside: avoid-column;
+    //break-after: always;
+    margin-bottom: 14px;
+}
+
+.directory, .file {
+    display: block;
+}
+
+.directory i {
+    width: 25px;
+    height: 20px;
+    display: inline-block;
+    margin: auto;
+    position: relative;
+    background-color: #708090;
+    border-radius: 0 3px 3px 3px;
+    box-shadow: 4px 4px 7px rgba(0, 0, 0, 0.59);
+    margin-bottom: -2px;
+    margin-top: 4px;
+    margin-right: 6px;
+}
+
+.directory:before i {
+    content: '';
+    width: 50%;
+    height: 0.2em;
+    border-radius: 0 20px 0 0;
+    background-color: #708090;
+    position: absolute;
+    top: -0.2em;
+    left: 0px;
+}
+
+/*
+.directory:before {
+    content: 'X';
+    color: red;
+    display: inline;
+}
+*/
+/*
+.directory i {
+    width: 150px;
+    height: 105px;
+    margin: 0 auto;
+    margin-top: 50px;
+    position: relative;
+    background-color: #708090;
+    border-radius: 0 6px 6px 6px;
+    box-shadow: 4px 4px 7px rgba(0, 0, 0, 0.59);
+}
+
+.directory:before i {
+    content: '';
+    width: 50%;
+    height: 12px;
+    border-radius: 0 20px 0 0;
+    background-color: #708090;
+    position: absolute;
+    top: -12px;
+    left: 0px;
+}
+*/
+
+/*
+.directory i {
+    display: block;
+    position: relative;
+    top: 8px;
+    left: 0;
+    margin: 0px 0;
+    //font: 18px helvetica, arial, sans-serif;
+    text-indent: 27px;
+    line-height: 0px;
+}
+
+.directory .i {
+    content: "";
+    display: block;
+    float: left;
+    position: relative;
+    top: -10px;
+    left: 0;
+    width: 20px;
+    height: 16px;
+    border: 2px solid #999;
+    background: #ddd;
+    -moz-border-radius: 2px; -webkit-border-radius: 2px; -o-border-radius: 2px; border-radius: 2px;
+    -moz-transform: scale(1) rotate(0deg) translateX(10px) skewX(10deg);
+    -webkit-transform: scale(1) rotate(0deg) translateX(10px) skewX(10deg);
+    -o-transform: scale(1) rotate(0deg) translateX(10px) skewX(10deg);
+    -ms-transform: scale(1) rotate(0deg) translateX(10px) skewX(10deg);
+    transform: scale(1) rotate(0deg) translateX(10px) skewX(10deg);
+}
+
+.directory .i::after {
+    content: "";
+    display: block;
+    position: relative;
+    top: 0px;
+    left: -6px;
+    width: 20px; height: 16px;
+    border: 2px solid #999;
+    background: #ddd;
+    -moz-border-radius: 2px; -webkit-border-radius: 2px; -o-border-radius: 2px; border-radius: 2px;
+    -moz-transform: scale(1) rotate(0deg) translateX(10px) skewX(-20deg);
+    -webkit-transform: scale(1) rotate(0deg) translateX(10px) skewX(-20deg);
+    -o-transform: scale(1) rotate(0deg) translateX(10px) skewX(-20deg);
+    -ms-transform: scale(1) rotate(0deg) translateX(10px) skewX(-20deg);
+    transform: scale(1) rotate(0deg) translateX(10px) skewX(-20deg);
+}
+*/

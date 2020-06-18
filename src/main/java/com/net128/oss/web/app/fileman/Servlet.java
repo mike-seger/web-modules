@@ -74,8 +74,10 @@ public class Servlet extends HttpServlet {
 			final PrintWriter writer = response.getWriter();
 			writer.println(header());
 			writer.println(breadCrumb(files));
+
+			writer.print("<div class=\"file-list\">");
 			if(files instanceof Directory) {
-				writer.print(getDotLinks(file, path));
+				writer.print(getParentLink(file, path));
 			}
 
 			File [] fileList=files.listFiles();
@@ -87,6 +89,8 @@ public class Servlet extends HttpServlet {
 			else if(search!=null && !search.isEmpty() && path!=null && !path.isEmpty()) {
 				writer.print(noResults(path));
 			}
+			writer.println("</div>");
+
 			if(!(files instanceof Roots)) {
 				writer.print(getTools(search));
 			}
@@ -96,21 +100,21 @@ public class Servlet extends HttpServlet {
 	}
 
 	private String header() {
-		return "<!DOCTYPE html><html><head><link rel=\"stylesheet\" href=\"file-manager.css\"></head><body>";
+		return "<!DOCTYPE html><html><head><link rel=\"stylesheet\" href=\"css/file-manager.css\"></head><body>";
 	}
 
 	private String breadCrumb(Files files) {
-		return "<p>Current directory: "+files+"</p><pre>";
+		return "<p>Current directory: "+files+"</p>";
 	}
 
 	private String footer() {
-		return "</pre></body></html>";
+		return "</body></html>";
 	}
 
 	private String noResults(String path) throws UnsupportedEncodingException {
 		StringBuilder sb=new StringBuilder();
-		sb.append(" <p id=\"no-files\">No files found. ");
-		sb.append(" <a href=\"?path=").append(URLEncoder.encode(path,ENCODING)).append("\">back</a>\n");
+		sb.append("<p id=\"no-files\">No files found. ");
+		sb.append("<a class=\"dir-navigation\" href=\"?path=").append(URLEncoder.encode(path,ENCODING)).append("\">back</a>\n");
 		sb.append(" </p>");
 		return sb.toString();
 	}
@@ -179,27 +183,25 @@ public class Servlet extends HttpServlet {
 			return "";
 		}
 		StringBuilder sb = new StringBuilder();
-		sb.append(child.isDirectory() ? "+ " : "  ");
 		if (child.isDirectory()) {
-			sb.append("<a href=\"?path=" + URLEncoder.encode(child.getAbsolutePath(), ENCODING) + "\" title=\"" + child.getAbsolutePath() + "\">" + child.getName() + "</a>");
-			sb.append(" <a href=\"?path=" + URLEncoder.encode(child.getAbsolutePath(), ENCODING) + "&zip\" title=\"download\">&#8681;</a>");
+			sb.append("<span class=\"directory\"><i class=\"icon\" /></i><a href=\"?path=" + URLEncoder.encode(child.getAbsolutePath(), ENCODING) + "\" title=\"" + child.getAbsolutePath() + "\">" + child.getName() + "</a></span>");
+			//sb.append("<a class=\"download\" href=\"?path=" + URLEncoder.encode(child.getAbsolutePath(), ENCODING) + "&zip\" title=\"download\">&#8681;</a>");
 		} else {
-			sb.append("<span class=\"file\">" + child.getName() + "</span>");
-			sb.append(" <a href=\"?path=" + URLEncoder.encode(child.getAbsolutePath(), ENCODING) + "\" title=\"download\">&#8681;</a>");
+			sb.append("<span class=\"file\"><i class=\"icon\" /></i>" + child.getName());
+			sb.append("<a \"download\" href=\"?path=" + URLEncoder.encode(child.getAbsolutePath(), ENCODING) + "\" title=\"download\">&#8681;</a></span>");
 		}
 
 		if(searchResult)
-			sb.append(" <a href=\"?path="+URLEncoder.encode(child.getParentFile().getAbsolutePath(),ENCODING)+"\" title=\"go to parent folder\">&#128449;</a>");
+			sb.append("<span class=\"dir-navigation\"><i class=\"icon\" /></i><a href=\"?path="+URLEncoder.encode(child.getParentFile().getAbsolutePath(),ENCODING)+"\" title=\"go to parent folder\">&#128449;</a></span>");
 		sb.append("\n");
 		return sb.toString();
 	}
 
-	private String getDotLinks(File file, String path) throws UnsupportedEncodingException {
+	private String getParentLink(File file, String path) throws UnsupportedEncodingException {
 		StringBuilder sb=new StringBuilder();
-		sb.append("+ <a href=\"?path="+URLEncoder.encode(path,ENCODING)+"\">.</a>\n");
 		if((file.getParentFile())!=null)
-			sb.append("+ <a href=\"?path="+URLEncoder.encode(file.getParentFile().getAbsolutePath(),ENCODING)+"\">..</a>\n");
-		else sb.append("+ <a href=\"?path=\">..</a>\n");
+			sb.append("<span class=\"dir-navigation\"><i class=\"icon\" /></i><a href=\"?path="+URLEncoder.encode(file.getParentFile().getAbsolutePath(),ENCODING)+"\">..</a></span>\n");
+		else sb.append("<span class=\"dir-navigation\"><i class=\"icon\" /></i><a href=\"?path=\">..</a></span>\n");
 		return sb.toString();
 	}
 
