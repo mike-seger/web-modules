@@ -65,7 +65,7 @@ public class Servlet extends HttpServlet {
 		else if(file.isDirectory()) {
 			if(search!=null&&!search.isEmpty())
 			     files = new Search(file.toPath(), search);
-			else if(type!=null&&type.startsWith("multipart/form-data")) {
+			else if(type!=null && type.startsWith("multipart/form-data")) {
 				receiveUpload(file, request);
 			} else files = new Directory(file);
 		} else throw new ServletException("Unknown type of file or folder.");
@@ -80,18 +80,9 @@ public class Servlet extends HttpServlet {
 
 			File [] fileList=files.listFiles();
 			if(fileList!=null) {
-				for (File child : fileList) {
-					if(!child.isDirectory()) {
-						continue;
-					}
-					writer.print(getFileLink(child, search != null && !search.isEmpty()));
-				}
-				for (File child : fileList) {
-					if(child.isDirectory()) {
-						continue;
-					}
-					writer.print(getFileLink(child, search != null && !search.isEmpty()));
-				}
+				boolean isSearchResult =  search != null && !search.isEmpty();
+				writer.print(getFileList(fileList, isSearchResult, true));
+				writer.print(getFileList(fileList, isSearchResult, false));
 			}
 			else if(search!=null && !search.isEmpty() && path!=null && !path.isEmpty()) {
 				writer.print(noResults(path));
@@ -170,6 +161,16 @@ public class Servlet extends HttpServlet {
 					copyStream(part.getInputStream(), output); }
 			else ZipUtil.unpack(part.getInputStream(), file);
 		}
+	}
+
+	private String getFileList(File [] fileList, boolean isSearchResult, boolean directory) throws UnsupportedEncodingException {
+		StringBuilder sb = new StringBuilder();
+		for (File child : fileList) {
+			if(directory == child.isDirectory()) {
+				sb.append(getFileLink(child, isSearchResult));
+			}
+		}
+		return sb.toString();
 	}
 
 	private String getFileLink(File child, boolean searchResult) throws UnsupportedEncodingException {
