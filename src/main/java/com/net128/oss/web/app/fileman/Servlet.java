@@ -49,8 +49,12 @@ public class Servlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Files files = null; File file = null, parent;
-		String path = request.getParameter("path"), type = request.getContentType(), search = request.getParameter("search"), mode;
+		Files files = null;
+		File file = null, parent;
+		String path = request.getParameter("path");
+		String type = request.getContentType();
+		String search = request.getParameter("search");
+		String mode;
 
 		if(path==null||!(file=new File(path)).exists())
 			files = new Roots();
@@ -71,31 +75,7 @@ public class Servlet extends HttpServlet {
 		} else throw new ServletException("Unknown type of file or folder.");
 		
 		if(files!=null) {
-			final PrintWriter writer = response.getWriter();
-			writer.println(header());
-			writer.println(breadCrumb(files));
-
-			writer.print("<div class=\"file-list\">");
-			if(files instanceof Directory) {
-				writer.print(getParentLink(file, path));
-			}
-
-			File [] fileList=files.listFiles();
-			if(fileList!=null) {
-				boolean isSearchResult =  search != null && !search.isEmpty();
-				writer.print(getFileList(fileList, isSearchResult, true));
-				writer.print(getFileList(fileList, isSearchResult, false));
-			}
-			else if(search!=null && !search.isEmpty() && path!=null && !path.isEmpty()) {
-				writer.print(noResults(path));
-			}
-			writer.println("</div>");
-
-			if(!(files instanceof Roots)) {
-				writer.print(getTools(search));
-			}
-			writer.print(footer());
-			writer.flush();
+			listFiles(files, file, path, search, response);
 		}
 	}
 
@@ -167,17 +147,45 @@ public class Servlet extends HttpServlet {
 		}
 	}
 
-	private String getFileList(File [] fileList, boolean isSearchResult, boolean directory) throws UnsupportedEncodingException {
+	private void listFiles(Files files, File file, String path, String search, HttpServletResponse response) throws IOException {
+		final PrintWriter writer = response.getWriter();
+		writer.println(header());
+		writer.println(breadCrumb(files));
+
+		writer.print("<div class=\"file-list\">");
+		if(files instanceof Directory) {
+			writer.print(parentLink(file, path));
+		}
+
+		File [] fileList=files.listFiles();
+		if(fileList!=null) {
+			boolean isSearchResult =  search != null && !search.isEmpty();
+			writer.print(fileList(fileList, isSearchResult, true));
+			writer.print(fileList(fileList, isSearchResult, false));
+		}
+		else if(search!=null && !search.isEmpty() && path!=null && !path.isEmpty()) {
+			writer.print(noResults(path));
+		}
+		writer.println("</div>");
+
+		if(!(files instanceof Roots)) {
+			writer.print(tools(search));
+		}
+		writer.print(footer());
+		writer.flush();
+	}
+
+	private String fileList(File [] fileList, boolean isSearchResult, boolean directory) throws UnsupportedEncodingException {
 		StringBuilder sb = new StringBuilder();
 		for (File child : fileList) {
 			if(directory == child.isDirectory()) {
-				sb.append(getFileLink(child, isSearchResult));
+				sb.append(singleFile(child, isSearchResult));
 			}
 		}
 		return sb.toString();
 	}
 
-	private String getFileLink(File child, boolean searchResult) throws UnsupportedEncodingException {
+	private String singleFile(File child, boolean searchResult) throws UnsupportedEncodingException {
 		//hide dot files
 		if (child.getName().matches("^[.]+[^.]+.*")) {
 			return "";
@@ -197,7 +205,7 @@ public class Servlet extends HttpServlet {
 		return sb.toString();
 	}
 
-	private String getParentLink(File file, String path) throws UnsupportedEncodingException {
+	private String parentLink(File file, String path) throws UnsupportedEncodingException {
 		StringBuilder sb=new StringBuilder();
 		if((file.getParentFile())!=null)
 			sb.append("<span class=\"dir-navigation\"><i class=\"icon\" /></i><a href=\"?path="+URLEncoder.encode(file.getParentFile().getAbsolutePath(),ENCODING)+"\">..</a></span>\n");
@@ -205,7 +213,7 @@ public class Servlet extends HttpServlet {
 		return sb.toString();
 	}
 
-	private String getTools(String search) {
+	private String tools(String search) {
 		StringBuilder sb=new StringBuilder();
 		sb.append("\n<form method=\"post\"><label for=\"search\">Search Files:</label> <input type=\"text\" name=\"search\" id=\"search\" value=\""+(search!=null?search:"")+"\"> <button type=\"submit\">Search</button></form>");
 		sb.append("<form method=\"post\" enctype=\"multipart/form-data\"><label for=\"upload\">Upload Files:</label> <button type=\"submit\">Upload</button> <button type=\"submit\" name=\"unzip\">Upload & Unzip</button> <input type=\"file\" name=\"upload[]\" id=\"upload\" multiple></form>\n");
