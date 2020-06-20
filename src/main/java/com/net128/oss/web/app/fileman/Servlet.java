@@ -152,7 +152,8 @@ public class Servlet extends HttpServlet {
 		writer.println(header());
 		writer.println(breadCrumb(files));
 
-		writer.print("<div class=\"file-list\">");
+		writer.print("<ul class=\"file-list\">");
+		//writer.print("<div class=\"file-list\">");
 		if(files instanceof Directory) {
 			writer.print(parentLink(file, path));
 		}
@@ -166,7 +167,7 @@ public class Servlet extends HttpServlet {
 		else if(search!=null && !search.isEmpty() && path!=null && !path.isEmpty()) {
 			writer.print(noResults(path));
 		}
-		writer.println("</div>");
+		writer.println("</ul>");
 
 		if(!(files instanceof Roots)) {
 			writer.print(tools(search));
@@ -192,11 +193,11 @@ public class Servlet extends HttpServlet {
 		}
 		StringBuilder sb = new StringBuilder();
 		if (child.isDirectory()) {
-			sb.append("<span class=\"directory\"><i class=\"icon\" /></i><a href=\"?path=" + URLEncoder.encode(child.getAbsolutePath(), ENCODING) + "\" title=\"" + child.getAbsolutePath() + "\">" + child.getName() + "</a></span>");
+			sb.append("<li class=\"directory\"><i class=\"icon\" /></i><a href=\"?path=" + URLEncoder.encode(child.getAbsolutePath(), ENCODING) + "\" title=\"" + child.getAbsolutePath() + "\">" + child.getName() + "</a></li>");
 			//sb.append("<a class=\"download\" href=\"?path=" + URLEncoder.encode(child.getAbsolutePath(), ENCODING) + "&zip\" title=\"download\">&#8681;</a>");
 		} else {
-			sb.append("<span class=\"file\"><i class=\"icon\" /></i>" + child.getName());
-			sb.append("<a \"download\" href=\"?path=" + URLEncoder.encode(child.getAbsolutePath(), ENCODING) + "\" title=\"download\">&#8681;</a></span>");
+			sb.append("<li class=\"file\"><i class=\"icon\" /></i><span class=\"name\">" + child.getName()+"</span>");
+			sb.append("<a \"download\" href=\"?path=" + URLEncoder.encode(child.getAbsolutePath(), ENCODING) + "\" title=\"download\">&#8681;</a></li>");
 		}
 
 		if(searchResult)
