@@ -126,21 +126,23 @@ public class Servlet extends HttpServlet {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<").append(ITEM);
 		if (child.isDirectory()) {
-			sb.append(" class=\"directory\"><a href=\"?path=")
-					.append(URLEncoder.encode(child.getAbsolutePath(), ENCODING))
-					.append("\"><i class=\"item\" ></i>").append(child.getName()).append("</a>");
-		} else {
-			sb.append(" class=\"file\"><span class=\"name\"><i class=\"item\"></i>")
-					.append(child.getName()).append("</span>");
-		}
-
-		sb.append(" <span class=\"item-tool\">")
-				.append("<a class=\"download\" href=\"?path=")
+			sb.append(" class=\"directory\">")
+				.append(" <a href=\"?path=")
 				.append(URLEncoder.encode(child.getAbsolutePath(), ENCODING))
-				.append(child.isDirectory()?"&zip":"")
-				.append("\">&#x2B07;</a>")
-				.append("</span>")
-				.append("</").append(ITEM).append(">\n");
+				.append("\"><i class=\"item\" ></i>").append(child.getName()).append("</a>");
+		} else {
+			sb.append(" class=\"file\">")
+				.append(" <span class=\"name\"><i class=\"item\"></i>")
+				.append(child.getName()).append("</span>");
+		}
+		sb.append(" <span class=\"item-tool\">")
+			.append("<a class=\"download\" href=\"?path=")
+			.append(URLEncoder.encode(child.getAbsolutePath(), ENCODING))
+			.append(child.isDirectory()?"&zip":"")
+			.append("\">&#x2B07;</a>")
+			.append("</span>");
+		sb.append("</").append(ITEM).append(">\n");
+
 		return sb.toString();
 	}
 

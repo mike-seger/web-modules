@@ -70,6 +70,8 @@ li {
   display: inline;;
   margin: 0;
   padding: 0;
+  min-height: 28px;
+  line-height: 28px;
 }
 
 .directory, .file {
@@ -82,16 +84,12 @@ li {
 
 span.item-tool {
     display: none;
-    xvisibility: hidden;
-    zoom: 90%;
-    margin: 0;
-    padding: 0;
-    height: 14px;
 }
 
 span.item-tool a {
     margin: 0;
     padding: 0;
+    width: 14px;
 }
 
 li.file:hover, li.file:active, li.directory:hover, li.directory:active  {
