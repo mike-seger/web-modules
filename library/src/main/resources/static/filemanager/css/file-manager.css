@@ -13,6 +13,14 @@ body {
     padding: 15px;
 }
 
+p.breadcrumb, ul.file-list, #uploadForm {
+    margin: 0;
+}
+
+p.breadcrumb, #uploadForm {
+    margin-bottom: 15px;
+}
+
 a {
     color: rgb(102, 149, 184);
     text-decoration: none;
@@ -25,11 +33,9 @@ a {
 
 .breadcrumb {
     margin: 0;
-    margin-top: 15px;
 }
 
 .file-list {
-    margin-top: 15px;
     -ms-word-break: break-all;
     /* This is the dangerous one in WebKit, as it breaks things wherever */
     word-break: break-all;
@@ -157,7 +163,6 @@ li:hover span.item-tool {
     filter: invert(63%) sepia(10%) saturate(1593%) hue-rotate(161deg) brightness(35%) contrast(67%);
 }
 
-
 a.delete {
     color: rgb(223, 77, 77);
 }
@@ -198,11 +203,6 @@ input[type="file"]::-webkit-file-upload-button, button {
     text-indent:0;
     display:inline-block;
     color: rgb(240,240,240);
-    /*
-    font-family:arial;
-    font-weight:400;
-    font-style:normal;
-    */
     height:35px;
     line-height:30px;
     text-decoration:none;
@@ -213,12 +213,6 @@ input[type="file"]::-webkit-file-upload-button, button {
     border-left-color: rgb(118, 118, 118);
     border-top-color: rgb(118, 118, 118);
     border-bottom-color: rgb(30, 30, 30);
-/*
-    border-radius: 7px;
-    background: #3e4a51;
-    box-shadow: 5px 5px 12px #303a3f, -5px -5px 12px #4c5a63;
-    box-shadow: 0px 0px 12px #303a3f, 0px 0px 0px #4c5a63;
-    */
 }
 
 input[type="file"]::-webkit-file-upload-button:hover, button:hover {
@@ -232,36 +226,3 @@ input[type="file"]::-webkit-file-upload-button:focus, button:focus {
 .tools {
     margin: 0;
 }
-
-/*
-button.upload:before {
-    content: url(download1.svg);
-    width: 20px;
-    float: left;
-    margin-right: 5px;
-    margin-top: -2px;
-}
-*/
-
-/*
-button.upload::before {
-
-  content: "";
-  display: block;
-  width: 50%;
-  height: 50%;
-  background: #000;
-  pointer-events: none;
-
-
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-
-
-  mask-image: url("download.svg");
-  mask-position: center;
-  mask-repeat: no-repeat;
-  mask-size: contain;
-}*/
