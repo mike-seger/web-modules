@@ -14,7 +14,7 @@ public class AppConfiguration {
     @Bean
     public ServletRegistrationBean<FileManagerServlet> fileManagerBean(MultipartConfigElement mce) {
         ServletRegistrationBean<FileManagerServlet> bean =
-                new ServletRegistrationBean<>(new FileManagerServlet(), mapping);
+            new ServletRegistrationBean<>(new FileManagerServlet(), mapping);
         bean.setMultipartConfig(mce);
         bean.setLoadOnStartup(0);
         return bean;
