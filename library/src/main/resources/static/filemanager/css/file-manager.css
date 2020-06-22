@@ -11,6 +11,9 @@ html, body {
 
 body {
     padding: 15px;
+    padding-right: 30px;
+    width: calc(100% - 30px);
+    height: calc(100% - 30px);
 }
 
 p.breadcrumb, ul.file-list, #uploadForm {
@@ -31,10 +34,6 @@ a {
     font-size: 16px;
 }
 
-.breadcrumb {
-    margin: 0;
-}
-
 .file-list {
     -ms-word-break: break-all;
     /* This is the dangerous one in WebKit, as it breaks things wherever */
@@ -50,8 +49,8 @@ a {
     -moz-column-gap: 20px;
     column-gap: 20px;
 
-    min-height: calc(100vh - 140px);
-    height: calc(100vh - 140px);
+    min-height: calc(100vh - 110px);
+    height: calc(100vh - 110px);
     overflow-y: hidden;
 
     -webkit-column-span: 1;
