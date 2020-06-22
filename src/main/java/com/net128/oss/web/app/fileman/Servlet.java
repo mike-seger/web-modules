@@ -64,7 +64,7 @@ public class Servlet extends HttpServlet {
 		String path = request.getParameter("path");
 		String type = request.getContentType();
 		String mode;
-		boolean redirectToApiWeb = request.getParameter("api-data")!=null;
+		boolean redirectToApiWeb = true;
 
 		File file;
 		if (path==null || !new File(path).exists()) {

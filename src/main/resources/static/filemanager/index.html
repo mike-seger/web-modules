@@ -7,7 +7,6 @@
 <form id="uploadForm" class="tools" method="post" enctype="multipart/form-data">
     <button class="tool" type="submit">&#x2B06;</button>
     <input type="file" name="file" id="file" multiple>
-    <input type="hidden" name="api-data" value="">
 </form>
 <p id="breadCrumb" class="breadcrumb"></p>
 <ul id="file-list" class="file-list"></ul>
@@ -20,7 +19,7 @@ function refreshFileData(path) {
     let fileList = document.getElementById("file-list");
     let breadCrumb = document.getElementById("breadCrumb");
     let showDotFiles = false;
-    const apiUri = "api?api-data&path=";
+    const apiUri = "api?path=";
     path = apiUri + path;
 
     function createItemTools(fileUri, isDirectory) {
