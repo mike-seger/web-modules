@@ -52,7 +52,6 @@ public class Servlet extends HttpServlet {
 
 	private static final String mapping = "/filemanager/api";
 	private static final int BUFFER_SIZE = 4096;
-	private static final String ITEM = "li";
 	private static final String ENCODING = StandardCharsets.UTF_8.name();
 	private final ObjectMapper om=new ObjectMapper().registerModule(new JavaTimeModule())
 		.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
@@ -93,18 +92,14 @@ public class Servlet extends HttpServlet {
 		}
 
 		FileList fileList=new Directory(file);
-		if(request.getParameter("api-data")!=null) {
-			if(redirectToApiWeb) {
-				if(!file.isDirectory()) {
-					file = file.getParentFile();
-				}
-				response.sendRedirect("index.html?path="+
-					URLEncoder.encode(file.getAbsolutePath(), ENCODING));
-			} else {
-				api(response, file, fileList);
+		if(redirectToApiWeb) {
+			if(!file.isDirectory()) {
+				file = file.getParentFile();
 			}
+			response.sendRedirect("index.html?path="+
+				URLEncoder.encode(file.getAbsolutePath(), ENCODING));
 		} else {
-			listFiles(fileList, response);
+			api(response, file, fileList);
 		}
 	}
 
@@ -113,6 +108,7 @@ public class Servlet extends HttpServlet {
 		public ApiResponse(String path, List<File> files) {
 			this.path = path;
 			this.files = files.stream().map(FileInfo::new).collect(Collectors.toList());
+			isWritable = Files.isWritable(new File(path).toPath());
 		}
 
 		@JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -140,11 +136,13 @@ public class Servlet extends HttpServlet {
 					modified = new Date(file.lastModified()).toInstant()
 						.atZone(ZoneId.systemDefault())
 						.toLocalDateTime();
-					FileTime creationTime = (FileTime) Files.getAttribute(path, "creationTime");
-					if(creationTime != null) {
-						created = creationTime.toInstant()
-							.atZone(ZoneId.systemDefault())
-							.toLocalDateTime();
+					if(isReadable) {
+						FileTime creationTime = (FileTime) Files.getAttribute(path, "creationTime");
+						if (creationTime != null) {
+							created = creationTime.toInstant()
+									.atZone(ZoneId.systemDefault())
+									.toLocalDateTime();
+						}
 					}
 				} catch (IOException e) {
 					logger.error("Failed to complete file information", e);
@@ -162,6 +160,7 @@ public class Servlet extends HttpServlet {
 		}
 
 		public String path;
+		public boolean isWritable;
 		public List<FileInfo> files;
 	}
 
@@ -169,73 +168,6 @@ public class Servlet extends HttpServlet {
 		File [] files = fileList.listFiles();
 		ApiResponse apiResponse=new ApiResponse(path.getAbsolutePath(), Arrays.asList(files));
 		om.writeValue(response.getOutputStream(), apiResponse);
-	}
-
-	private void listFiles(FileList files, HttpServletResponse response) throws IOException {
-		File [] fileList=files.listFiles();
-		fileList = fileList!=null?fileList:new File[]{};
-		String html = loadStringResource("/static/filemanager/index2.html");
-		String content =
-			fileList(fileList, true) +
-			fileList(fileList, false);
-		html = html.replace("${file-list}", content);
-		html = html.replace("${breadcrumb}", breadCrumb(new File(files.toString())));
-		final PrintWriter writer = response.getWriter();
-		writer.print(html);
-		writer.flush();
-	}
-
-	private String loadStringResource(String location) {
-		return new Scanner(getClass().getResourceAsStream(location),
-			StandardCharsets.UTF_8.name()).useDelimiter("\\A").next();
-	}
-
-	private String breadCrumb(File directory) throws UnsupportedEncodingException {
-		List<String> parentList=new ArrayList<>();
-		parentList.add(directory.getName());
-		directory=directory.getParentFile();
-		while(directory!=null) {
-			String name = directory.getName();
-			if(name.isEmpty()) {
-				name = ">";
-			}
-			String encodedPath = URLEncoder.encode(directory.getAbsolutePath(), ENCODING);
-			directory=directory.getParentFile();
-			parentList.add(0, String.format("<a href=\"?path=%s\">%s</a>", encodedPath , name));
-		}
-		return " "+String.join(" / ", parentList)+"\n";
-	}
-
-	private String fileTools(File file) throws UnsupportedEncodingException {
-		return " <span class=\"item-tool\">" +
-			"<a class=\"download\" href=\"?path=" +
-			URLEncoder.encode(file.getAbsolutePath(), ENCODING) +
-			(file.isDirectory() ? "&zip" : "") +
-			"\">&#x2B07;</a>" +
-			"</span>";
-	}
-
-	private String singleFile(File file) throws UnsupportedEncodingException {
-		//hide dot files
-		if (file.getName().matches("^[.]+[^.]+.*")) {
-			return "";
-		}
-		StringBuilder sb = new StringBuilder();
-		sb.append("<").append(ITEM);
-		if (file.isDirectory()) {
-			sb.append(" class=\"directory\">")
-				.append(" <a href=\"?path=")
-				.append(URLEncoder.encode(file.getAbsolutePath(), ENCODING))
-				.append("\"><i class=\"item\" ></i>").append(file.getName()).append("</a>");
-		} else {
-			sb.append(" class=\"file\">")
-				.append(" <span class=\"name\"><i class=\"item\"></i>")
-				.append(file.getName()).append("</span>");
-		}
-		sb.append(fileTools(file));
-		sb.append("</").append(ITEM).append(">\n");
-
-		return sb.toString();
 	}
 
 	private void zipFile(File file, HttpServletResponse response) throws IOException {
@@ -286,16 +218,6 @@ public class Servlet extends HttpServlet {
 		}
 	}
 
-	private String fileList(File[] fileList, boolean directory) throws UnsupportedEncodingException {
-		StringBuilder sb = new StringBuilder();
-		for (File child : fileList) {
-			if(directory == child.isDirectory()) {
-				sb.append(singleFile(child));
-			}
-		}
-		return sb.toString();
-	}
-
 	protected interface FileList {
 		File[] listFiles();
 	}
@@ -316,28 +238,11 @@ public class Servlet extends HttpServlet {
 			if(files==null || files.length==0) {
 				return new File []{};
 			}
-			Arrays.sort(files);
+			Arrays.sort(files, (o1, o2) ->
+				o1.getAbsolutePath().compareToIgnoreCase(o2.getAbsolutePath()));
 			return files;
 		}
 	}
-/*	protected static class Roots implements FileList {
-		@Override public String toString() { return "root"; }
-		@Override public File[] listFiles() {
-			File[] roots = File.listRoots();
-			for(int root=0;root<roots.length;root++) {
-				final File originalRoot = roots[root];
-				roots[root] = new File(roots[root].toURI()) {
-					@Override public String getName() {
-						String displayName = null;
-						try { displayName = FileSystemView.getFileSystemView().getSystemDisplayName(originalRoot); }
-						catch(NoClassDefFoundError e) {
-
-						return displayName!=null&&!displayName.isEmpty()?displayName:originalRoot.getPath();
-					}
-				};
-			} return roots;
-		}
-	}*/
 
 	private static void copyStream(InputStream input, OutputStream output) throws IOException {
 		int read;

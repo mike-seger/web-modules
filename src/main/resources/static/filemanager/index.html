@@ -95,8 +95,19 @@ function refreshFileData(path) {
         return breadCrumbPath;
     }
 
+    function display(element, show) {
+        if(show) {
+            element.style.display = "block";
+        } else {
+            element.style.display = "none";
+        }
+    }
+
     function receiveFileData(data) {
         uploadForm.setAttribute("action", apiUri + data.path);
+        display(uploadForm, data.isWritable);
+        display(breadCrumb, !(data.path === '/'));
+
         breadCrumb.innerHTML = '';
         breadCrumb.appendChild(createBradCrumb(data.path));
         fileList.innerHTML = '';
