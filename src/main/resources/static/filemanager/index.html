@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="css/file-manager.css">
+</head>
+<body>
+<form id="uploadForm" class="tools" method="post" enctype="multipart/form-data">
+    <button class="tool" type="submit">&#x2B06;</button>
+    <input type="file" name="file" id="file" multiple>
+    <input type="hidden" name="api-data" value="">
+</form>
+<p id="breadCrumb" class="breadcrumb"></p>
+<ul id="file-list" class="file-list"></ul>
+
+<script>
+'use strict';
+
+function refreshFileData(path) {
+    let uploadForm = document.getElementById("uploadForm");
+    let fileList = document.getElementById("file-list");
+    let breadCrumb = document.getElementById("breadCrumb");
+    let showDotFiles = false;
+    const apiUri = "api?api-data&path=";
+    path = apiUri + path;
+
+    function createItemTools(fileUri, isDirectory) {
+        var itemTools = document.createElement("span");
+        itemTools.classList.add('item-tool');
+        var downloadLink = document.createElement("a");
+        downloadLink.classList.add('download');
+        downloadLink.setAttribute("href", apiUri + fileUri + (isDirectory?'&zip':''));
+        downloadLink.appendChild(document.createTextNode(' \u2B07 '));
+        itemTools.appendChild(downloadLink);
+        if(!isDirectory) {
+            itemTools.appendChild(document.createTextNode(' '));
+            var deleteLink = document.createElement("a");
+            deleteLink.classList.add('delete');
+            deleteLink.setAttribute("href", apiUri + fileUri + '&delete');
+            deleteLink.appendChild(document.createTextNode(' \u2718 '));
+            itemTools.appendChild(deleteLink);
+        }
+
+        return itemTools;
+    }
+
+    function createItem(file) {
+        var fileUri = encodeURIComponent(file.parent + '/'+ file.name);
+        var listItem = document.createElement("li");
+        if(file.isDirectory) {
+            listItem.classList.add('directory');
+        } else  {
+            listItem.classList.add('file');
+        }
+        if(file.isDirectory) {
+            var fileLink = document.createElement("a");
+            fileLink.setAttribute("href", 'javascript:refreshFileData("' + fileUri + '")');
+            var iClass = document.createElement("i");
+            iClass.classList.add('item');
+            fileLink.appendChild(iClass);
+            fileLink.appendChild(document.createTextNode(file.name));
+            listItem.appendChild(fileLink);
+        } else {
+            var nameSpan = document.createElement("span");
+            nameSpan.classList.add('name');
+            var iClass = document.createElement("i");
+            iClass.classList.add('item');
+            nameSpan.appendChild(iClass);
+            nameSpan.appendChild(document.createTextNode(file.name));
+            listItem.appendChild(nameSpan);
+        }
+
+        listItem.appendChild(createItemTools(fileUri, file.isDirectory));
+        return listItem;
+    }
+
+    function createBradCrumb(directory) {
+        var breadCrumbPath = document.createElement("span");
+        if(directory === '/') {
+            return breadCrumbPath;
+        }
+        var path = '';
+        var parts = directory.split('/');
+        parts.forEach(dir => {
+            if(dir != '') {
+                breadCrumbPath.appendChild(document.createTextNode(' / '));
+            }
+            path += (path.endsWith('/')?'':'/') + dir;
+            var name = dir===''?'>':dir;
+            console.log("uri: [" + path + "]");
+            var dirLink = document.createElement("a");
+            dirLink.setAttribute("href", 'javascript:refreshFileData("' + path + '")');
+            dirLink.appendChild(document.createTextNode(name));
+            breadCrumbPath.appendChild(dirLink);
+        });
+        return breadCrumbPath;
+    }
+
+    function receiveFileData(data) {
+        uploadForm.setAttribute("action", apiUri + data.path);
+        breadCrumb.innerHTML = '';
+        breadCrumb.appendChild(createBradCrumb(data.path));
+        fileList.innerHTML = '';
+        var directoryFlag = [ true, false ];
+        directoryFlag.forEach(isDirectory => {
+            data.files.forEach(file => {
+                var isDotFile = file.name.startsWith('.');
+                if(file.isDirectory == isDirectory && (!isDotFile || (isDotFile && showDotFiles))) {
+                    fileList.appendChild(createItem(file));
+                }
+            });
+        });
+
+        console.log(data);
+    }
+
+    fetch(path)
+        .then(response => response.json())
+        .then(data => receiveFileData(data));
+}
+
+const params = new URLSearchParams(window.location.search)
+refreshFileData((params.has('path')?params.get('path'):''));
+
+</script>
+</body>
+</html>

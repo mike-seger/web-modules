@@ -4,10 +4,15 @@ import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletException;
@@ -16,148 +21,221 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
-import javax.swing.filechooser.FileSystemView;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.util.StdDateFormat;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.fileupload.ParameterParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.zeroturnaround.zip.ZipUtil;
 
-//@MultipartConfig
+@SuppressWarnings({"ResultOfMethodCallIgnored", "SameParameterValue"})
 @Configuration
-@MultipartConfig/*(
-	fileSizeThreshold = 1024 * 1024,
-	maxFileSize = 1024 * 1024 * 5,
-	maxRequestSize = 1024 * 1024 * 5 * 5)*/
+@MultipartConfig
 public class Servlet extends HttpServlet {
+	final static Logger logger = LoggerFactory.getLogger(Servlet.class);
+	//Required to automatically pick up this old-school servlet in a Spring application
 	@Bean
 	public ServletRegistrationBean<Servlet> fileManagerBean(MultipartConfigElement mce) {
 		ServletRegistrationBean<Servlet> bean =
-			new ServletRegistrationBean<>(new Servlet(), "/filemanager/index");
+			new ServletRegistrationBean<>(new Servlet(), mapping);
 		bean.setMultipartConfig(mce);
 		bean.setLoadOnStartup(0);
 		return bean;
 	}
 
+	private static final String mapping = "/filemanager/api";
 	private static final int BUFFER_SIZE = 4096;
-	private static String GROUP = "ul";
-	private static String ITEM = "li";
+	private static final String ITEM = "li";
 	private static final String ENCODING = StandardCharsets.UTF_8.name();
+	private final ObjectMapper om=new ObjectMapper().registerModule(new JavaTimeModule())
+		.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+		.setDateFormat(new StdDateFormat().withColonInTimeZone(true));
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Files files = null;
-		File file;
 		String path = request.getParameter("path");
 		String type = request.getContentType();
 		String mode;
+		boolean redirectToApiWeb = request.getParameter("api-data")!=null;
 
-		file = new File(path);
-
-		if(path==null||!file.exists()) {
-			files = new Roots();
-		} else if(request.getParameter("zip")!=null) {
-			zipFile(file, response);
-		} else if(request.getParameter("delete")!=null) {
-			deleteFileOrDirectory(file);
-		} else if((mode=request.getParameter("mode"))!=null) {
-			changeMode(file, mode);
-		} else if(file.isFile()) {
-			downloadFile(response, file);
-		} else if(file.isDirectory()) {
-			if(type!=null && type.startsWith("multipart/form-data")) {
-				receiveUpload(file, request);
-			}
-		} else throw new ServletException("Unknown type of file or folder.");
-
-		if(files==null) {
-			files = new Directory(file);
+		File file;
+		if (path==null || !new File(path).exists()) {
+			redirectToApiWeb = false;
+			file = new File("/");
+		} else {
+			file=new File(path);
+			if (request.getParameter("zip") != null) {
+				redirectToApiWeb = false;
+				zipFile(file, response);
+			} else if (request.getParameter("delete") != null) {
+				deleteFileOrDirectory(file);
+			} else if ((mode = request.getParameter("mode")) != null) {
+				changeMode(file, mode);
+			} else if (file.isFile()) {
+				redirectToApiWeb = false;
+				downloadFile(response, file);
+			} else if (file.isDirectory()) {
+				if (type != null && type.startsWith("multipart/form-data")) {
+					receiveUpload(file, request);
+				} else {
+					redirectToApiWeb = false;
+				}
+			} else throw new ServletException("Unknown type of file or folder.");
 		}
-		listFiles(files, response);
+
+		FileList fileList=new Directory(file);
+		if(request.getParameter("api-data")!=null) {
+			if(redirectToApiWeb) {
+				if(!file.isDirectory()) {
+					file = file.getParentFile();
+				}
+				response.sendRedirect("index.html?path="+
+					URLEncoder.encode(file.getAbsolutePath(), ENCODING));
+			} else {
+				api(response, file, fileList);
+			}
+		} else {
+			listFiles(fileList, response);
+		}
 	}
 
-	private void listFiles(Files files, HttpServletResponse response) throws IOException {
-		final PrintWriter writer = response.getWriter();
-		writer.println(header());
-		writer.println(breadCrumb(files));
-		writer.print(tools());
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
+	public static class ApiResponse {
+		public ApiResponse(String path, List<File> files) {
+			this.path = path;
+			this.files = files.stream().map(FileInfo::new).collect(Collectors.toList());
+		}
+
+		@JsonInclude(JsonInclude.Include.NON_EMPTY)
+		public static class FileInfo {
+			public FileInfo(File file) {
+				name = file.getName();
+				File parentFile = file.getParentFile();
+				if(parentFile!=null) {
+					try {
+						parent = file.getParentFile().getCanonicalPath();
+					} catch (IOException e) {
+						parent = file.getParentFile().getAbsolutePath();
+					}
+				}
+				if(file.isDirectory()) {
+					isDirectory = true;
+				} else {
+					length = file.length();
+				}
+				Path path = file.toPath();
+				isReadable = Files.isReadable(path);
+				isWritable = Files.isWritable(path);
+				isExecutable = Files.isExecutable(path);
+				try {
+					modified = new Date(file.lastModified()).toInstant()
+						.atZone(ZoneId.systemDefault())
+						.toLocalDateTime();
+					FileTime creationTime = (FileTime) Files.getAttribute(path, "creationTime");
+					if(creationTime != null) {
+						created = creationTime.toInstant()
+							.atZone(ZoneId.systemDefault())
+							.toLocalDateTime();
+					}
+				} catch (IOException e) {
+					logger.error("Failed to complete file information", e);
+				}
+			}
+			public String parent;
+			public String name;
+			public Long length;
+			public boolean isDirectory;
+			public boolean isReadable;
+			public boolean isWritable;
+			public boolean isExecutable;
+			public LocalDateTime modified;
+			public LocalDateTime created;
+		}
+
+		public String path;
+		public List<FileInfo> files;
+	}
+
+	private void api(HttpServletResponse response, File path, FileList fileList) throws IOException {
+		File [] files = fileList.listFiles();
+		ApiResponse apiResponse=new ApiResponse(path.getAbsolutePath(), Arrays.asList(files));
+		om.writeValue(response.getOutputStream(), apiResponse);
+	}
+
+	private void listFiles(FileList files, HttpServletResponse response) throws IOException {
 		File [] fileList=files.listFiles();
 		fileList = fileList!=null?fileList:new File[]{};
-		writer.print("<"+GROUP+" class=\"file-list\">");
-		writer.print(fileList(fileList, true));
-		writer.print(fileList(fileList, false));
-		writer.println("</"+GROUP+">");
-		writer.print(footer());
+		String html = loadStringResource("/static/filemanager/index2.html");
+		String content =
+			fileList(fileList, true) +
+			fileList(fileList, false);
+		html = html.replace("${file-list}", content);
+		html = html.replace("${breadcrumb}", breadCrumb(new File(files.toString())));
+		final PrintWriter writer = response.getWriter();
+		writer.print(html);
 		writer.flush();
 	}
 
-	private String header() {
-		return "<!DOCTYPE html><html><head>" +
-			"<link rel=\"stylesheet\" href=\"css/file-manager.css\">" +
-			"</head><body>"
-			;
+	private String loadStringResource(String location) {
+		return new Scanner(getClass().getResourceAsStream(location),
+			StandardCharsets.UTF_8.name()).useDelimiter("\\A").next();
 	}
 
-	private String breadCrumb(Files files) throws UnsupportedEncodingException {
-		File file=new File(files.toString());
+	private String breadCrumb(File directory) throws UnsupportedEncodingException {
 		List<String> parentList=new ArrayList<>();
-		parentList.add(file.getName());
-		file=file.getParentFile();
-		while(file!=null) {
-			String name = file.getName();
+		parentList.add(directory.getName());
+		directory=directory.getParentFile();
+		while(directory!=null) {
+			String name = directory.getName();
 			if(name.isEmpty()) {
 				name = ">";
 			}
-			String encodedPath = URLEncoder.encode(file.getAbsolutePath(), ENCODING);
-			file=file.getParentFile();
+			String encodedPath = URLEncoder.encode(directory.getAbsolutePath(), ENCODING);
+			directory=directory.getParentFile();
 			parentList.add(0, String.format("<a href=\"?path=%s\">%s</a>", encodedPath , name));
 		}
-		return "<p class=\"breadcrumb\"> "+String.join(" / ", parentList)+"</p>";
+		return " "+String.join(" / ", parentList)+"\n";
 	}
 
-	private String singleFile(File child) throws UnsupportedEncodingException {
+	private String fileTools(File file) throws UnsupportedEncodingException {
+		return " <span class=\"item-tool\">" +
+			"<a class=\"download\" href=\"?path=" +
+			URLEncoder.encode(file.getAbsolutePath(), ENCODING) +
+			(file.isDirectory() ? "&zip" : "") +
+			"\">&#x2B07;</a>" +
+			"</span>";
+	}
+
+	private String singleFile(File file) throws UnsupportedEncodingException {
 		//hide dot files
-		if (child.getName().matches("^[.]+[^.]+.*")) {
+		if (file.getName().matches("^[.]+[^.]+.*")) {
 			return "";
 		}
 		StringBuilder sb = new StringBuilder();
 		sb.append("<").append(ITEM);
-		if (child.isDirectory()) {
+		if (file.isDirectory()) {
 			sb.append(" class=\"directory\">")
 				.append(" <a href=\"?path=")
-				.append(URLEncoder.encode(child.getAbsolutePath(), ENCODING))
-				.append("\"><i class=\"item\" ></i>").append(child.getName()).append("</a>");
+				.append(URLEncoder.encode(file.getAbsolutePath(), ENCODING))
+				.append("\"><i class=\"item\" ></i>").append(file.getName()).append("</a>");
 		} else {
 			sb.append(" class=\"file\">")
 				.append(" <span class=\"name\"><i class=\"item\"></i>")
-				.append(child.getName()).append("</span>");
+				.append(file.getName()).append("</span>");
 		}
-		sb.append(" <span class=\"item-tool\">")
-			.append("<a class=\"download\" href=\"?path=")
-			.append(URLEncoder.encode(child.getAbsolutePath(), ENCODING))
-			.append(child.isDirectory()?"&zip":"")
-			.append("\">&#x2B07;</a>")
-			.append("</span>");
+		sb.append(fileTools(file));
 		sb.append("</").append(ITEM).append(">\n");
 
 		return sb.toString();
-	}
-
-	private String tools() {
-		StringBuilder sb=new StringBuilder();
-		sb.append(
-			"<form class=\"tools\" method=\"post\" enctype=\"multipart/form-data\">" +
-				" <button class=\"tool\" type=\"submit\">&#x2B06;</button>" +
-				" <input type=\"file\" name=\"file\" id=\"file\" multiple>" +
-				"</form>\n");
-		return sb.toString();
-	}
-
-	private String footer() {
-		return "</body></html>";
 	}
 
 	private void zipFile(File file, HttpServletResponse response) throws IOException {
@@ -218,15 +296,18 @@ public class Servlet extends HttpServlet {
 		return sb.toString();
 	}
 
-	protected interface Files {
-		public File[] listFiles();
+	protected interface FileList {
+		File[] listFiles();
 	}
-	protected static class Directory implements Files {
+
+	protected static class Directory implements FileList {
 		public final File directory;
 
 		public Directory(File directory) {
-			if(!(this.directory=directory).isDirectory())
-				throw new IllegalArgumentException();
+			if(!directory.isDirectory()) {
+				directory=directory.getParentFile();
+			}
+			this.directory = directory;
 		}
 
 		@Override public String toString() { return directory.getAbsolutePath(); }
@@ -239,53 +320,25 @@ public class Servlet extends HttpServlet {
 			return files;
 		}
 	}
-	protected static class Roots implements Files {
+/*	protected static class Roots implements FileList {
 		@Override public String toString() { return "root"; }
 		@Override public File[] listFiles() {
 			File[] roots = File.listRoots();
 			for(int root=0;root<roots.length;root++) {
 				final File originalRoot = roots[root];
 				roots[root] = new File(roots[root].toURI()) {
-					private static final long serialVersionUID = 1l;
 					@Override public String getName() {
 						String displayName = null;
 						try { displayName = FileSystemView.getFileSystemView().getSystemDisplayName(originalRoot); }
-						catch(NoClassDefFoundError e) { /* some JRE implementations may not feature the FileSystemView */ }
+						catch(NoClassDefFoundError e) {
+
 						return displayName!=null&&!displayName.isEmpty()?displayName:originalRoot.getPath();
 					}
 				};
 			} return roots;
 		}
-	}
+	}*/
 
-	@SuppressWarnings("unused") private static void checkForPost(HttpServletRequest request) throws ServletException {
-		if(!"POST".equals(request.getMethod()))
-			throw new ServletException("method must be POST");
-	}
-	
-	@SuppressWarnings("unused") private static byte[] readStream(InputStream input) throws IOException { return readStream(input, -1, true); }
-	private static byte[] readStream(InputStream input, int length, boolean readAll) throws IOException {
-		byte[] output = {}; int position = 0;
-		if(length==-1) length = Integer.MAX_VALUE;
-		while(position<length) {
-			int bytesToRead;
-			if(position>=output.length) { // Only expand when there's no room
-				bytesToRead = Math.min(length - position, output.length + 1024);
-				if(output.length < position + bytesToRead)
-					output = Arrays.copyOf(output, position + bytesToRead);
-			} else bytesToRead = output.length - position;
-			int bytesRead = input.read(output, position, bytesToRead);
-			if(bytesRead<0) {
-				if(!readAll||length==Integer.MAX_VALUE) {
-					if(output.length!=position)
-						output = Arrays.copyOf(output, position);
-					break;
-				} else throw new EOFException("Detect premature EOF");
-			}
-			position += bytesRead;
-		}
-		return output;
-	}
 	private static void copyStream(InputStream input, OutputStream output) throws IOException {
 		int read;
 		byte[] buffer = new byte[BUFFER_SIZE];
@@ -309,6 +362,7 @@ public class Servlet extends HttpServlet {
 	private static String permamentName(String temporaryName) {
 		return temporaryName.replaceAll("-\\d+(?=\\.(?!.*\\.))","");
 	}
+
 	private String partFileName(Part part) {
 		String header, file = null;
 		if((header=part.getHeader("content-disposition"))!=null) {
