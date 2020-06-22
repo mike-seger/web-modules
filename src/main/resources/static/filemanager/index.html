@@ -85,7 +85,6 @@ function refreshFileData(path) {
             }
             path += (path.endsWith('/')?'':'/') + dir;
             var name = dir===''?'>':dir;
-            console.log("uri: [" + path + "]");
             var dirLink = document.createElement("a");
             dirLink.setAttribute("href", 'javascript:refreshFileData("' + path + '")');
             dirLink.appendChild(document.createTextNode(name));
