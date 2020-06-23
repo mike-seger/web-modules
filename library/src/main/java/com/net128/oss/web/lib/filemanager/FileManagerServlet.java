@@ -74,14 +74,10 @@ public class FileManagerServlet extends HttpServlet {
 			response.sendRedirect("index.html?path="+
 				URLEncoder.encode(file.getAbsolutePath(), ENCODING));
 		} else {
-			api(response, file, fileList);
+			File [] files = fileList.listFiles();
+			DirectoryInfo directoryInfo =new DirectoryInfo(file.getAbsolutePath(), Arrays.asList(files));
+			om.writeValue(response.getOutputStream(), directoryInfo);
 		}
-	}
-
-	private void api(HttpServletResponse response, File path, FileList fileList) throws IOException {
-		File [] files = fileList.listFiles();
-		DirectoryInfo directoryInfo =new DirectoryInfo(path.getAbsolutePath(), Arrays.asList(files));
-		om.writeValue(response.getOutputStream(), directoryInfo);
 	}
 
 	private void zipFile(File file, HttpServletResponse response) throws IOException {
