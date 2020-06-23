@@ -3,6 +3,7 @@ package com.net128.oss.web.lib.filemanager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.fileupload.ParameterParser;
 import org.zeroturnaround.zip.ZipUtil;
 
@@ -29,6 +30,7 @@ public class FileManagerServlet extends HttpServlet {
 	private static final int BUFFER_SIZE = 4096;
 	private static final String ENCODING = StandardCharsets.UTF_8.name();
 	private final ObjectMapper om=new ObjectMapper()
+		.registerModule(new JavaTimeModule())
 		.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
 		.setDateFormat(new StdDateFormat().withColonInTimeZone(true));
 
