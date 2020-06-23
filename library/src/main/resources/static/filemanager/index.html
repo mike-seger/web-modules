@@ -27,7 +27,7 @@ function refreshFileData(path) {
     let showDotFiles = false;
     const apiUri = "api?path=";
     const fmUri = "?path=";
-    window.history.pushState(path, '', fmUri + path);
+    window.history.pushState(path, '', fmUri + encodeURIComponent(path));
 
     function createItemTools(fileUri, isDirectory) {
         var itemTools = document.createElement("span");
@@ -99,7 +99,7 @@ function refreshFileData(path) {
     }
 
     function receiveFileData(data) {
-        uploadForm.setAttribute("action", apiUri + data.path);
+        uploadForm.setAttribute("action", apiUri + encodeURIComponent(data.path));
         display(uploadForm, data.isWritable);
         display(breadCrumb, !(data.path === '/'));
 
