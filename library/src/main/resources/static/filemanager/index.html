@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="css/file-manager.css">
+    <title>File Manager</title>
+    <link rel="stylesheet" href="css/file-manager.css">
 </head>
 <body>
 
+<!-- FIXME check if there exists upload without form -->
 <form id="uploadForm" class="tools" method="post" enctype="multipart/form-data" style="display:none">
     <button class="tool" type="submit">&#x2B06;</button>
     <input type="file" name="file" id="file" multiple>
 </form>
+
 <p id="breadCrumb" class="breadcrumb"></p>
 <ul id="file-list" class="file-list"></ul>
 
@@ -21,7 +24,8 @@ function refreshFileData(path) {
     let breadCrumb = document.getElementById("breadCrumb");
     let showDotFiles = false;
     const apiUri = "api?path=";
-    path = apiUri + path;
+    const fmUri = "?path=";
+    window.history.pushState(path, '', fmUri + path);
 
     function createItemTools(fileUri, isDirectory) {
         var itemTools = document.createElement("span");
@@ -44,30 +48,24 @@ function refreshFileData(path) {
     }
 
     function createItem(file) {
-        var fileUri = encodeURIComponent(file.parent + '/'+ file.name);
+        var fileUri = encodeURIComponent(file.parent + (file.parent.endsWith('/')?'':'/') +  file.name);
         var listItem = document.createElement("li");
+        var content;
         if(file.isDirectory) {
             listItem.classList.add('directory');
-        } else  {
-            listItem.classList.add('file');
-        }
-        if(file.isDirectory) {
-            var fileLink = document.createElement("a");
-            fileLink.setAttribute("href", 'javascript:refreshFileData("' + fileUri + '")');
-            var iClass = document.createElement("i");
-            iClass.classList.add('item');
-            fileLink.appendChild(iClass);
-            fileLink.appendChild(document.createTextNode(file.name));
-            listItem.appendChild(fileLink);
+            content = document.createElement("a");
+            content.setAttribute("href", 'javascript:refreshFileData("' + fileUri + '")');
         } else {
-            var nameSpan = document.createElement("span");
-            nameSpan.classList.add('name');
-            var iClass = document.createElement("i");
-            iClass.classList.add('item');
-            nameSpan.appendChild(iClass);
-            nameSpan.appendChild(document.createTextNode(file.name));
-            listItem.appendChild(nameSpan);
+            listItem.classList.add('file');
+            content = document.createElement("span");
+            content.classList.add('name');
         }
+
+        var iClass = document.createElement("i");
+        iClass.classList.add('content');
+        content.appendChild(iClass);
+        content.appendChild(document.createTextNode(file.name));
+        listItem.appendChild(content);
 
         listItem.appendChild(createItemTools(fileUri, file.isDirectory));
         return listItem;
@@ -123,7 +121,7 @@ function refreshFileData(path) {
         console.log(data);
     }
 
-    fetch(path)
+    fetch(apiUri + path)
         .then(response => response.json())
         .then(data => receiveFileData(data));
 }

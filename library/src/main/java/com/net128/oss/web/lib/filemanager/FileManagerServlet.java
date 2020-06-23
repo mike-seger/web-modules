@@ -1,18 +1,10 @@
 package com.net128.oss.web.lib.filemanager;
 
-import java.io.*;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileTime;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.*;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.util.StdDateFormat;
+import org.apache.commons.fileupload.ParameterParser;
+import org.zeroturnaround.zip.ZipUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -20,20 +12,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.util.StdDateFormat;
-import org.apache.commons.fileupload.ParameterParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.zeroturnaround.zip.ZipUtil;
+import java.io.*;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.Map;
 
 @SuppressWarnings({"ResultOfMethodCallIgnored", "SameParameterValue"})
 @MultipartConfig
 public class FileManagerServlet extends HttpServlet {
-	final static Logger logger = LoggerFactory.getLogger(FileManagerServlet.class);
 	private static final int BUFFER_SIZE = 4096;
 	private static final String ENCODING = StandardCharsets.UTF_8.name();
 	private final ObjectMapper om=new ObjectMapper()
@@ -86,71 +78,10 @@ public class FileManagerServlet extends HttpServlet {
 		}
 	}
 
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
-	public static class ApiResponse {
-		public ApiResponse(String path, List<File> files) {
-			this.path = path;
-			this.files = files.stream().map(FileInfo::new).collect(Collectors.toList());
-			isWritable = Files.isWritable(new File(path).toPath());
-		}
-
-		@JsonInclude(JsonInclude.Include.NON_EMPTY)
-		public static class FileInfo {
-			public FileInfo(File file) {
-				name = file.getName();
-				File parentFile = file.getParentFile();
-				if(parentFile!=null) {
-					try {
-						parent = file.getParentFile().getCanonicalPath();
-					} catch (IOException e) {
-						parent = file.getParentFile().getAbsolutePath();
-					}
-				}
-				if(file.isDirectory()) {
-					isDirectory = true;
-				} else {
-					length = file.length();
-				}
-				Path path = file.toPath();
-				isReadable = Files.isReadable(path);
-				isWritable = Files.isWritable(path);
-				isExecutable = Files.isExecutable(path);
-				try {
-					modified = new Date(file.lastModified()).toInstant()
-						.atZone(ZoneId.systemDefault())
-						.toLocalDateTime();
-					if(isReadable) {
-						FileTime creationTime = (FileTime) Files.getAttribute(path, "creationTime");
-						if (creationTime != null) {
-							created = creationTime.toInstant()
-									.atZone(ZoneId.systemDefault())
-									.toLocalDateTime();
-						}
-					}
-				} catch (IOException e) {
-					logger.error("Failed to complete file information", e);
-				}
-			}
-			public String parent;
-			public String name;
-			public Long length;
-			public boolean isDirectory;
-			public boolean isReadable;
-			public boolean isWritable;
-			public boolean isExecutable;
-			public LocalDateTime modified;
-			public LocalDateTime created;
-		}
-
-		public String path;
-		public boolean isWritable;
-		public List<FileInfo> files;
-	}
-
 	private void api(HttpServletResponse response, File path, FileList fileList) throws IOException {
 		File [] files = fileList.listFiles();
-		ApiResponse apiResponse=new ApiResponse(path.getAbsolutePath(), Arrays.asList(files));
-		om.writeValue(response.getOutputStream(), apiResponse);
+		FileManagerInfo fileManagerInfo =new FileManagerInfo(path.getAbsolutePath(), Arrays.asList(files));
+		om.writeValue(response.getOutputStream(), fileManagerInfo);
 	}
 
 	private void zipFile(File file, HttpServletResponse response) throws IOException {
