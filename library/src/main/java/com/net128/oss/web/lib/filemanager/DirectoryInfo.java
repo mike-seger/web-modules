@@ -15,14 +15,23 @@ import java.util.stream.Collectors;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class DirectoryInfo {
 	final static Logger logger = LoggerFactory.getLogger(DirectoryInfo.class);
-	public DirectoryInfo(String path, List<File> files) {
-		this.path = path;
-		this.files = files.stream().map(FileInfo::new).collect(Collectors.toList());
-		isWritable = Files.isWritable(new File(path).toPath());
-	}
+
+	public String path;
+	public boolean isWritable;
+	public List<FileInfo> files;
 
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	public static class FileInfo {
+		public String parent;
+		public String name;
+		public Long length;
+		public boolean isDirectory;
+		public boolean isReadable;
+		public boolean isWritable;
+		public boolean isExecutable;
+		public LocalDateTime modified;
+		public LocalDateTime created;
+
 		public FileInfo(File file) {
 			name = file.getName();
 			File parentFile = file.getParentFile();
@@ -58,19 +67,11 @@ public class DirectoryInfo {
 				logger.error("Failed to complete file information", e);
 			}
 		}
-
-		public String parent;
-		public String name;
-		public Long length;
-		public boolean isDirectory;
-		public boolean isReadable;
-		public boolean isWritable;
-		public boolean isExecutable;
-		public LocalDateTime modified;
-		public LocalDateTime created;
 	}
 
-	public String path;
-	public boolean isWritable;
-	public List<FileInfo> files;
+	public DirectoryInfo(String path, List<File> files) {
+		this.path = path;
+		this.files = files.stream().map(FileInfo::new).collect(Collectors.toList());
+		isWritable = Files.isWritable(new File(path).toPath());
+	}
 }
