@@ -13,9 +13,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class FileManagerInfo {
-	final static Logger logger = LoggerFactory.getLogger(FileManagerInfo.class);
-	public FileManagerInfo(String path, List<File> files) {
+public class DirectoryInfo {
+	final static Logger logger = LoggerFactory.getLogger(DirectoryInfo.class);
+	public DirectoryInfo(String path, List<File> files) {
 		this.path = path;
 		this.files = files.stream().map(FileInfo::new).collect(Collectors.toList());
 		isWritable = Files.isWritable(new File(path).toPath());

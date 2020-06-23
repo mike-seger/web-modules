@@ -80,8 +80,8 @@ public class FileManagerServlet extends HttpServlet {
 
 	private void api(HttpServletResponse response, File path, FileList fileList) throws IOException {
 		File [] files = fileList.listFiles();
-		FileManagerInfo fileManagerInfo =new FileManagerInfo(path.getAbsolutePath(), Arrays.asList(files));
-		om.writeValue(response.getOutputStream(), fileManagerInfo);
+		DirectoryInfo directoryInfo =new DirectoryInfo(path.getAbsolutePath(), Arrays.asList(files));
+		om.writeValue(response.getOutputStream(), directoryInfo);
 	}
 
 	private void zipFile(File file, HttpServletResponse response) throws IOException {
