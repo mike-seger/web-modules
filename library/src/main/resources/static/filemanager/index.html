@@ -27,7 +27,7 @@ function refreshFileData(path) {
     let showDotFiles = false;
     const apiUri = "api?path=";
     const fmUri = "?path=";
-    window.history.pushState(path, '', fmUri + encodeURIComponent(path));
+    window.history.pushState(path, '', fmUri + encodePath(path));
 
     function createItemTools(fileUri, isDirectory) {
         var itemTools = document.createElement("span");
@@ -50,7 +50,7 @@ function refreshFileData(path) {
     }
 
     function createItem(file) {
-        var fileUri = encodeURIComponent(file.parent + (file.parent.endsWith('/')?'':'/') +  file.name);
+        var fileUri = encodePath(file.parent + (file.parent.endsWith('/')?'':'/') +  file.name);
         var listItem = document.createElement("li");
         var content;
         if(file.isDirectory) {
@@ -64,7 +64,7 @@ function refreshFileData(path) {
         }
 
         var iClass = document.createElement("i");
-        iClass.classList.add('content');
+        iClass.classList.add('item');
         content.appendChild(iClass);
         content.appendChild(document.createTextNode(file.name));
         listItem.appendChild(content);
@@ -80,16 +80,21 @@ function refreshFileData(path) {
         }
         var path = '';
         var parts = directory.split('/');
-        parts.forEach(dir => {
+        parts.forEach((dir, index) => {
             if(dir != '') {
                 breadCrumbPath.appendChild(document.createTextNode(' / '));
             }
             path += (path.endsWith('/')?'':'/') + dir;
             var name = dir===''?'>':dir;
-            var dirLink = document.createElement("a");
-            dirLink.setAttribute("href", 'javascript:refreshFileData("' + path + '")');
-            dirLink.appendChild(document.createTextNode(name));
-            breadCrumbPath.appendChild(dirLink);
+            var text = document.createTextNode(name);
+            if(index != parts.length - 1) {
+                var dirLink = document.createElement("a");
+                dirLink.setAttribute("href", 'javascript:refreshFileData("' + path + '")');
+                dirLink.appendChild(text);
+                breadCrumbPath.appendChild(dirLink);
+            } else {
+                breadCrumbPath.appendChild(text);
+            }
         });
         return breadCrumbPath;
     }
@@ -98,23 +103,29 @@ function refreshFileData(path) {
         element.style.display = show?"block":"none";
     }
 
+    function encodePath(path) {
+        return encodeURIComponent(path).replace(/%2F/g, '/');
+    }
+
     function receiveFileData(data) {
-        uploadForm.setAttribute("action", apiUri + encodeURIComponent(data.path));
+        uploadForm.setAttribute("action", apiUri + encodePath(data.path));
         display(uploadForm, data.isWritable);
         display(breadCrumb, !(data.path === '/'));
 
         breadCrumb.innerHTML = '';
         breadCrumb.appendChild(createBradCrumb(data.path));
         fileList.innerHTML = '';
-        var directoryFlag = [ true, false ];
-        directoryFlag.forEach(isDirectory => {
-            data.files.forEach(file => {
-                var isDotFile = file.name.startsWith('.');
-                if(file.isDirectory == isDirectory && (!isDotFile || (isDotFile && showDotFiles))) {
-                    fileList.appendChild(createItem(file));
-                }
+        if(data.files && data.files.length>0) {
+            var directoryFlag = [ true, false ];
+            directoryFlag.forEach(isDirectory => {
+                data.files.forEach(file => {
+                    var isDotFile = file.name.startsWith('.');
+                    if(file.isDirectory == isDirectory && (!isDotFile || (isDotFile && showDotFiles))) {
+                        fileList.appendChild(createItem(file));
+                    }
+                });
             });
-        });
+        }
 
         console.log(data);
     }
