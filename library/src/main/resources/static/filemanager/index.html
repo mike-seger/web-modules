@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>File Manager</title>
     <link rel="stylesheet" href="css/file-manager.css">
 </head>
+
 <body>
 
 <!-- FIXME check if there exists upload without form -->
@@ -93,11 +95,7 @@ function refreshFileData(path) {
     }
 
     function display(element, show) {
-        if(show) {
-            element.style.display = "block";
-        } else {
-            element.style.display = "none";
-        }
+        element.style.display = show?"block":"none";
     }
 
     function receiveFileData(data) {
