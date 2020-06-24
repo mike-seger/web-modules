@@ -17,6 +17,7 @@ public class DirectoryInfo {
 	final static Logger logger = LoggerFactory.getLogger(DirectoryInfo.class);
 
 	public String name;
+	public String path;
 	public boolean isWritable;
 	public List<FileInfo> files;
 	public List<ParentInfoUtil.ParentInfo> parentInfos;
@@ -78,6 +79,7 @@ public class DirectoryInfo {
 
 	public DirectoryInfo(String path, List<File> files) {
 		logger.info("path: {}", path);
+		this.path = path;
 		if("\\".equals(File.separator) && path.equals("/")) {
 			//4 windoes
 			this.files = Arrays.stream(File.listRoots()).map(
