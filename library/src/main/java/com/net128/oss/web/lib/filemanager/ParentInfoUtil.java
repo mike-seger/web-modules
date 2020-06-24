@@ -51,7 +51,7 @@ public class ParentInfoUtil {
         public String path;
         public String name;
         public ParentInfo(String path, String name) {
-            this.path = path;
+            this.path = toUniversalPath(path);
             this.name = name;
         }
 
