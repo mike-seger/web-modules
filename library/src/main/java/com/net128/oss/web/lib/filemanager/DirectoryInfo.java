@@ -77,12 +77,14 @@ public class DirectoryInfo {
 	}
 
 	public DirectoryInfo(String path, List<File> files) {
-		logger.info("File.separator: "+File.separator);
+		logger.info("path: {}", path);
 		if("\\".equals(File.separator) && path.equals("/")) {
 			//4 windoes
 			this.files = Arrays.stream(File.listRoots()).map(
 				f -> new FileInfo(f.getPath())).collect(Collectors.toList());
+			logger.info("Windows Root: {}", this.files);
 		} else {
+			logger.info("Not Windows Root: {}", this.files);
 			this.parentInfos = ParentInfoUtil.getParentInfo(path);
 			this.files = files.stream().map(FileInfo::new).collect(Collectors.toList());
 			this.name = new File(path).getName();
