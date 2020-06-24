@@ -41,6 +41,7 @@ public class DirectoryInfo {
 				} catch (IOException e) {
 					parent = file.getParentFile().getAbsolutePath();
 				}
+				parent = toUniversalPath(parent);
 			}
 			if(file.isDirectory()) {
 				isDirectory = true;
@@ -70,8 +71,25 @@ public class DirectoryInfo {
 	}
 
 	public DirectoryInfo(String path, List<File> files) {
-		this.path = path;
+		this.path = toUniversalPath(path);
 		this.files = files.stream().map(FileInfo::new).collect(Collectors.toList());
 		isWritable = Files.isWritable(new File(path).toPath());
+	}
+
+
+	public static String toUniversalPath(String path) {
+		String delim = File.separator;
+		if(path == null || "/".equals(path)) {
+			return path;
+		}
+		return path.replace(delim, "/");
+	}
+
+	public static String toPlaformPath(String path) {
+		String delim = File.separator;
+		if(path == null || "/".equals(path)) {
+			return path;
+		}
+		return path.replace("/", delim);
 	}
 }

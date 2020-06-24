@@ -38,7 +38,7 @@ public class FileManagerServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String path = request.getParameter("path");
+		String path = DirectoryInfo.toPlaformPath(request.getParameter("path"));
 		String type = request.getContentType();
 		String mode;
 		boolean redirectToApiWeb = true;
@@ -74,7 +74,7 @@ public class FileManagerServlet extends HttpServlet {
 				file = file.getParentFile();
 			}
 			response.sendRedirect("index.html?path="+
-				URLEncoder.encode(file.getAbsolutePath(), ENCODING));
+				URLEncoder.encode(DirectoryInfo.toUniversalPath(file.getAbsolutePath()), ENCODING));
 		} else {
 			File [] files = fileList.listFiles();
 			DirectoryInfo directoryInfo =new DirectoryInfo(file.getAbsolutePath(), Arrays.asList(files));
