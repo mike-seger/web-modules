@@ -19,6 +19,7 @@ public class DirectoryInfo {
 	public String path;
 	public boolean isWritable;
 	public List<FileInfo> files;
+	public List<ParentInfoUtil.ParentInfo> parentInfos;
 
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	public static class FileInfo {
@@ -32,6 +33,11 @@ public class DirectoryInfo {
 		public LocalDateTime modified;
 		public LocalDateTime created;
 
+		public FileInfo(String rootPath) {
+			name = rootPath;
+			isDirectory = true;
+			isReadable = true;
+		}
 		public FileInfo(File file) {
 			name = file.getName();
 			File parentFile = file.getParentFile();
@@ -72,16 +78,23 @@ public class DirectoryInfo {
 
 	public DirectoryInfo(String path, List<File> files) {
 		this.path = toUniversalPath(path);
-		this.files = files.stream().map(FileInfo::new).collect(Collectors.toList());
+		this.parentInfos = ParentInfoUtil.getParentInfo(path);
+		if("\\".equals(File.separator) && path.equals("/")) {
+			//4 windoes
+			this.files = Arrays.stream(File.listRoots()).map(
+				f -> new FileInfo(f.getPath())).collect(Collectors.toList());
+		} else {
+			this.files = files.stream().map(FileInfo::new).collect(Collectors.toList());
+		}
 		isWritable = Files.isWritable(new File(path).toPath());
 	}
-
 
 	public static String toUniversalPath(String path) {
 		String delim = File.separator;
 		if(path == null || "/".equals(path)) {
 			return path;
 		}
+		//4 windoes
 		return path.replace(delim, "/");
 	}
 
@@ -90,6 +103,7 @@ public class DirectoryInfo {
 		if(path == null || "/".equals(path)) {
 			return path;
 		}
+		//4 windoes
 		return path.replace("/", delim);
 	}
 }
