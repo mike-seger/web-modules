@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.net128.oss.web.lib.filemanager.DirectoryInfo.toUniversalPath;
+
 public class ParentInfoUtil {
     public static void main(String [] args) {
         System.out.println(getParentInfo(".").stream().map(ParentInfo::toString )
@@ -14,6 +16,7 @@ public class ParentInfoUtil {
     }
 
     public static List<ParentInfo> getParentInfo(String path) {
+        path = toUniversalPath(path);
         List<ParentInfo> parents=new ArrayList<>();
         File file;
         try {
