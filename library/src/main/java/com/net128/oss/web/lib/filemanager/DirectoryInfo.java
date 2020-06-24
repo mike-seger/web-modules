@@ -77,14 +77,15 @@ public class DirectoryInfo {
 	}
 
 	public DirectoryInfo(String path, List<File> files) {
-		this.name = new File(path).getName();
-		this.parentInfos = ParentInfoUtil.getParentInfo(path);
+		logger.info("File.separator: "+File.separator);
 		if("\\".equals(File.separator) && path.equals("/")) {
 			//4 windoes
 			this.files = Arrays.stream(File.listRoots()).map(
 				f -> new FileInfo(f.getPath())).collect(Collectors.toList());
 		} else {
+			this.parentInfos = ParentInfoUtil.getParentInfo(path);
 			this.files = files.stream().map(FileInfo::new).collect(Collectors.toList());
+			this.name = new File(path).getName();
 		}
 		isWritable = Files.isWritable(new File(path).toPath());
 	}
