@@ -73,29 +73,19 @@ function refreshFileData(path) {
         return listItem;
     }
 
-    function createBradCrumb(directory) {
+    function createBradCrumb(parentInfos, name) {
         var breadCrumbPath = document.createElement("span");
-        if(directory === '/') {
+        if(!parentInfos) {
             return breadCrumbPath;
         }
-        var path = '';
-        var parts = directory.split('/');
-        parts.forEach((dir, index) => {
-            if(dir != '') {
-                breadCrumbPath.appendChild(document.createTextNode(' / '));
-            }
-            path += (path.endsWith('/')?'':'/') + dir;
-            var name = dir===''?'>':dir;
-            var text = document.createTextNode(name);
-            if(index != parts.length - 1) {
-                var dirLink = document.createElement("a");
-                dirLink.setAttribute("href", 'javascript:refreshFileData("' + path + '")');
-                dirLink.appendChild(text);
-                breadCrumbPath.appendChild(dirLink);
-            } else {
-                breadCrumbPath.appendChild(text);
-            }
+        parentInfos.reverse().forEach((pathInfo) => {
+            var dirLink = document.createElement("a");
+            dirLink.setAttribute("href", 'javascript:refreshFileData("' + pathInfo.path + '")');
+            dirLink.appendChild(document.createTextNode(pathInfo.name));
+            breadCrumbPath.appendChild(dirLink);
+            breadCrumbPath.appendChild(document.createTextNode(' / '));
         });
+        breadCrumbPath.appendChild(document.createTextNode(name));
         return breadCrumbPath;
     }
 
@@ -108,12 +98,13 @@ function refreshFileData(path) {
     }
 
     function receiveFileData(data) {
+        console.log(data);
         uploadForm.setAttribute("action", apiUri + encodePath(data.path));
         display(uploadForm, data.isWritable);
         display(breadCrumb, !(data.path === '/'));
 
         breadCrumb.innerHTML = '';
-        breadCrumb.appendChild(createBradCrumb(data.path));
+        breadCrumb.appendChild(createBradCrumb(data.parentInfos, data.name));
         fileList.innerHTML = '';
         if(data.files && data.files.length>0) {
             var directoryFlag = [ true, false ];
@@ -126,8 +117,6 @@ function refreshFileData(path) {
                 });
             });
         }
-
-        console.log(data);
     }
 
     fetch(apiUri + path)

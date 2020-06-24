@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ParentInfoUtil {
-    public static void main(String [] args) throws IOException {
+    public static void main(String [] args) {
         System.out.println(getParentInfo(".").stream().map(ParentInfo::toString )
                 .collect(Collectors.joining("\n")));
     }

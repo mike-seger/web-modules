@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class DirectoryInfo {
 	final static Logger logger = LoggerFactory.getLogger(DirectoryInfo.class);
 
-	public String path;
+	public String name;
 	public boolean isWritable;
 	public List<FileInfo> files;
 	public List<ParentInfoUtil.ParentInfo> parentInfos;
@@ -77,7 +77,7 @@ public class DirectoryInfo {
 	}
 
 	public DirectoryInfo(String path, List<File> files) {
-		this.path = toUniversalPath(path);
+		this.name = new File(path).getName();
 		this.parentInfos = ParentInfoUtil.getParentInfo(path);
 		if("\\".equals(File.separator) && path.equals("/")) {
 			//4 windoes
