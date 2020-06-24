@@ -34,7 +34,7 @@ public class DirectoryInfo {
 		public LocalDateTime created;
 
 		public FileInfo(String rootPath) {
-			name = rootPath;
+			name = toUniversalPath(rootPath);
 			isDirectory = true;
 			isReadable = true;
 		}
