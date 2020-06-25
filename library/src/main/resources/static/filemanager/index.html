@@ -29,7 +29,7 @@ function refreshFileData(path) {
     const fmUri = "?path=";
     window.history.pushState(path, '', fmUri + encodePath(path));
 
-    function createItemTools(fileUri, isDirectory) {
+    function createItemTools(fileUri, isDirectory, isWritable) {
         var itemTools = document.createElement("span");
         itemTools.classList.add('item-tool');
         var downloadLink = document.createElement("a");
@@ -37,7 +37,7 @@ function refreshFileData(path) {
         downloadLink.setAttribute("href", apiUri + fileUri + (isDirectory?'&zip':''));
         downloadLink.appendChild(document.createTextNode(' \u2B07 '));
         itemTools.appendChild(downloadLink);
-        if(!isDirectory) {
+        if(!isDirectory && isWritable) {
             itemTools.appendChild(document.createTextNode(' '));
             var deleteLink = document.createElement("a");
             deleteLink.classList.add('delete');
@@ -71,7 +71,7 @@ function refreshFileData(path) {
         content.appendChild(document.createTextNode(file.name.replace(/:[/]$/, '')));
         listItem.appendChild(content);
 
-        listItem.appendChild(createItemTools(fileUri, file.isDirectory));
+        listItem.appendChild(createItemTools(fileUri, file.isDirectory, file.isWritable));
         return listItem;
     }
 
