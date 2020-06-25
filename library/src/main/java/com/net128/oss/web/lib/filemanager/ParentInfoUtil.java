@@ -1,5 +1,8 @@
 package com.net128.oss.web.lib.filemanager;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,6 +13,8 @@ import java.util.stream.Collectors;
 import static com.net128.oss.web.lib.filemanager.DirectoryInfo.toUniversalPath;
 
 public class ParentInfoUtil {
+    final static Logger logger = LoggerFactory.getLogger(ParentInfoUtil.class);
+
     public static void main(String [] args) {
         System.out.println(getParentInfo(".").stream().map(ParentInfo::toString )
                 .collect(Collectors.joining("\n")));
@@ -40,7 +45,7 @@ public class ParentInfoUtil {
         }
         if(roots.length>1) {
             parents.add(new ParentInfo("/", ">"));
-            System.out.println(Arrays.asList(roots).stream().map(File::toString )
+            logger.debug("Roots: {}", Arrays.stream(roots).map(File::toString )
                     .collect(Collectors.joining(", ")));
         }
 
@@ -54,8 +59,6 @@ public class ParentInfoUtil {
             this.path = toUniversalPath(path);
             this.name = name;
         }
-
-        public ParentInfo(){}
 
         @Override
         public String toString() {
