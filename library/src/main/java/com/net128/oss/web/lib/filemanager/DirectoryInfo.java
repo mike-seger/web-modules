@@ -78,21 +78,21 @@ public class DirectoryInfo {
 	}
 
 	public DirectoryInfo(String path, List<File> files) {
-		logger.info("path: {}", path);
+		logger.debug("path: {}", path);
 		this.path = path;
 		if("\\".equals(File.separator) && path.equals("/")) {
 			//4 windoes
+			logger.debug("Windows Root: {}", this.files);
 			this.files = Arrays.stream(File.listRoots()).map(
 				f -> new FileInfo(f.getPath())).collect(Collectors.toList());
-			logger.info("Windows Root: {}", this.files);
 		} else {
-			logger.info("Not Windows Root: {}", this.files);
+			logger.debug("Not Windows Root: {}", this.files);
 			this.parentInfos = ParentInfoUtil.getParentInfo(path);
 			this.files = files.stream().map(FileInfo::new).collect(Collectors.toList());
 			this.name = new File(path).getName();
 		}
 		if(this.name == null || this.name.isEmpty()) {
-			this.name = this.path;
+			this.name = this.path.replaceAll(":/$", "");
 		}
 		isWritable = Files.isWritable(new File(path).toPath());
 	}

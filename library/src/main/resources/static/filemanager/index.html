@@ -68,7 +68,7 @@ function refreshFileData(path) {
         var iClass = document.createElement("i");
         iClass.classList.add('item');
         content.appendChild(iClass);
-        content.appendChild(document.createTextNode(file.name));
+        content.appendChild(document.createTextNode(file.name.replace(/:[/]$/, '')));
         listItem.appendChild(content);
 
         listItem.appendChild(createItemTools(fileUri, file.isDirectory));
