@@ -91,6 +91,9 @@ public class DirectoryInfo {
 			this.files = files.stream().map(FileInfo::new).collect(Collectors.toList());
 			this.name = new File(path).getName();
 		}
+		if(this.name == null || this.name.isEmpty()) {
+			this.name = this.path;
+		}
 		isWritable = Files.isWritable(new File(path).toPath());
 	}
 
