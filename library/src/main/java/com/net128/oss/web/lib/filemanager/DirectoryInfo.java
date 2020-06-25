@@ -92,7 +92,7 @@ public class DirectoryInfo {
 			this.name = new File(path).getName();
 		}
 		if(this.name == null || this.name.isEmpty()) {
-			this.name = this.path.replaceAll(":/$", "");
+			this.name = this.path.replaceAll(":[/\\\\]$", "");
 		}
 		isWritable = Files.isWritable(new File(path).toPath());
 	}
