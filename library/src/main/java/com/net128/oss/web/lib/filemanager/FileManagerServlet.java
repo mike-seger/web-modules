@@ -77,7 +77,8 @@ public class FileManagerServlet extends HttpServlet {
 				URLEncoder.encode(DirectoryInfo.toUniversalPath(file.getAbsolutePath()), ENCODING));
 		} else {
 			File [] files = fileList.listFiles();
-			DirectoryInfo directoryInfo =new DirectoryInfo(file.getAbsolutePath(), Arrays.asList(files));
+			DirectoryInfo directoryInfo =new DirectoryInfo(
+				"/".equals(path)?"/":file.getAbsolutePath(), Arrays.asList(files));
 			om.writeValue(response.getOutputStream(), directoryInfo);
 		}
 	}
