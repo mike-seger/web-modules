@@ -50,7 +50,9 @@ function refreshFileData(path) {
     }
 
     function createItem(file) {
-        var fileUri = encodePath(file.parent + (file.parent.endsWith('/')?'':'/') +  file.name);
+        var fileUri;
+        if(file.parent) fileUri = encodePath(file.parent + (file.parent.endsWith('/')?'':'/') +  file.name);
+        else fileUri = file.name;
         var listItem = document.createElement("li");
         var content;
         if(file.isDirectory) {
