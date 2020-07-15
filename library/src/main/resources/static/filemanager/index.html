@@ -75,7 +75,7 @@ function refreshFileData(path) {
         return listItem;
     }
 
-    function createBradCrumb(parentInfos, name) {
+    function createBreadCrumb(parentInfos, name) {
         var breadCrumbPath = document.createElement("span");
         if(!parentInfos) {
             return breadCrumbPath;
@@ -106,7 +106,7 @@ function refreshFileData(path) {
         display(breadCrumb, !(data.path === '/'));
 
         breadCrumb.innerHTML = '';
-        breadCrumb.appendChild(createBradCrumb(data.parentInfos, data.name));
+        breadCrumb.appendChild(createBreadCrumb(data.parentInfos, data.name));
         fileList.innerHTML = '';
         if(data.files && data.files.length>0) {
             var directoryFlag = [ true, false ];
