@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.net128.oss.web.lib</groupId>
     <artifactId>filemanager-api</artifactId>
-    <version>0.1.1-SNAPSHOT</version>
+    <version>0.1.1</version>
     <packaging>jar</packaging>
     <name>file-manager-lib</name>
     <description>file-manager - a file manager api servlet</description>
@@ -43,7 +43,7 @@
         <connection>scm:git:git://github.com/mike-seger/filemanager.git</connection>
         <developerConnection>scm:git:git@github.com:mike-seger/filemanager.git</developerConnection>
         <url>https://github.com/mike-seger/filemanager</url>
-        <tag>filemanager-0.1.0</tag>
+        <tag>filemanager-api-0.1.1</tag>
     </scm>
 
     <dependencies>
