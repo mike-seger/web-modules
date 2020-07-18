@@ -2,11 +2,11 @@
 
 A file manager providing browser-based file up- and download to a hosting server.
 
-[filemanager](https://github.com/mike-seger/filemanager/) comes in two flavors:
-- a [library](library), which can be used as a maven dependency to a Spring Boot application
-- a standalone [application](application), based on the library
+[filemanager](https://github.com/mike-seger/filemanager/) comes in two flavours:
+- A [library](library), which can be used as a maven dependency to a Spring Boot application
+- A standalone [application](application), based on the library
 
-filemanager has two components:
+filemanager consists of two components:
 - Browser client, compatible with modern browsers.
 - Server, a simple java servlet served by a Spring Boot application.
 It exposes the host file system to the browser client.
@@ -27,8 +27,8 @@ It exposes the host file system to the browser client.
 
 ### Server
 
-The server is compatible with any OS providing with Java 1.8+.
-It has been successfully tested with the following:
+The server is compatible with any OS providing Java 1.8+.
+It has been successfully tested on the following platforms:
 
 - MacOS 10.15
 - Ubuntu 18.04, 20.04
@@ -37,7 +37,7 @@ It has been successfully tested with the following:
 ### Client
 
 The client is compatible with any modern browser.
-It has been successfully tested with the following:
+It has been successfully tested with the following browsers:
 
 - Chrome Version 84.0.4147.89 (Official Build) (64-bit) and (32-Bit)
 - Firefox Version 78.0.1 (64-bit)
