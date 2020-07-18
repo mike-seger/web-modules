@@ -31,6 +31,7 @@ public class DirectoryInfo {
 		public boolean isReadable;
 		public boolean isWritable;
 		public boolean isExecutable;
+		public boolean hasChildren;
 		public LocalDateTime modified;
 		public LocalDateTime created;
 
@@ -38,6 +39,7 @@ public class DirectoryInfo {
 			name = toUniversalPath(rootPath);
 			isDirectory = true;
 			isReadable = true;
+			hasChildren = true;
 		}
 		public FileInfo(File file) {
 			name = file.getName();
@@ -52,6 +54,8 @@ public class DirectoryInfo {
 			}
 			if(file.isDirectory()) {
 				isDirectory = true;
+				File [] files = file.listFiles();
+				hasChildren = files != null && files.length > 0;
 			} else {
 				length = file.length();
 			}
