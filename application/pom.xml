@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.net128.oss.web.application</groupId>
     <artifactId>filemanager-app</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.6</version>
     <packaging>war</packaging>
     <name>filemanager-app</name>
     <description>a file manager application based on the filemanager api library</description>
@@ -29,7 +29,7 @@
         <dependency>
             <groupId>com.net128.oss.web.lib</groupId>
             <artifactId>filemanager-api</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
+            <version>0.1.6</version>
         </dependency>
 
         <dependency>
