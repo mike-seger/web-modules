@@ -45,4 +45,10 @@ It has been successfully tested with the following:
 
 ## Sample Screenshots
 
-![Screenshot](doc-assets/images/screenshot-macos.png)
+### Mac OS
+![Mac OS](doc-assets/images/screenshot-brave-macos.png)
+
+### Linux
+![Linux](doc-assets/images/screenshot-firefox-ubuntu.png)
+
+
