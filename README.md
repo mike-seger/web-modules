@@ -1,6 +1,6 @@
 # filemanager
 
-A file manager providing browser-based file up- and download to a hosting server.
+A file manager providing browser-based file up- and download to a host.
 
 [filemanager](https://github.com/mike-seger/filemanager/) comes in two flavours:
 - A [library](library), which can be used as a maven dependency to a Spring Boot application
