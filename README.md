@@ -1,13 +1,14 @@
 # filemanager
 
-A browser based file manager capable of doing file up- and downloads to a hosting server.
-filemanager comes in two flavors:
-- a library, which can be used as a dependency to a Spring Boot application
-- a standalone application, based on the library
+A file manager providing browser-based file up- and download to a hosting server.
+
+[filemanager](https://github.com/mike-seger/filemanager/) comes in two flavors:
+- a [library](library), which can be used as a maven dependency to a Spring Boot application
+- a standalone [application](application), based on the library
 
 filemanager contains a browser client, compatible with modern browsers.
 The server part of filemanager is a simple java servlet served by a Spring Boot application.
-It exposes the host file system to the browser client and has been tested under the following OSes:
+It exposes the host file system to the browser client.
 
 ## Features
 
@@ -19,6 +20,7 @@ It exposes the host file system to the browser client and has been tested under 
 - Navigation of host file system
 - File up- and download
 - Directory download as ZIP file
+- Responsive multi column file list
 
 ## System Requirements
 
