@@ -42,7 +42,7 @@
     <scm>
         <connection>scm:git:git://github.com/mike-seger/filemanager.git</connection>
         <developerConnection>scm:git:git@github.com:mike-seger/filemanager.git</developerConnection>
-        <url>https://github.com/mike-seger/file-manager</url>
+        <url>https://github.com/mike-seger/filemanager</url>
         <tag>filemanager-0.1.0</tag>
     </scm>
 
