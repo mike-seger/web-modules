@@ -38,7 +38,7 @@ It has been successfully tested with the following:
 The client is compatible with any modern browser.
 It has been successfully tested with the following:
 
-- Chrome Version 83.0.4103.116 (Official Build) (64-bit)
+- Chrome Version 84.0.4147.89 (Official Build) (64-bit) and (32-Bit)
 - Firefox Version 78.0.1 (64-bit)
 - Safari Version 13.1.1 (15609.2.9.1.2)
 - Brave Version 1.11.97 Chromium: 84.0.4147.89 (Official Build) (64-bit)
