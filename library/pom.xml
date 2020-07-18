@@ -8,7 +8,7 @@
     <name>file-manager-lib</name>
     <description>file-manager - a file manager api servlet</description>
     <url>https://github.com/mike-seger/filemanager</url>
-    
+
     <properties>
         <java.version>1.8</java.version>
         <maven.compiler.source>1.8</maven.compiler.source>
