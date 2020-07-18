@@ -51,4 +51,6 @@ It has been successfully tested with the following:
 ### Linux
 ![Linux](doc-assets/images/screenshot-firefox-ubuntu.png)
 
+### Windows
+![Windows](doc-assets/images/screenshot-chrome-windows.png)
 
