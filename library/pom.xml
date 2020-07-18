@@ -43,7 +43,6 @@
         <license>
             <name>The MIT License</name>
             <url>https://raw.githubusercontent.com/ConvertAPI/convertapi-java/master/LICENSE.txt</url>
-            <distribution>repo</distribution>
         </license>
     </licenses>
 
@@ -54,16 +53,13 @@
             <email>mike-001@net128.com</email>
             <organization>net128</organization>
             <organizationUrl>http://net128.com/</organizationUrl>
-            <roles>
-                <role>architect</role>
-            </roles>
         </developer>
     </developers>
 
     <scm>
         <connection>scm:git:git://github.com/mike-seger/filemanager.git</connection>
         <developerConnection>scm:git:git@github.com:mike-seger/filemanager.git</developerConnection>
-        <url>https://github.com/mike-seger/filemanager</url>
+        <url>https://github.com/mike-seger/filemanager/tree/master</url>
         <tag>filemanager-0.1.0</tag>
     </scm>
 
