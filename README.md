@@ -14,7 +14,7 @@ It exposes the host file system to the browser client.
 ## Features
 
 ### Server
-- Expose file system of any major hosting OS through a REST/JSON API
+- Expose file system of any major hosting OS through an API
 
 ### Client 
 - Compatible with any modern browser
