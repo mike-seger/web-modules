@@ -6,8 +6,9 @@ A file manager providing browser-based file up- and download to a hosting server
 - a [library](library), which can be used as a maven dependency to a Spring Boot application
 - a standalone [application](application), based on the library
 
-filemanager contains a browser client, compatible with modern browsers.
-The server part of filemanager is a simple java servlet served by a Spring Boot application.
+filemanager has two components:
+- Browser client, compatible with modern browsers.
+- Server, a simple java servlet served by a Spring Boot application.
 It exposes the host file system to the browser client.
 
 ## Features
