@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.net128.oss.web</groupId>
     <artifactId>web-modules</artifactId>
-    <version>1.1</version>
+    <version>1.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>web-modules</name>
 
@@ -44,7 +44,7 @@
         <connection>scm:git:git://github.com/mike-seger/web-modules.git</connection>
         <developerConnection>scm:git:git@github.com:mike-seger/web-modules.git</developerConnection>
         <url>https://github.com/mike-seger/web-modules</url>
-      <tag>web-modules-1.1</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <distributionManagement>
@@ -90,6 +90,7 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>2.8.2</version>
                     <executions>
