@@ -5,8 +5,8 @@
     <artifactId>file-manager-api</artifactId>
     <version>0.1.8-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>file-manager-lib</name>
-    <description>file-manager - a file manager api servlet</description>
+    <name>file-manager-api</name>
+    <description>file-manager-api - a file manager client and server library</description>
     <url>https://github.com/mike-seger/web-modules</url>
 
     <parent>
@@ -83,6 +83,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
