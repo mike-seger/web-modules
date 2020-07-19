@@ -1,12 +1,12 @@
-# filemanager
+# file-manager
 
 A file manager providing browser-based file up- and download to a host.
 
-[filemanager](https://github.com/mike-seger/filemanager/) comes in two flavours:
+[file-manager](https://github.com/mike-seger/web-modules/) comes in two flavours:
 - A [library](library), which can be used as a maven dependency to a Spring Boot application
 - A standalone [application](application), based on the library
 
-filemanager consists of two components:
+file-manager consists of two components:
 - Browser client, compatible with modern browsers.
 - Server, a simple java servlet served by a Spring Boot application.
 It exposes the host file system to the browser client.

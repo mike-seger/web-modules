@@ -4,11 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.net128.oss.web.application</groupId>
-    <artifactId>filemanager-app</artifactId>
-    <version>0.1.6</version>
+    <artifactId>file-manager-app</artifactId>
+    <version>0.1.7-SNAPSHOT</version>
     <packaging>war</packaging>
-    <name>filemanager-app</name>
-    <description>a file manager application based on the filemanager api library</description>
+    <name>file-manager-app</name>
+    <description>a file manager application based on the file-manager api library</description>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -28,8 +28,8 @@
 
         <dependency>
             <groupId>com.net128.oss.web.lib</groupId>
-            <artifactId>filemanager-api</artifactId>
-            <version>0.1.6</version>
+            <artifactId>file-manager-api</artifactId>
+            <version>0.1.7-SNAPSHOT</version>
         </dependency>
 
         <dependency>

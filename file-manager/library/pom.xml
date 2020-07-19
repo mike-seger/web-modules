@@ -2,12 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.net128.oss.web.lib</groupId>
-    <artifactId>filemanager-api</artifactId>
+    <artifactId>file-manager-api</artifactId>
     <version>0.1.7-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>file-manager-lib</name>
     <description>file-manager - a file manager api servlet</description>
-    <url>https://github.com/mike-seger/filemanager</url>
+    <url>https://github.com/mike-seger/web-modules</url>
 
     <properties>
         <java.version>1.8</java.version>
@@ -59,10 +59,10 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/mike-seger/filemanager.git</connection>
-        <developerConnection>scm:git:git@github.com:mike-seger/filemanager.git</developerConnection>
-        <url>https://github.com/mike-seger/filemanager</url>
-        <tag>filemanager-0.1.0</tag>
+        <connection>scm:git:git://github.com/mike-seger/web-modules.git</connection>
+        <developerConnection>scm:git:git@github.com:mike-seger/web-modules.git</developerConnection>
+        <url>https://github.com/mike-seger/web-modules</url>
+        <tag>file-manager-0.1.0</tag>
     </scm>
 
     <dependencies>
