@@ -44,8 +44,8 @@
         <connection>scm:git:git://github.com/mike-seger/web-modules.git</connection>
         <developerConnection>scm:git:git@github.com:mike-seger/web-modules.git</developerConnection>
         <url>https://github.com/mike-seger/web-modules</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <distributionManagement>
         <snapshotRepository>
