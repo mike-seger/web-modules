@@ -9,7 +9,7 @@ import javax.servlet.MultipartConfigElement;
 
 @Configuration
 public class AppConfiguration {
-    private static final String mapping = "/filemanager/api";
+    private static final String mapping = "/file-manager/api";
 
     @Bean
     public ServletRegistrationBean<FileManagerServlet> fileManagerBean(MultipartConfigElement mce) {
