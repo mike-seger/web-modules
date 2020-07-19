@@ -2,7 +2,7 @@
 
 A file manager providing browser-based file up- and download to a host.
 
-[file-manager](https://github.com/mike-seger/web-modules/file-manager/) comes in two flavours:
+[file-manager](https://github.com/mike-seger/web-modules/tree/master/file-manager) comes in two flavours:
 - A [library](library), which can be used as a maven dependency to a Spring Boot application
 - A standalone [application](application), based on the library
 
