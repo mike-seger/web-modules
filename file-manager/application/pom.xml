@@ -9,11 +9,12 @@
     <packaging>war</packaging>
     <name>file-manager-app</name>
     <description>a file manager application based on the file-manager api library</description>
+
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.1.RELEASE</version>
-        <relativePath/>
+        <groupId>com.net128.oss.web</groupId>
+        <artifactId>web-modules</artifactId>
+        <version>1.0</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <properties>
@@ -35,14 +36,12 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.6.2</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <version>2.3.1.RELEASE</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
