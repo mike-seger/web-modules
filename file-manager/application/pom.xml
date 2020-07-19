@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.net128.oss.web.application</groupId>
     <artifactId>file-manager-app</artifactId>
-    <version>0.1.7</version>
+    <version>0.1.8-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>file-manager-app</name>
     <description>a file manager application based on the file-manager api library</description>
@@ -73,9 +73,4 @@
             </plugin>
         </plugins>
     </build>
-
-
-  <scm>
-    <tag>file-manager-app-0.1.7</tag>
-  </scm>
 </project>
