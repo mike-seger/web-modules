@@ -38,7 +38,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <gpg.keyname>net128-gpg</gpg.keyname>
+        <gpg.keyname>C7E0EC13C79D64E7B69D1C0694E15DBC9F1849FE</gpg.keyname>
     </properties>
 
     <scm>
