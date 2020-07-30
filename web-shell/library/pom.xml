@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.net128.oss.web.lib</groupId>
     <artifactId>webshell</artifactId>
-    <version>0.1.5-SNAPSHOT</version>
+    <version>0.1.5</version>
     <packaging>jar</packaging>
     <name>web-shell-lib</name>
     <description>web-shell - a web shell based on Spring, web sockets and Javascript</description>
@@ -127,4 +127,8 @@
         </dependency>
     </dependencies>
 
+
+  <scm>
+    <tag>webshell-0.1.5</tag>
+  </scm>
 </project>
