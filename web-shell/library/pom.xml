@@ -2,11 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.net128.oss.web.lib</groupId>
-    <artifactId>webshell-lib</artifactId>
+    <artifactId>web-shell-lib</artifactId>
     <version>0.1.6-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>web-shell-lib</name>
-    <description>web-shell - a web shell based on Spring, web sockets and Javascript</description>
+    <description>web-shell-lib - a web shell based library on Spring, web sockets and Javascript</description>
 
     <parent>
         <groupId>com.net128.oss.web</groupId>
