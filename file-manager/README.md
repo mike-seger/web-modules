@@ -8,7 +8,7 @@ A file manager providing a file system explorer and the capability to up- and do
 
 file-manager consists of two components:
 - A web page compatible with modern browsers.
-- A server application.
+- A server component.
 
 ## Demo
 https://web-modules-file-manager.herokuapp.com/
