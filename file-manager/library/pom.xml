@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.net128.oss.web.lib</groupId>
     <artifactId>file-manager-api</artifactId>
-    <version>y</version>
+    <version>1.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>file-manager-api</name>
     <description>file-manager-api - a file manager client and server library</description>
@@ -56,8 +56,4 @@
         </dependency>
 
     </dependencies>
-
-  <scm>
-    <tag>file-manager-api-y</tag>
-  </scm>
 </project>
