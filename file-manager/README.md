@@ -44,6 +44,9 @@ It has been successfully tested with the following browsers:
 - Safari Version 13.1.1 (15609.2.9.1.2)
 - Brave Version 1.11.97 Chromium: 84.0.4147.89 (Official Build) (64-bit)
 
+## Sample Instance
+https://web-modules-file-manager.herokuapp.com/
+
 ## Sample Screenshots
 
 ### Mac OS
@@ -54,4 +57,3 @@ It has been successfully tested with the following browsers:
 
 ### Windows
 ![Windows](doc-assets/images/screenshot-chrome-windows.png)
-

@@ -1,6 +1,5 @@
-#server:
-#  servlet:
-#    context-path: /context
+server.port: ${PORT:8080}
+
 spring:
   application:
     name: webshell

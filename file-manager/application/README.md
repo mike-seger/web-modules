@@ -1,4 +1,4 @@
-# web-shell
+# file-manager-app
 
 ## building
 ```
@@ -15,8 +15,7 @@ mvn spring-boot:run -Dspring-boot.run.arguments=--server.port=8085
 # or:
 PORT=8888 mvn spring-boot:run
 ```
-
-If you have successfully started the application with e.g. `mvn spring-boot:run`, you can open  
+If you have successfully started the application using e.g. `mvn spring-boot:run`, you can open  
 http://localhost:8080/  
 in your browser, to use the application with access to your local system.
 
@@ -24,6 +23,8 @@ in your browser, to use the application with access to your local system.
 
 ### heroku
 ```
-heroku deploy:jar target/*.war --app web-modules-web-shell
-heroku ps:scale web=1 -a web-modules-web-shell
+heroku deploy:jar target/*.war --app web-modules-file-manager
+heroku ps:scale web=1 -a web-modules-file-manager
 ```
+
+
