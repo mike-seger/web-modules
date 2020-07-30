@@ -3,7 +3,7 @@
 A file manager providing a file system explorer and the capability to up- and download files from/to a host file system.
 
 [file-manager](https://github.com/mike-seger/web-modules/tree/master/file-manager) comes in two flavours:
-- A [library](library), which can be included as a dependency to a Spring Boot application
+- A [library](library), which can be included as a dependency in a Spring Boot application
 - A standalone sample [application](application), based on the library
 
 file-manager consists of two components:
