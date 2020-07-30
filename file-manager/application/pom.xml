@@ -28,7 +28,7 @@
         <dependency>
             <groupId>com.net128.oss.web.lib</groupId>
             <artifactId>file-manager-api</artifactId>
-            <version>0.1.7</version>
+            <version>[0.1.7,)</version>
         </dependency>
 
         <dependency>
