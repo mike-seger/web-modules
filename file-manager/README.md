@@ -1,15 +1,14 @@
 # file-manager
 
-A file manager providing file nagigation and the capability to up- and download files from/to a host file system.
+A file manager providing a file system explorer and the capability to up- and download files from/to a host file system.
 
 [file-manager](https://github.com/mike-seger/web-modules/tree/master/file-manager) comes in two flavours:
-- A [library](library), which can be used as a maven dependency to a Spring Boot application
-- A standalone [application](application), based on the library
+- A [library](library), which can be included as a dependency to a Spring Boot application
+- A standalone sample [application](application), based on the library
 
 file-manager consists of two components:
-- A web page, compatible with modern browsers.
+- A web page compatible with modern browsers.
 - A server application.
-It exposes the host file system to the browser.
 
 ## Demo
 https://web-modules-file-manager.herokuapp.com/
