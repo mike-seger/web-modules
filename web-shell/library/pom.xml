@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.net128.oss.web.lib</groupId>
     <artifactId>web-shell-lib</artifactId>
-    <version>0.1.6</version>
+    <version>0.1.7-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>web-shell-lib</name>
     <description>web-shell-lib - a web shell based library on Spring, web sockets and Javascript</description>
@@ -126,8 +126,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-  <scm>
-    <tag>web-shell-lib-0.1.6</tag>
-  </scm>
 </project>
