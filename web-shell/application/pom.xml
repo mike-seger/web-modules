@@ -25,7 +25,7 @@
         <dependency>
             <groupId>com.net128.oss.web.lib</groupId>
             <artifactId>webshell</artifactId>
-            <version>0.1.4</version>
+            <version>LATEST</version>
         </dependency>
     </dependencies>
 

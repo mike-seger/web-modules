@@ -11,6 +11,9 @@ file-manager consists of two components:
 - Server, a simple java servlet served by a Spring Boot application.
 It exposes the host file system to the browser client.
 
+## Demo
+https://web-modules-file-manager.herokuapp.com/
+
 ## Features
 
 ### Server
@@ -43,9 +46,6 @@ It has been successfully tested with the following browsers:
 - Firefox Version 78.0.1 (64-bit)
 - Safari Version 13.1.1 (15609.2.9.1.2)
 - Brave Version 1.11.97 Chromium: 84.0.4147.89 (Official Build) (64-bit)
-
-## Sample Instance
-https://web-modules-file-manager.herokuapp.com/
 
 ## Sample Screenshots
 

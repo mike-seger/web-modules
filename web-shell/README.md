@@ -8,6 +8,9 @@ You can can find a sample application using the web-shell library here:
 A simple application allowing to run host and custom commands on the hosting system.  
 It provides server and client in a single web application.
 
+## Demo
+https://web-modules-web-shell.herokuapp.com/
+
 ![](doc/screen.png)
 
 ## Features
@@ -26,9 +29,6 @@ mvn spring-boot:run
 ```
 This builds and starts the application.  
 Open http://localhost:8080/ and start using.
-
-## Example Instance
-https://web-modules-web-shell.herokuapp.com/
 
 ## Commands
 
