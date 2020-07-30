@@ -2,7 +2,7 @@
 
 web-shell is a library, which provides a web based shell (like bash, zsh, etc.) to any
 Spring Boot application.  
-You can can find a sample application using the web-shell library here: 
+A sample application using the web-shell library can be found here: 
 [application](./application/)
 
 It provides a server and client in a single dependency.
