@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.net128.oss.web.application</groupId>
     <artifactId>web-shell-app</artifactId>
-    <version>0.1.7</version>
+    <version>0.1.8-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>web-shell-app</name>
     <description>a web shell application based on the web-shell library</description>
@@ -56,8 +56,4 @@
             </plugin>
         </plugins>
     </build>
-
-  <scm>
-    <tag>web-shell-app-0.1.7</tag>
-  </scm>
 </project>
