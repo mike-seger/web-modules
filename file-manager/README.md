@@ -6,7 +6,7 @@ A file manager providing a file system explorer and the capability to up- and do
 - A [library](library), which can be included as a dependency in a Spring Boot application
 - A standalone sample [application](application), based on the library
 
-file-manager consists of two components:
+file-manager consists of the following components:
 - A web page compatible with modern browsers.
 - A server component.
 
