@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.net128.oss.web.app.demo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -16,4 +16,4 @@ dependencyResolutionManagement {
 
 rootProject.name = 'web-modules'
 
-include 'demo'
+include 'app:demo'
