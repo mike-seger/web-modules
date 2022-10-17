@@ -8,7 +8,12 @@ plugins {
 	id 'idea'
 	id 'signing'
 	id 'maven-publish'
+	id 'org.springframework.boot' version '2.7.4'
+	id 'io.spring.dependency-management' version '1.0.14.RELEASE'
 }
+
+tasks.bootJar { enabled = false}
+tasks.jar { enabled = true}
 
 //subprojects {
 //	task javadocJar(type: Jar) {
@@ -75,8 +80,6 @@ plugins {
 //		}
 //	}
 //}
-
-
 
 idea {
 	module {

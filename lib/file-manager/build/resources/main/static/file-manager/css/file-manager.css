@@ -1,0 +1,207 @@
+html, body {
+    background-color: rgb(30, 30, 30);
+    color: white;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    padding: 15px;
+    width: calc(100% - 30px);
+    height: calc(100% - 30px);
+}
+
+* {
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 16px;
+}
+
+.breadcrumb, .file-list, #uploadForm {
+    margin: 0;
+}
+
+.breadcrumb, #uploadForm {
+    margin-bottom: 15px;
+}
+
+a {
+    color: rgb(102, 149, 184);
+    text-decoration: none;
+}
+
+.file-list {
+    -ms-word-break: break-all;
+    word-break: break-all;
+    break-after: auto;
+    padding: 0;
+
+    -webkit-column-count: 1;
+    -moz-column-count: 1;
+    column-count: 1;
+
+    -webkit-column-gap: 20px;
+    -moz-column-gap: 20px;
+    column-gap: 20px;
+
+    min-height: calc(100vh - 110px);
+    height: calc(100vh - 110px);
+    overflow-y: hidden;
+
+    -webkit-column-span: 1;
+    column-span: none;
+}
+
+@media only screen and (min-width: 400px) { .file-list  { column-count: 2; } }
+@media only screen and (min-width: 700px) { .file-list  { column-count: 3; } }
+@media only screen and (min-width: 1000px) { .file-list  { column-count: 4; } }
+@media only screen and (min-width: 1300px) { .file-list  { column-count: 5; } }
+@media only screen and (min-width: 1600px) { .file-list  { column-count: 6; } }
+
+.file-list::-webkit-scrollbar-track {
+  border: 0;
+  padding: 2px 0;
+  background-color: #404040;
+}
+
+.file-list::-webkit-scrollbar {
+  width: 10px;
+}
+
+.file-list::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+  background-color: #737272;
+  border: 0;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+}
+
+li {
+    display: inline;;
+    margin: 0;
+    padding: 0;
+    min-height: 32px;
+    line-height: 32px;
+}
+
+.directory, .file {
+    display: block;
+}
+
+.file.name {
+   display: inline;
+}
+
+span.item-tool {
+    display: none;
+}
+
+span.item-tool a {
+    margin: 0;
+    padding: 0;
+    margin-left: 10px;
+    width: 14px;
+}
+
+li.file:hover, li.file:active, li.directory:hover, li.directory:active  {
+    background-color: rgb(50, 60, 70);
+}
+
+li:hover span.item-tool {
+    display: inline;
+}
+
+.directory .item {
+    width: 25px;
+    height: 20px;
+    display: inline-block;
+    margin: auto;
+    position: relative;
+    background-color: #708090;
+    border-radius: 0 3px 3px 3px;
+    box-shadow: 4px 4px 7px rgba(0, 0, 0, 0.59);
+    margin-bottom: -2px;
+    margin-top: 4px;
+    margin-right: 6px;
+}
+
+.directory:before .item {
+    content: '';
+    width: 50%;
+    height: 0.2em;
+    border-radius: 0 20px 0 0;
+    background-color: #708090;
+    position: absolute;
+    top: -0.2em;
+    left: 0px;
+}
+
+a.delete {
+    color: rgb(223, 77, 77);
+}
+
+a.download:hover, a.delete:hover {
+    filter: brightness(140%);
+}
+
+button.tool {
+    width: 75px;
+}
+
+button img {
+    position: relative;
+    top: 3px;
+    left: 0px;
+    width: 20px;
+    height: 20px;
+}
+
+input[type="file"]::-webkit-file-upload-button, button {
+    x-moz-box-shadow: 0px 10px 14px -7px #276873;
+    x-webkit-box-shadow: 0px 10px 14px -7px #276873;
+    box-shadow: 0px 10px 14px -7px #276873;
+    background-color:rgb(67,83,94);
+    -webkit-border-top-left-radius:6px;
+    -moz-border-radius-topleft:6px;
+    border-top-left-radius:6px;
+    -webkit-border-top-right-radius:6px;
+    -moz-border-radius-topright:6px;
+    border-top-right-radius:6px;
+    -webkit-border-bottom-right-radius:6px;
+    -moz-border-radius-bottomright:6px;
+    border-bottom-right-radius:6px;
+    -webkit-border-bottom-left-radius:6px;
+    -moz-border-radius-bottomleft:6px;
+    border-bottom-left-radius:6px;
+    text-indent:0;
+    display:inline-block;
+    color: rgb(240,240,240);
+    height:35px;
+    line-height:30px;
+    text-decoration:none;
+    text-align:center;
+    text-shadow:0px 1px 0px #3d768a;
+
+    border-color: rgb(118, 118, 118);
+    border-left-color: rgb(118, 118, 118);
+    border-top-color: rgb(118, 118, 118);
+    border-bottom-color: rgb(30, 30, 30);
+}
+
+input[type="file"]::-webkit-file-upload-button:hover, button:hover {
+	background-color:#408c99;
+}
+
+input[type="file"]::-webkit-file-upload-button:focus, button:focus {
+    outline: none;
+}
+
+.tools {
+    margin: 0;
+}

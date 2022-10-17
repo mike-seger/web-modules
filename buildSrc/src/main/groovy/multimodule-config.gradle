@@ -1,9 +1,24 @@
 plugins {
     id 'java'
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
+    id 'signing'
+    id 'maven-publish'
 }
+
+project.ext.appId = project.gradle.toString().split("'")[1].toString() +
+    projectPath.toString().replace(":lib:", ":").replace(":", "-")
+
+group = 'com.net128.oss.web'
+version = System.getProperty("VERSION", System.getenv("VERSION") ?: '0.0.1-SNAPSHOT')
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
+
+javadoc.options.addStringOption('Xdoclint:none', '-quiet')
+
+tasks.bootJar { enabled = false }
+tasks.jar { enabled = true }
 
 test {
     useJUnitPlatform()
@@ -12,4 +27,20 @@ test {
 dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    testCompileOnly 'org.projectlombok:lombok:1.18.24'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
+}
+
+task javadocJar(type: Jar) {
+    archiveClassifier.set('javadoc')
+    from javadoc
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+}
+
+task sourcesJar(type: Jar) {
+    archiveClassifier.set('sources')
+    from sourceSets.main.allSource
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
 }

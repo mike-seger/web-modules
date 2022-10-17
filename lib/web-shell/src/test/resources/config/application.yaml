@@ -1,0 +1,13 @@
+logging:
+  level:
+    ROOT: warn
+    ch.qos: warn
+    org.springframework: warn
+    com.net128: info
+
+spring:
+  main:
+    banner-mode: off
+
+spring.datasource:
+  url: jdbc:h2:mem:testdb

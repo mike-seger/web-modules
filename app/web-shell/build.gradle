@@ -1,0 +1,15 @@
+plugins {
+    id 'multimodule-config'
+    id 'app-config'
+    id 'publish-helper'
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.3.1.RELEASE'
+    implementation project(':lib:web-shell')
+}
+
+group = 'com.net128.oss.web.app'
+description = 'web-shell'
+
+//apply from: '../../publish-helper.gradle'

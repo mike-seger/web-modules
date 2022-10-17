@@ -1,0 +1,15 @@
+plugins {
+    id 'multimodule-config'
+    id 'app-config'
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation project(':lib:file-manager')
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+group = 'com.net128.oss.web.application'
+description = 'file-manager-app'
+
+apply from: '../../publish-helper.gradle'

@@ -1,0 +1,18 @@
+.terminal, .cmd, .terminal .terminal-output div div, .cmd .prompt {
+    --color: rgb(104, 151, 187, 0.99);
+    --size: 2.4;
+}
+
+.terminal * {
+    font-family: 'Source Code Pro', Monaco, monospace;
+    font-weight: 500;
+}
+
+.terminal, .cmd {
+    color: #0f0;
+}
+
+.terminal::selection, .cmd::selection, .terminal .terminal-output div div::selection, .cmd .prompt::selection {
+  --color: white;
+  --background-color: rgb(104, 151, 187, 0.99);
+}

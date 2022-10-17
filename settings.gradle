@@ -13,7 +13,10 @@ dependencyResolutionManagement {
     }
 }
 
-
 rootProject.name = 'web-modules'
 
-include 'app:demo'
+include('app:demo')
+include('lib:file-manager')
+include('app:file-manager')
+include('lib:web-shell')
+include('app:web-shell')
