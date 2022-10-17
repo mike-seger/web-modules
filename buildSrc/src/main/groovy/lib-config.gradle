@@ -1,13 +1,15 @@
-tasks.bootJar { enabled = true }
-tasks.jar { enabled = false }
+tasks.bootJar { enabled = false }
+tasks.jar {
+    enabled = true
+    archiveClassifier.set("")
+}
 
 publishing {
     publications {
-        bootJava(MavenPublication) {
-            //from components.java
+        mavenJava(MavenPublication) {
             groupId = 'com.net128.oss.web'
 
-            artifact tasks.named("bootJar")
+            artifact tasks.named("jar")
             artifact sourcesJar
             artifact javadocJar
 
@@ -43,10 +45,9 @@ publishing {
         }
     }
 }
-
 //https://docs.gradle.org/current/userguide/signing_plugin.html
 signing {
     //sign publishing.publications.release
 
-    sign publishing.publications.bootJava
+    sign publishing.publications.mavenJava
 }

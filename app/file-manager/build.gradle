@@ -1,5 +1,6 @@
 plugins {
     id 'multimodule-config'
+    id 'publish-helper'
     id 'app-config'
 }
 
@@ -11,5 +12,3 @@ dependencies {
 
 group = 'com.net128.oss.web.application'
 description = 'file-manager-app'
-
-apply from: '../../publish-helper.gradle'

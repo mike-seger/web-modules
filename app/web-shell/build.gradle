@@ -1,7 +1,7 @@
 plugins {
     id 'multimodule-config'
-    id 'app-config'
     id 'publish-helper'
+    id 'app-config'
 }
 
 dependencies {
@@ -11,5 +11,3 @@ dependencies {
 
 group = 'com.net128.oss.web.app'
 description = 'web-shell'
-
-//apply from: '../../publish-helper.gradle'

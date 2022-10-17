@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.net128.oss.web.app.filemanager"}]

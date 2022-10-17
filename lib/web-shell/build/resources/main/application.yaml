@@ -1,8 +1,0 @@
-spring.resources:
-  static-locations:
-    - file:src/main/resources/static/
-    - classpath:/static/
-
-web-shell:
-  root: /web-shell
-  hostshells: zsh,bash,sh

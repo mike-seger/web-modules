@@ -1,8 +1,0 @@
-com.net128.oss.web.lib
-com.net128.oss.web.lib.commands
-com.net128.oss.web.lib.commands.picocli
-com.net128.oss.web.lib.commands.sql
-com.net128.oss.web.lib.communication
-com.net128.oss.web.lib.communication.rest
-com.net128.oss.web.lib.communication.websocket
-com.net128.oss.web.lib.util

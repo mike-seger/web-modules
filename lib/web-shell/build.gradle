@@ -1,6 +1,7 @@
 plugins {
     id 'multimodule-config'
     id 'publish-helper'
+    id 'lib-config'
 }
 
 dependencies {

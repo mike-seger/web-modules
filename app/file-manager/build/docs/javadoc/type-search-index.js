@@ -1,1 +1,0 @@
-typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"com.net128.oss.web.app.filemanager","l":"AppConfiguration"},{"p":"com.net128.oss.web.app.filemanager","l":"Application"}]
