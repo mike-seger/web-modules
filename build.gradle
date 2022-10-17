@@ -1,37 +1,17 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
 	ext.kotlin_version = '1.7.10'
 	repositories {
 		mavenCentral()
 	}
-	dependencies {
-		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-	}
 }
 plugins {
-//	id 'com.android.application' version '7.2.0' apply false
-//	id 'com.android.library' version '7.2.0' apply false
-//	id 'org.jetbrains.kotlin.android' version '1.6.21' apply false
 	id 'maven-publish'
 	id "java"
-//	id 'maven' version '1.0.8'
 	id 'signing'
 	id 'idea'
 }
 
 apply plugin: GenerateConfigPlugin.class
-
-/*task clean(type: Delete) {
-	delete rootProject.buildDir
-}
-*/
-
-/*subprojects {
-	plugins {
-		id 'java'
-	}
-}
-*/
 
 subprojects {
 	task javadocJar(type: Jar) {	
@@ -43,12 +23,6 @@ subprojects {
 		 from sourceSets.main.allSource
 	}
 
-//	artifacts {
-//		archives jar, javadocJar, sourcesJar
-//	}
-
-	// https://docs.gradle.org/current/userguide/publishing_maven.html
-	// https://central.sonatype.org/publish/publish-gradle/#metadata-definition-and-upload
 	publishing {
 		publications {
 			mavenJava(MavenPublication) {
@@ -97,59 +71,9 @@ subprojects {
 }
 
 //https://docs.gradle.org/current/userguide/signing_plugin.html
-//	signing {
-//		sign publishing.publications.mavenJava
-//	}
-
-//	uploadArchives {
-//	  repositories {
-//		mavenDeployer {
-//		  beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-//
-//		  repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-//			authentication(userName: ossrhUsername, password: ossrhPassword)
-//		  }
-//
-//		  snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-//			authentication(userName: ossrhUsername, password: ossrhPassword)
-//		  }
-//
-//		  pom.project {
-//			name 'Example Application'
-//			packaging 'jar'
-//			//group 'com.example.lib'
-//			//artifactId 'artifact-id'
-//			description 'A application used as an example on how to set up pushing  its components to the Central Repository.'
-//			url 'http://www.example.com/example-application'
-//
-//			scm {
-//			  connection 'scm:svn:http://foo.googlecode.com/svn/trunk/'
-//			  developerConnection 'scm:svn:https://foo.googlecode.com/svn/trunk/'
-//			  url 'http://foo.googlecode.com/svn/trunk/'
-//			}
-//
-//			licenses {
-//			  license {
-//				name 'The Apache License, Version 2.0'
-//				url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-//			  }
-//			}
-//
-//			developers {
-//			  developer {
-//				id 'sampleId'
-//				name 'Sample Name'
-//				email 'sample@samplecompany.com'
-//			  }
-//			}
-//		  }
-//		}
-//	  }
-//	}
-
-//repositories {
-//	mavenCentral()
-//}
+signing {
+	sign publishing.publications.mavenJava
+}
 
 idea {
 	module {
