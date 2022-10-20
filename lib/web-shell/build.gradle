@@ -1,36 +1,37 @@
 plugins {
-    id 'multimodule-config'
-    id 'publish-helper'
-    id 'lib-config'
+    id "multimodule-config"
+    id "publish-helper"
+    id "lib-config"
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-websocket:2.3.1.RELEASE'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator:2.3.1.RELEASE'
-    implementation 'org.springframework.boot:spring-boot-starter-jdbc:2.3.1.RELEASE'
-    implementation 'org.springframework.data:spring-data-commons:2.3.1.RELEASE'
-    implementation 'org.slf4j:jul-to-slf4j:1.7.30'
-    implementation 'org.projectlombok:lombok:1.18.12'
-    implementation 'org.toile-libre.libe:curl:0.0.38'
-    implementation 'org.codehaus.plexus:plexus-utils:3.3.0'
-    implementation 'org.fusesource.jansi:jansi:1.18'
-    implementation 'info.picocli:picocli:4.3.2'
-    implementation 'info.picocli:picocli-spring-boot-starter:4.3.2'
-    implementation 'javax.validation:validation-api:2.0.0.Final'
-    implementation 'org.zeroturnaround:zt-exec:1.11'
-    implementation 'commons-io:commons-io:2.6'
-    implementation 'com.google.code.findbugs:annotations:3.0.1'
-    implementation 'javax.inject:javax.inject:1'
-    implementation 'com.google.guava:guava:29.0-jre'
-    implementation 'org.reflections:reflections:0.9.12'
-    implementation 'com.opencsv:opencsv:5.2'
-    implementation 'com.h2database:h2:1.4.200'
-    implementation 'de.vandermeer:asciitable:0.3.2'
-    implementation 'org.imgscalr:imgscalr-lib:4.2'
-    testImplementation 'org.junit.platform:junit-platform-launcher:1.6.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.3.1.RELEASE'
+    implementation "org.springframework.boot:spring-boot-starter-websocket"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springframework.boot:spring-boot-starter-security"
+    implementation "org.springframework.boot:spring-boot-starter-jdbc"
+    implementation "org.springframework.data:spring-data-commons"
+    implementation "org.slf4j:jul-to-slf4j:1.7.30"
+    implementation "org.projectlombok:lombok:1.18.12"
+    implementation "org.toile-libre.libe:curl:0.0.38"
+    implementation "org.codehaus.plexus:plexus-utils:3.3.0"
+    implementation "org.fusesource.jansi:jansi:1.18"
+    implementation "info.picocli:picocli:4.3.2"
+    implementation "info.picocli:picocli-spring-boot-starter:4.3.2"
+    implementation "javax.validation:validation-api:2.0.0.Final"
+    implementation "org.zeroturnaround:zt-exec:1.11"
+    implementation "commons-io:commons-io:2.6"
+    implementation "com.google.code.findbugs:annotations:3.0.1"
+    implementation "javax.inject:javax.inject:1"
+    implementation "com.google.guava:guava:29.0-jre"
+    implementation "org.reflections:reflections:0.9.12"
+    implementation "com.opencsv:opencsv:5.2"
+    implementation "com.h2database:h2:1.4.200"
+    implementation "de.vandermeer:asciitable:0.3.2"
+    implementation "org.imgscalr:imgscalr-lib:4.2"
+    testImplementation "org.junit.platform:junit-platform-launcher:1.6.2"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:5.6.2"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
 }
 
-group = 'com.net128.oss.web.lib'
-description = 'web-shell-lib'
+group = "com.net128.oss.web.lib"
+description = "Web-Shell library"

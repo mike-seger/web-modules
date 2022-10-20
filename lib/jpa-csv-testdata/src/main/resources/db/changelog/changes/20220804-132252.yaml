@@ -1,0 +1,223 @@
+databaseChangeLog:
+- logicalFilePath: 20220804-132252.yaml
+- changeSet:
+    id: 1659619377113-1
+    author: adminux
+    changes:
+    - createTable:
+        tableName: car
+        columns:
+        - column:
+            autoIncrement: true
+            startWith: 1
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: carPK
+            name: id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: brand
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: total_price
+            type: DOUBLE
+    - createTable:
+        tableName: city
+        columns:
+        - column:
+            autoIncrement: true
+            startWith: 1
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: cityPK
+            name: id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: city
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: population
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: iso_country
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: country
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: geo_id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: latitude
+            type: DOUBLE
+        - column:
+            constraints:
+              nullable: false
+            name: longitude
+            type: DOUBLE
+        - column:
+            constraints:
+              nullable: false
+            name: modified
+            type: date
+    - createTable:
+        tableName: country_population
+        columns:
+        - column:
+            autoIncrement: true
+            startWith: 1
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: country_populationPK
+            name: id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: area_sq_km
+            type: INT
+        - column:
+            constraints:
+              nullable: false
+            name: country
+            type: VARCHAR(255)
+        - column:
+            name: fert_rate
+            type: DOUBLE
+        - column:
+            name: med_age
+            type: INT
+        - column:
+            name: migrants
+            type: INT
+        - column:
+            constraints:
+              nullable: false
+            name: net_change
+            type: INT
+        - column:
+            constraints:
+              nullable: false
+            name: pop_per_sq_km
+            type: INT
+        - column:
+            constraints:
+              nullable: false
+            name: population
+            type: BIGINT
+        - column:
+            name: pop_urban_perc
+            type: DOUBLE
+        - column:
+            constraints:
+              nullable: false
+            name: world_perc
+            type: DOUBLE
+        - column:
+            constraints:
+              nullable: false
+            name: year_change_perc
+            type: DOUBLE
+    - createTable:
+        tableName: country_code
+        columns:
+        - column:
+            autoIncrement: true
+            startWith: 1
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: country_codePK
+            name: id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: alpha2
+            type: CHAR(2)
+        - column:
+              constraints:
+                nullable: false
+              name: alpha3
+              type: CHAR(3)
+        - column:
+            constraints:
+              nullable: false
+            name: region
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: sub_region
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: region_code
+            type: CHAR(3)
+        - column:
+            constraints:
+              nullable: false
+            name: sub_region_code
+            type: CHAR(3)
+    - createTable:
+        tableName: person
+        columns:
+        - column:
+            autoIncrement: true
+            startWith: 1
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: personPK
+            name: my_id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: address
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: city
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: country
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: first_name
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: last_name
+            type: VARCHAR(255)

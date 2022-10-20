@@ -37,6 +37,14 @@ function refreshFileData(path) {
         downloadLink.setAttribute("href", apiUri + fileUri + (isDirectory?'&zip':''));
         downloadLink.appendChild(document.createTextNode(' \u2B07 '));
         itemTools.appendChild(downloadLink);
+        if(!isDirectory) {
+            var viewLink = document.createElement("a");
+            viewLink.classList.add('view');
+            viewLink.setAttribute("href", apiUri + fileUri + "&view");
+            viewLink.setAttribute("target", "_new");
+            viewLink.appendChild(document.createTextNode(' \u27A1 '));
+            itemTools.appendChild(viewLink);
+        }
         if(!hasChildren && isWritable) {
             itemTools.appendChild(document.createTextNode(' '));
             var deleteLink = document.createElement("a");

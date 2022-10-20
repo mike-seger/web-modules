@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="JpaCsvTestDataApplication" type="Application" factoryName="Application" nameIsGenerated="true">
+    <option name="MAIN_CLASS_NAME" value="com.net128.oss.web.app.demo.JpaCsvTestDataApplication" />
+    <module name="web-modules.app.jpa-csv-testdata.main" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/app/jpa-csv-testdata" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="com.net128.oss.web.app.demo.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

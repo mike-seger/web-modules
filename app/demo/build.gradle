@@ -6,6 +6,11 @@ plugins {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	implementation project(':lib:file-manager')
+	implementation project(':lib:web-shell')
+	implementation project(':lib:iframe-navigator')
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 

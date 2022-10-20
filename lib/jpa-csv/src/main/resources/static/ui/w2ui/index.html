@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CSV UI (w2ui)</title>
+        <!-- <link rel="stylesheet" type="text/css" href="./w2ui/w2ui.css"> -->
+        <link rel="stylesheet" type="text/css" href="https://rawgit.com/vitmalina/w2ui/master/dist/w2ui.css">
+        <script src="https://cdn.jsdelivr.net/npm/d3-dsv@3"></script>
+        <!-- <script src="https://cdn.jsdelivr.net/npm/d3-fetch@3"></script> -->
+        <script type="module">
+            import { w2ui, w2toolbar, w2grid } 
+                from 'https://rawgit.com/vitmalina/w2ui/master/dist/w2ui.es6.js'
+                //from './w2ui/w2ui.es6.js'
+
+            const globalState = {
+                entities: null,
+                loadedEntity: null,
+                selectedEntityName: null,
+                delimFormat: 'TSV'
+            }
+
+            const globalConst = {
+                dropdownMargin: 6,
+                numberFactor: 1.2,
+                hMargin: 10,
+            }
+
+            function stringWidth(text, font = "16px sans-serif") {
+                const canvas = document.createElement("canvas")
+                const context = canvas.getContext("2d")
+                context.font = font
+                const { width } = context.measureText(text)
+                return width
+            }
+
+            function maxStringWidth(texts) {
+                const max = texts.reduce((element,max) => 
+                    stringWidth(element) > stringWidth(max) ? element : max, 0)
+                return stringWidth(max)
+            }
+
+            function getColumnWidthFromString(column, string) {
+                if(string===null || string===undefined || column.hidden) return 0
+                function findLongestString(arr) {
+                    if(arr.length==0) return ""
+                    return arr.reduce((a, b)=> a.length > b.length ? a : b)
+                }
+                const sortableMargin = column.sortable === true?globalConst.dropdownMargin:0
+                let w = Math.max(stringWidth(string), stringWidth(column.text)+sortableMargin)
+                if(column?.editable?.type === 'int') w *= globalConst.numberFactor;
+                else if(column?.editable?.type === 'list') w += globalConst.dropdownMargin
+                w += 2*globalConst.hMargin
+                return w
+            }
+
+            function getColumnWidth(column, values) {
+                if(column.hidden) return 0
+                function findLongestString(arr) {
+                    if(arr.length==0) return ""
+                    return arr.reduce((a, b)=> a.length > b.length ? a : b)
+                }
+                let longestText = findLongestString(values)
+                if(column?.editable?.items) {
+                    const longestItemText = 
+                        findLongestString(column.editable.items.map(item => item.text))
+                    if(longestItemText.length > longestText.length) longestText = longestItemText
+                }
+
+                return getColumnWidthFromString(column, longestText)
+            }
+
+            function autoAdjustColumnWidth(column, values) {
+                const w = getColumnWidth(column, values)
+                column.size = w+"px"
+                console.log("columnWidth "+column.size)
+            }
+
+            function autoAdjustColumnWidths(grid) {
+                grid.columns.forEach(column => {
+                    const values = grid.records
+                        .map(record => record[column.field])
+                        .filter(value => value)
+                    autoAdjustColumnWidth(column, values)
+                })
+                grid.refresh()
+                grid.on('change', function(event) {
+                    event.onComplete = function() {
+                        const newValue = event.detail.value.new
+                        if(!newValue) return
+                        const column = grid.columns[event.detail.column]
+                        const oldW = column.size.replace("px", "")
+                        const newW = getColumnWidthFromString(column, newValue)
+                        if(newW > oldW) {
+                            console.log(column, newValue)
+                            column.size = newW + "px"
+                            grid.refresh()
+                        }
+                    }
+                })
+            }
+
+            function isStatic() {
+                const urlParams = new URLSearchParams(window.location.search)
+                const isStatic = urlParams.get('static')
+                return isStatic || location.port==8000 || location.port==8001 || location.host.includes(".github.io")
+            }
+
+            function getConfigUri() {
+                const urlParams = new URLSearchParams(window.location.search)
+                let configUri = urlParams.get('conf')
+                if(!configUri) {
+                    if(isStatic()) configUri = 'config.json'
+                    else configUri = '/configuration'
+                }
+                return configUri
+            }
+
+            function getRemoteBaseUri() {
+                const urlParams = new URLSearchParams(window.location.search)
+                let remoteBaseUri = urlParams.get('rbase')
+                if(!remoteBaseUri) {
+                    if(isStatic()) remoteBaseUri = "../../../../../../../data/"
+                    else remoteBaseUri = "../../api/v1/admin/csv"
+                }
+                return remoteBaseUri
+            }
+
+            function getRows() {
+                const urlParams = new URLSearchParams(window.location.search);
+                let rows = urlParams.get('rows');
+                if(!rows) rows = 0;
+                else if(rows!=0) rows = Math.max(Number(rows), 1);
+                return rows;
+            }
+
+            function remoteUrl(url, tabSeparated, deleteAll) {
+                return url+(url.includes('?')?"&":"?")+"tabSeparated="+(tabSeparated === true)
+                    + "&deleteAll="+(deleteAll === true)
+            }
+
+            function importFile() {
+                if(globalState.loadedEntity==null) return
+                let input = document.createElement('input')
+                input.type = 'file'
+                input.onchange = _this => {	uploadFile(input.files[0]);	}
+                input.click()
+            }
+
+            function extractText(responseText) {
+                let text = responseText
+                if(text.indexOf("<body")>=0) {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(text, "text/html");
+                    text = doc.body.textContent
+                }
+                return text
+            }
+
+            async function handleFetchTextResponse(response) {
+                const responseMessage = await response.text()
+                const responseText = extractText(responseMessage)
+                if(response.status==200) {
+                    alert(responseText)
+                    return true
+                } else {
+                    alert(responseText)
+                    console.log(responseText)
+                }
+                return false;
+            }
+
+            async function submitData(uri, method, body) {
+                try {
+                    const response = await fetch(uri, {
+                        method: method,
+                        body: body})
+                    const success = await handleFetchTextResponse(response);
+                    if(success) loadEntity(globalState.loadedEntity)
+                } catch(e) {
+                    alert(e.message);
+                }
+            }
+
+            async function save(records) {
+                if(records.length==0) return
+                const uri = remoteUrl(getRemoteBaseUri() + globalState.loadedEntity.putUri, false, false);
+                try {
+                    const modRecords = modifiedRecords(records)
+                    if(modRecords.length==0) return
+                    const response = await fetch(uri, {
+                        method: 'PUT',
+                        headers: { 'Content-type': 'text/csv' },
+                        body: d3.csvFormat(modRecords),
+                    });
+                    const success = await handleFetchTextResponse(response)
+                    if(success) loadEntity(globalState.loadedEntity)
+                } catch(e) {
+                    alert(e.message)
+                }
+            }
+
+            function uploadFile(file) {
+                if(globalState.loadedEntity==null) return
+                const entity = globalState.loadedEntity
+                let uri = null
+                let method = "PUT"
+                let tabSeparated = true
+                if(file.type === "text/tab-separated-values") {
+                    uri = getRemoteBaseUri() + entity.putUri
+                } else if(file.type === "text/csv") {
+                    uri = getRemoteBaseUri() + entity.putUri
+                    tabSeparated = false;
+                } else {
+                    alert("Unsupported file type: "+file.type)
+                    return;
+                }
+
+                submitData(remoteUrl(uri, tabSeparated, true), method, file)
+            }
+
+            function localRecord(record) {
+                if(! record?.w2ui?.changes) return record
+                const changes = record.w2ui.changes
+                var result = {...record, ...changes}
+                delete result.w2ui
+                return result
+            }
+
+            function modifiedRecords(records, onlyChanged = true) {
+                return records.filter(record => 
+                        !onlyChanged || 
+                        record?.w2ui?.changes)
+                    .map(record => localRecord(record))
+                    .map(record => Object.keys(localRecord(record))
+                    .filter(key => key != 'recid' && key != 'w2ui')
+                    .reduce((obj, key) => {
+                        obj[key] = record[key]
+                        return obj }, {})
+                )
+            }
+
+            function downloadSvFile(fileName, delimFormat, records) {
+                if(records == null) return
+                let result;
+                let mimetype = "text/csv";
+                const timeStamp =new Date().toISOString().substring(0,19).replaceAll(/[:.-]/g, '_').replace('T', '-');
+                const modRecords = modifiedRecords(records, false);
+                if(delimFormat == "TSV") {
+                    result = d3.tsvFormat(modRecords)
+                    mimetype = "text/tab-separated-values"
+                } else result = d3.csvFormat(modRecords)
+                const dlLink = document.createElement('a')
+                dlLink.href = 'data:'+mimetype+';charset=utf-8,' + encodeURI(result)
+                dlLink.target = '_blank'
+                dlLink.download = fileName+'-'+ timeStamp +'.'+delimFormat.toLowerCase()
+                dlLink.click()
+                dlLink.remove()
+            }
+
+            function refreshSelection(grid) {
+                    const selection = grid.getSelection(true)
+                    const recids = [...new Set(selection.map(cell => Number(cell.recid)))].sort((a,b) => a-b)
+                    recids.forEach(recid => grid.refreshRow(recid))
+                }
+
+            function deleteSelectionText(grid) {
+                const selection = grid.getSelection(true)
+                const columnIndexes = [...new Set(selection.map(cell => Number(cell.column)))].sort((a,b) => a-b)
+                const indexes = [...new Set(selection.map(cell => Number(cell.index)))].sort((a,b) => a-b)
+                indexes.forEach(index => 
+                    columnIndexes.forEach(column => { 
+                        grid.editChange({ type: 'custom', value: null}, index, column) })      
+                )
+            }
+
+            function getSelectionText(grid) {
+                const selection = grid.getSelection(true)
+                const columnIndexes = [...new Set(selection.map(cell => Number(cell.column)))].sort((a,b) => a-b)
+                const indexes = [...new Set(selection.map(cell => Number(cell.index)))].sort((a,b) => a-b)
+                const selectedRecords = indexes.map(index => grid.records[index])
+                    .map(record => localRecord(record))
+                    .map(record => { return columnIndexes
+                        .map(column => record[grid.columns[column].field]) })
+                const result = globalState.delimFormat == "TSV"?
+                    d3.tsvFormatBody(selectedRecords):
+                    d3.csvFormatBody(selectedRecords)
+                console.log(result)
+                return result
+            }
+
+            function deleteRows(grid) {
+                const selection = grid.getSelection(true)
+                const recIds = [...new Set(selection.map(cell => Number(cell.recid)))]
+                grid.records = grid.records.filter(record => ! recIds.includes(record.recid))
+                grid.total = grid.records.length
+                grid.buffered = grid.total
+                grid.refresh()
+            }
+
+            function insertRows(grid, after) {
+                const selection = grid.getSelection(true)
+                let indexes = [...new Set(selection.map(cell => Number(cell.index)))].sort((a,b) => a-b)
+                if(indexes.length==0) { indexes = [0]; after=false; }
+                const pos = (after?indexes.slice(-1)[0]+1:indexes[0])
+                const newRecords = Array.from(new Array(indexes.length), (x, i) => 
+                        i + grid.records.length)
+                    .map(index => { 
+                        const record = Object.fromEntries(grid.columns
+                            .map(
+                                col => { 
+                                    return [col.field, null]  
+                                }))
+                        record.recid = index
+                        return record
+                })
+                const len = grid.records.length
+                const head = grid.records.slice(0, pos)
+                const tail = grid.records.slice(pos, pos+len)
+                grid.add(newRecords)
+
+                grid.records = [...head, ...newRecords,  ...tail]
+                grid.total = grid.records.length
+                grid.buffered = grid.total
+                grid.refresh()
+                console.log("Inserted "+newRecords.length+" rows")
+            }
+
+            function loadEntity(entity) {
+                console.log(entity)
+                if(entity == null) return
+                globalState.loadedEntity = entity
+
+                var config = {
+                    grid: {
+                        name: 'grid',
+                        selectType: 'cell',
+                        recordHeight: 28,
+                        liveSearch: true,
+                        multiSearch: true,
+                        resizable: true,
+                        show: {
+                            toolbar: true,
+                            footer: true,
+                            lineNumbers: true
+                        },
+                        style: 'font-size:16px; font-family: sans-serif; color:black;',
+
+                        contextMenu: [
+                            { id: 'copySelection', text: 'Copy selection', icon: 'w2ui-icon-check' },
+                            { text: '--' },
+                            { id: 'insertRowsBefore', text: 'Insert new rows before', icon: 'w2ui-icon-plus' },
+                            { id: 'insertRowsAfter', text: 'Insert new rows after', icon: 'w2ui-icon-plus' },
+                            { text: '--' },
+                            { id: 'deleteRows', text: 'Delete selected rows', icon: 'w2ui-icon-cross' },
+                        ],
+
+                        onDelete(event) {
+                            deleteSelectionText(this)
+                            refreshSelection(this) 
+                            event.preventDefault()
+                        },
+
+                        onContextMenuClick(event) {
+                            console.log(event)
+                            const menuId = event.detail.menuItem.id
+                            event.onComplete = function() {
+                                switch(menuId) {
+                                    case 'deleteRows':
+                                        deleteRows(grid)
+                                        break;
+                                    case 'copySelection':
+                                        navigator.clipboard.writeText(getSelectionText(this))
+                                        break;
+                                    default:
+                                        if(menuId.startsWith('insert'))
+                                            insertRows(grid, menuId.endsWith('After'))
+                                        break;
+                                }
+                            }
+                        },
+
+                        onCopy: function(event) {
+                            navigator.clipboard.writeText(getSelectionText(this))
+                        },
+
+                        columnClick() {}
+                    }
+                }
+
+                const columnDefs = entity.attributes.map(attribute => {
+                    let type = 'text'
+                    switch(attribute.type) {
+                        case "Int": type = 'int'; break
+                        case "Float": type = 'float:2';  break
+                        case "Date": type = 'text';  break
+                        case "Enum": type = 'list'; break
+                    }
+                    let columnDefinition = { 
+                        field: attribute.columnName, 
+                        text: attribute.title,
+                        sortable: true, 
+                        editable: { type: type }
+                    }
+
+                    if(type === 'list') {
+                        const list = attribute.enumConstants.map(
+                            value => { return { id: value, text: value } }
+                        )
+                        // columnDefinition.editable = {
+                        //     items: list,
+                        //     type: 'select'
+                        // }
+                        columnDefinition.editable = {
+                            items: list,
+                            type: 'combo',
+                        }
+                        // columnDefinition.render = 
+                        //     function (record, extra) {
+                        //         return extra.value?.text || '';
+                        //     }
+                        columnDefinition.editable.showAll = true
+                    } else if(! (type === 'text')) {
+                        columnDefinition.render = type
+                        columnDefinition.editable.type = type
+                    }
+                    if(attribute.hidden) columnDefinition.hidden = true
+                    if(attribute.id || attribute.readOnly)
+                        columnDefinition.editable = false
+                    return columnDefinition
+                })
+
+                let grid = new w2grid(config.grid)
+                //grid.on('*', (event) => { console.log(event) })
+
+                w2ui.grid.columns = columnDefs
+                w2ui.grid.lineNumberWidth = 58
+                w2ui.grid.multiSearch = true
+
+                const csvUri = getRemoteBaseUri()+entity.getUri
+                const gridElement = document.getElementById("grid")
+                fetch(csvUri)
+                    .then(response => response.text())
+                    .then(csv => {
+                        let rawData = d3.csvParse(csv)
+                        const maxRows = getRows()
+                        const data = maxRows==0?rawData:rawData.slice(0, Math.min(rawData.length, maxRows))
+                        rawData = null;
+                        for (var i = 0; i < data.length; i++) data[i].recid = i
+                        w2ui.grid.records = data
+                        w2ui.grid.total = w2ui.grid.records.length
+                        w2ui.grid.buffered = w2ui.grid.total
+                        if(data.length==0) insertRows(grid)
+                        autoAdjustColumnWidths(w2ui.grid)
+                        console.log("w2ui.grid.columns", w2ui.grid.columns)
+                        //w2ui.grid.searches.forEach(search => { search.operator = 'contains' })
+                        w2ui.grid.render(gridElement)
+                        w2ui.grid.focus()
+                    }) 
+            }
+
+            function createToolbar(entities) {
+                const entityItens = Object.keys(entities).map(key => 
+                    { return { id: key, text: entities[key].name } }
+                )
+                const iconButtonStyle = 'font-family: icomoon; font-size: 17px;'
+
+                new w2toolbar({
+                    box: '#toolbar',
+                    name: 'toolbar',
+                    items: [
+                        { type: 'menu-radio', id: 'entities',
+                            text(item) {
+                                const text = item.get(item.selected)?.text
+                                if(text === undefined) return "Select entity..."
+                                return text
+                            },
+                            style: 'width: 210px;',
+                            items: entityItens 
+                        },
+                        { type: 'break' },
+                        { type: 'button', 
+                            id: 'save', 
+                            style: iconButtonStyle,
+                            text: '&#xe903;'
+                        },
+                        { type: 'menu-radio', id: 'format',
+                            text(item) { return item.get(item.selected)?.text },
+                            selected: globalState.delimFormat,
+                            style: 'width: 50px; padding-right: 5px;',
+                            items: [
+                                { id: 'TSV', text: 'TSV' },
+                                { id: 'CSV', text: 'CSV' },
+                            ]
+                        },
+                        { type: 'button', 
+                            id: 'download', 
+                            style: iconButtonStyle,
+                            text: '&#xe90c;'
+                        },
+                        { type: 'button', 
+                            id: 'upload', 
+                            style: iconButtonStyle,
+                            text: '&#xe90b;'
+                        },
+                        { type: 'break' },
+                        { type: 'button',
+                            id: 'refresh',
+                            style: iconButtonStyle,
+                            text: '&#xe908;'
+                        },
+                        { type: 'spacer' },
+                        { type: 'button', id: 'help', text: '?' }
+                    ]
+                })
+
+                w2ui.toolbar.on('*', (event) => {
+                    if(event.type === 'click') {
+                        switch(event.target.replace(/:.+/, '')){
+                            case "save":
+                                console.log('save')
+                                save(w2ui.grid.records)
+                                break
+
+                            case "upload":
+                                console.log('upload')
+                                importFile()
+                                break
+
+                            case "download":
+                                console.log('download')
+                                downloadSvFile(globalState.selectedEntityName, 
+                                    globalState.delimFormat, w2ui.grid.records)
+                                break
+
+                            case "refresh":
+                                console.log('refresh')
+                                loadEntity(globalState.loadedEntity)
+                                break
+
+                            case "entities":
+                                if(event.target.indexOf(':')>0) {
+                                    const key = event.target.replace(/.*:/, '')
+                                    globalState.selectedEntityName = key
+                                    loadEntity(entities[key])
+                                }
+                                break
+
+                            case "format":
+                                if(event.target.indexOf(':')>0)
+                                    globalState.delimFormat = event.target.replace(/.*:/, '')
+                                console.log('format -> '+globalState.delimFormat)
+                                break
+                            
+                            default: 
+                                console.log('default: '+event.target); break
+                        }
+                    }
+                })
+            }
+
+            async function loadConfiguration() {
+                const configUrl = getRemoteBaseUri() + getConfigUri()
+                const response = await fetch(configUrl)
+                const configuration = await response.json()
+                console.log(configuration)
+                globalState.entities = configuration.entities
+                createToolbar(globalState.entities)
+            }
+
+            addEventListener('load', (event) => { loadConfiguration() });
+        </script>
+        
+        <style> 
+            :root { 
+                --main-tb-height: 27px; 
+            }
+
+            body * {
+                font-family: sans-serif;
+                font-size: 16px;
+            }
+
+            @font-face {
+                font-family: 'icomoon';
+                src: 
+                    url('fonts/icomoon.ttf') format('truetype'),
+                    url('fonts/icomoon.svg#icomoon') format('svg');
+                font-weight: normal;
+                font-style: normal;
+                font-display: swap;
+            }
+
+            #toolbar * {
+                font-size: 16px;
+                color: black;
+                background-color: white;
+            }
+
+            .w2ui-toolbar {
+                padding: 0 !important;
+            }
+
+            #toolbar .w2ui-toolbar {
+                height: var(--main-tb-height) !important;
+                border: none !important;
+                margin: 0 !important;
+                padding: 2px !important;
+                background-color: white;
+            }
+
+            #toolbar .w2ui-tb-button {
+                height: calc(var(--main-tb-height) - 6px) !important;
+                border: none !important;
+                padding-left: 3px;
+            }
+
+            #toolbar .w2ui-tb-button:hover, #toolbar .w2ui-tb-button:hover * {
+                background-color: rgb(239, 239, 239) !important;
+                /* color: white; */
+            }
+
+            #toolbar .w2ui-tb-break {
+                margin-top: 0;
+                height: calc(var(--main-tb-height) - 8px) !important;
+            }
+
+            #toolbar .w2ui-tb-text {
+                padding: 0 0 0 3px !important;
+            }
+
+            #toolbar .w2ui-tb-line {
+                padding: 2px !important;
+                border: 1px solid rgb(206, 206, 206) !important;
+                min-height: var(--main-tb-height) !important;
+                height: calc(var(--main-tb-height) - 6px) !important;
+            }
+
+            #grid {
+                position: absolute;
+                top: calc(var(--main-tb-height) + 8px);
+                left: 8px;
+                height: calc(100% - var(--main-tb-height) - 16px);
+                width: calc(100% - 16px);
+            }
+
+            .w2ui-grid {
+                border: 0 1px 1px 1px solid #e1e1e1 !important;
+                border-radius: 0 !important;
+                overflow: hidden!important;
+                margin-top: -1px !important;
+            }
+
+            .w2ui-grid .w2ui-grid-toolbar {
+                padding: 4px 4px 4px 0 !important;
+            }
+
+            .w2ui-search-all, 
+            #tb_grid_toolbar_item_w2ui-search > * > *:not(.w2ui-action) {
+                background-color: white !important;
+            }
+
+            .w2ui-col-header/*,
+            .w2ui-col-number*/ {
+                font-weight: 600;
+                color: black !important;
+            }
+
+            #tb_grid_toolbar_item_w2ui-reload {
+                display: none;
+            }
+
+            .w2ui-grid .w2ui-grid-body table .w2ui-col-selected,
+            .w2ui-grid .w2ui-grid-body table .w2ui-row-selected {
+                background-color: rgb(206, 226, 255) !important;
+            }
+
+            .w2ui-grid .w2ui-grid-toolbar .w2ui-grid-searches {
+                margin: 7px -20px 0px -20px;
+            }
+
+            .w2ui-grid-toolbar .w2ui-reset .w2ui-toolbar {
+                margin-top: 3px;
+                margin-bottom: 0;
+            }
+
+            #w2overlay-context-menu *, .w2ui-overlay * {
+                font-size: 14px !important;
+            }
+
+            .w2ui-grid .w2ui-grid-toolbar .w2ui-grid-search-input .w2ui-search-drop {
+                display: none;
+            }
+
+            .w2ui-menu {
+                padding: 0 0 0 0;
+                border-radius: 0;
+            }
+
+            .w2ui-menu .menu-icon {
+                display: none;
+            }
+
+            #w2overlay-context-menu .w2ui-menu .menu-icon {
+                display: inline-block;
+            }
+
+            .w2ui-menu .w2ui-menu-item {
+                padding: 6px 10px 6px 16px;
+            }
+
+            .w2ui-menu .w2ui-menu-item:hover {
+                background-color: rgb(239, 239, 239);
+            }
+
+            .w2ui-overlay .w2ui-overlay-body {
+                line-height: 1.2;
+            }
+
+            .w2ui-overlay .w2ui-overlay-body.w2ui-arrow-bottom:after {
+                display: none;
+            }
+
+            #w2overlay-toolbar-drop {
+                top: cal(var(--main-tb-height) + 7px) !important;
+                margin: 0 !important;
+            }
+
+            .w2ui-overlay .w2ui-overlay-body.w2ui-white  {
+                background-color: white;
+                border-radius: 0;
+                border: 0;
+                box-shadow: 
+                    rgba(0, 0, 0, 0.16) 0 2px 3px 0, 
+                    rgba(0, 0, 0, 0.23) 0 2px 3px 0;
+            }
+
+/* 
+            .w2ui-overlay {
+                margin: 0 !important;
+            } */
+
+            #w2overlay-toolbar-drop {
+                --tip-size: 0 !important;
+            }
+
+            .w2ui-changed {
+                background-color: rgb(232, 249, 233) !important;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="toolbar"></div>
+        <div id="grid"></div>
+    </body>
+</html>

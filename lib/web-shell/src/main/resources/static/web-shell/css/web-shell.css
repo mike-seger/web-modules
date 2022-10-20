@@ -1,6 +1,6 @@
 .terminal, .cmd, .terminal .terminal-output div div, .cmd .prompt {
     --color: rgb(104, 151, 187, 0.99);
-    --size: 2.4;
+    --size: 1.4;
 }
 
 .terminal * {

@@ -1,0 +1,22 @@
+plugins {
+    id "multimodule-config"
+}
+
+group = "com.net128.oss.web.lib.jpa.csv"
+
+dependencies {
+    implementation 'javax.servlet:javax.servlet-api'
+    implementation 'org.springframework.data:spring-data-jpa'
+    implementation 'javax.persistence:javax.persistence-api'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.13.4'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.4'
+
+    implementation "commons-io:commons-io:2.11.0"
+    implementation 'org.reflections:reflections:0.10.2'
+
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.11'
+    implementation 'org.springdoc:springdoc-openapi-data-rest:1.6.11'
+
+    compileOnly "org.projectlombok:lombok"
+    annotationProcessor "org.projectlombok:lombok"
+}

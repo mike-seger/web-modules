@@ -1,0 +1,29 @@
+spring.application.name: jpa-csv-app
+spring.jpa.hibernate.ddl-auto: none
+spring.jpa.open-in-view: true
+spring.devtools.restart.enabled:  false
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:jpa-csv
+    username: sa
+    password: sa
+    #driverClassName: org.h2.Driver
+  h2:
+    console.enabled: true
+    settings:
+      trace: true
+      web-admin-password: admin
+      web-allow-others: true
+  jackson:
+    mapper:
+      SORT_PROPERTIES_ALPHABETICALLY: true
+    serialization:
+      ORDER_MAP_ENTRIES_BY_KEYS: true
+  jpa.properties.hibernate.dialect: org.hibernate.dialect.H2Dialect
+
+spring.liquibase:
+  change-log: classpath:db/changelog/db.changelog-master.yaml
+  url: ${spring.datasource.url}
+  user: ${spring.datasource.username}
+  password: ${spring.datasource.password}

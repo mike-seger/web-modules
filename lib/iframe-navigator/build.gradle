@@ -1,0 +1,8 @@
+plugins {
+    id 'multimodule-config'
+    id 'publish-helper'
+    id 'lib-config'
+}
+
+group = 'com.net128.oss.web.lib'
+description = 'iframe-navigator library'

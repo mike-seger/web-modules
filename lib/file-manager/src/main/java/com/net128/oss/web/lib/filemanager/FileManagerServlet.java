@@ -4,11 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import net.sf.jmimemagic.Magic;
 import org.apache.commons.fileupload.ParameterParser;
+import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.stereotype.Component;
 import org.zeroturnaround.zip.ZipUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +30,13 @@ import java.util.Map;
 
 @SuppressWarnings({"ResultOfMethodCallIgnored", "SameParameterValue"})
 @MultipartConfig
+@WebServlet(
+	name = "FileManagerServlet",
+	description = "A servlet which provides basic file management capabilities",
+	urlPatterns = {"/file-manager/api"}
+)
+@Component
+@ServletComponentScan
 public class FileManagerServlet extends HttpServlet {
 	private static final int BUFFER_SIZE = 4096;
 	private static final String ENCODING = StandardCharsets.UTF_8.name();
@@ -34,9 +45,15 @@ public class FileManagerServlet extends HttpServlet {
 		.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
 		.setDateFormat(new StdDateFormat().withColonInTimeZone(true));
 
+	@Override
+	public void init() {
+		System.out.println(FileManagerServlet.class.getName()+" initialized");
+	}
+
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
+	@Override
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String path = DirectoryInfo.toPlaformPath(request.getParameter("path"));
 		String type = request.getContentType();
@@ -58,7 +75,7 @@ public class FileManagerServlet extends HttpServlet {
 				changeMode(file, mode);
 			} else if (file.isFile()) {
 				redirectToApiWeb = false;
-				downloadFile(response, file);
+				downloadFile(response, file, request.getParameter("view") == null);
 			} else if (file.isDirectory()) {
 				if (type != null && type.startsWith("multipart/form-data")) {
 					receiveUpload(file, request);
@@ -89,14 +106,14 @@ public class FileManagerServlet extends HttpServlet {
 			ZipUtil.addEntry(zipFile, file.getName(), file);
 		else if(file.isDirectory())
 			ZipUtil.pack(file, zipFile);
-		downloadFile(response, zipFile, permamentName(zipFile.getName()), "application/zip");
+		downloadFile(response, zipFile, permanentName(zipFile.getName()), "application/zip", true);
 	}
 
 	private void deleteFileOrDirectory(File fileOrDirectory) throws IOException {
 		if(fileOrDirectory.isFile())
 			fileOrDirectory.delete();
 		else if(fileOrDirectory.isDirectory()) {
-			java.nio.file.Files.walkFileTree(fileOrDirectory.toPath(),new SimpleFileVisitor<Path>() {
+			java.nio.file.Files.walkFileTree(fileOrDirectory.toPath(),new SimpleFileVisitor<>() {
 				@Override public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 					java.nio.file.Files.delete(file);
 					return FileVisitResult.CONTINUE;
@@ -164,20 +181,21 @@ public class FileManagerServlet extends HttpServlet {
 			output.write(buffer, 0, read);
 	}
 	
-	private static void downloadFile(HttpServletResponse response, File file) throws IOException {
-		downloadFile(response, file, file.getName());
+	private void downloadFile(HttpServletResponse response, File file, boolean attached) throws IOException {
+		downloadFile(response, file, file.getName(), attached);
 	}
-	private static void downloadFile(HttpServletResponse response, File file, String name) throws IOException {
-		String contentType = java.nio.file.Files.probeContentType(file.toPath());
-		downloadFile(response, file, name, contentType!=null?contentType:"application/octet-stream");
+	private void downloadFile(HttpServletResponse response, File file, String name, boolean attached) throws IOException {
+		String contentType = getContentType(file);
+		downloadFile(response, file, name, contentType!=null?contentType:"application/octet-stream", attached);
 	}
-	private static void downloadFile(HttpServletResponse response, File file, String name, String contentType) throws IOException {
+	private void downloadFile(HttpServletResponse response, File file, String name, String contentType, boolean attached) throws IOException {
 		response.setContentType(contentType);
-		response.setHeader("Content-Disposition", "attachment; filename=\""+name+"\"");
+		if(attached)
+			response.setHeader("Content-Disposition", "attachment; filename=\""+name+"\"");
 		copyStream(new FileInputStream(file),response.getOutputStream());
 	}
 	
-	private static String permamentName(String temporaryName) {
+	private static String permanentName(String temporaryName) {
 		return temporaryName.replaceAll("-\\d+(?=\\.(?!.*\\.))","");
 	}
 
@@ -194,5 +212,18 @@ public class FileManagerServlet extends HttpServlet {
 			}
 		}
 		return file;
+	}
+
+	private String getContentType(File file) throws IOException {
+		String contentType = java.nio.file.Files.probeContentType(file.toPath());
+		if(contentType==null) {
+			try {
+				contentType = Magic.getMagicMatch(file, false).getMimeType();
+			} catch (Exception e) {
+				System.out.printf("Error determining mimetype of: %s.\nRoot cause: %s",
+					file.getAbsolutePath(), e.getMessage());
+			}
+		}
+		return contentType;
 	}
 }
