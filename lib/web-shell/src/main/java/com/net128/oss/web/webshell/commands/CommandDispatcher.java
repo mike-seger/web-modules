@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.net128.oss.web.webshell.WebShell;
 import com.net128.oss.web.webshell.util.ShellInfo;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.zeroturnaround.exec.ProcessExecutor;
 import org.zeroturnaround.exec.ProcessResult;
@@ -25,21 +25,18 @@ import static org.fusesource.jansi.Ansi.ansi;
 @Service
 @Slf4j
 public class CommandDispatcher {
-
-    @SuppressWarnings({"unused", "SingleElementAnnotation", "MismatchedQueryAndUpdateOfCollection"})
-    @Value("${web-shell.hostshells:sh}")
-    private List<String> hostShells;
-
     private final String userHome = System.getProperty("user.home", ".");
     private ObjectMapper objectMapper;
     private ShellInfo shellInfo;
+    private final List<String> hostShells;
 
     private final List<String> stringOutputClasses = Arrays.asList("java.util.Date", "java.lang.Boolean", "java.lang.Void");
 
     private final List<CommandHandler> commandHandlers;
 
-    public CommandDispatcher(List<CommandHandler> commandHandlers) {
+    public CommandDispatcher(List<CommandHandler> commandHandlers, WebShell.WebShellConfiguration configuration) {
         this.commandHandlers = commandHandlers;
+        this.hostShells = configuration.getHostShells();
     }
 
     @Data

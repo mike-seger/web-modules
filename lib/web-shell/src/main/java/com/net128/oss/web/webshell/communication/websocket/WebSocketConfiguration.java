@@ -1,5 +1,6 @@
 package com.net128.oss.web.webshell.communication.websocket;
 
+import com.net128.oss.web.webshell.WebShell;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -13,8 +14,11 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     @Value("${server.servlet.context-path:}")
     private String contextPath;
 
-    @Value("${web-shell.root:}")
-    private String root;
+    private final String root;
+
+    public WebSocketConfiguration(WebShell.WebShellConfiguration configuration) {
+        this.root = configuration.getRoot();
+    }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {

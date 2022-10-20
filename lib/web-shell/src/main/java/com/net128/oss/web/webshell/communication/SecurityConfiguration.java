@@ -1,4 +1,4 @@
-package com.net128.oss.web.webshell;
+package com.net128.oss.web.webshell.communication;
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
