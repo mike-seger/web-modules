@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="JpaCsvPetDataApplication" type="Application" factoryName="Application" nameIsGenerated="true">
+    <option name="MAIN_CLASS_NAME" value="com.net128.oss.web.app.jpa.csv.petdata.JpaCsvPetDataApplication" />
+    <module name="web-modules.app.jpa-csv-petdata.main" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/app/jpa-csv-petdata" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="com.net128.oss.web.app.jpa.csv.petdata.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

@@ -1,0 +1,31 @@
+databaseChangeLog:
+- logicalFilePath: 20210904-010402.yaml
+- changeSet:
+      id: load data
+      author: petstore
+      changes:
+        - loadData:
+            file: db/changelog/data/20210904-010402-countries.tsv
+            separator: '	'
+            quotchar: '"'
+            tableName: COUNTRY
+        - loadData:
+            file: db/changelog/data/20210904-010402-species.tsv
+            separator: '	'
+            quotchar: '"'
+            tableName: SPECIES
+        - loadData:
+            file: db/changelog/data/20210904-010402-customer.tsv
+            separator: '	'
+            quotchar: '"'
+            tableName: CUSTOMER
+        - loadData:
+            file: db/changelog/data/20210904-010402-pet.tsv
+            separator: '	'
+            quotchar: '"'
+            tableName: PET
+        - loadData:
+            file: db/changelog/data/20210904-010402-purchase.tsv
+            separator: '	'
+            quotchar: '"'
+            tableName: PURCHASE

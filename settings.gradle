@@ -30,3 +30,6 @@ include('app:jpa-csv')
 
 include('lib:jpa-csv-testdata')
 include('app:jpa-csv-testdata')
+
+include('lib:jpa-csv-petdata')
+include('app:jpa-csv-petdata')

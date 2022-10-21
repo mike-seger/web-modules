@@ -93,10 +93,10 @@ public class CsvService {
 						writer.write(e);
 						count.getAndIncrement();
 					} catch (Exception ex) {
-						if (errors.size() > 0) {
+						if (errors.isEmpty()) {
 							log.error("Failed to write entity", ex);
-							errors.add(ex.getMessage());
 						}
+						errors.add(ex.getMessage());
 					}
 				});
 
