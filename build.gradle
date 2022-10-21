@@ -15,7 +15,6 @@ plugins {
 tasks.bootJar { enabled = false}
 tasks.jar { enabled = false }
 
-
 idea {
 	module {
 		downloadJavadoc = true

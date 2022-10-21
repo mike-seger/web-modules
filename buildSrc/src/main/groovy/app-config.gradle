@@ -5,7 +5,7 @@ publishing {
     publications {
         bootJava(MavenPublication) {
             //from components.java
-            groupId = 'com.net128.oss.web'
+            groupId = 'com.net128.oss.web.app'
 
             artifact tasks.named("bootJar")
             artifact sourcesJar

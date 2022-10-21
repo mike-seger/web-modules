@@ -7,7 +7,7 @@ tasks.jar {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            groupId = 'com.net128.oss.web'
+            groupId = 'com.net128.oss.web.lib'
 
             artifact tasks.named("jar")
             artifact sourcesJar
