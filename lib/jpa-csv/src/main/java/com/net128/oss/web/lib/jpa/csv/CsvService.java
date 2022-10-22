@@ -2,16 +2,23 @@ package com.net128.oss.web.lib.jpa.csv;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.deser.BeanDeserializerFactory;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.BeanSerializerFactory;
+import com.fasterxml.jackson.databind.ser.SerializerFactory;
 import com.fasterxml.jackson.dataformat.csv.CsvFactory;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.net128.oss.web.lib.jpa.csv.util.JpaMapper;
+import com.net128.oss.web.lib.jpa.csv.util.PropertyDeserializerModifier;
+import com.net128.oss.web.lib.jpa.csv.util.PropertySerializerModifier;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -168,7 +175,8 @@ public class CsvService {
 			.with(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES);
 		mapper.setConfig(newConfig);
 		mapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
-		return mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+
+		return customPropertyDeSerialization(mapper).disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
 			.findAndRegisterModules()
 			.registerModule(new JavaTimeModule())
 			.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
@@ -179,6 +187,27 @@ public class CsvService {
 		CsvMapper csvMapper = new CsvMapper();
 		csvMapper = (CsvMapper)configureMapper(csvMapper);
 		csvMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
-		return csvMapper;
+		return customPropertyDeSerialization(csvMapper);
 	}
+
+	private <T extends ObjectMapper> T customPropertyDeSerialization(T mapper) {
+		Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
+		SimpleModule simpleModule = new SimpleModule()
+				.setSerializerModifier(new PropertySerializerModifier())
+				.setDeserializerModifier(new PropertyDeserializerModifier());
+		//builder.modules(simpleModule);
+		//builder.build();
+
+//		SimpleModule module = new SimpleModule();
+//		module.addDeserializer(Item.class, new ItemDeserializer());
+		mapper.registerModule(simpleModule);
+		return mapper;
+	}
+
+//	private <T extends ObjectMapper> T customPropertySerialization(T mapper) {
+//		PropertySerializerModifier modifier = new PropertySerializerModifier();
+//		SerializerFactory sf = BeanSerializerFactory.instance.withSerializerModifier(modifier);
+//		mapper.setSerializerFactory(sf);
+//		return mapper;
+//	}
 }

@@ -19,6 +19,14 @@ public class Props {
     @Inherited
     public @interface Sortable{}
 
+    @Target({ FIELD })
+    @Retention(RetentionPolicy.RUNTIME)
+    @Inherited
+    public @interface RefMapping {
+        String keyField() default "id";
+        String[] labelField();
+    }
+
     @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
     @Retention(RetentionPolicy.RUNTIME)
     public @interface ReadOnly{}

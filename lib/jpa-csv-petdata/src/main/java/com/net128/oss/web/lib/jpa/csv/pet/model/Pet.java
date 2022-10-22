@@ -1,9 +1,6 @@
 package com.net128.oss.web.lib.jpa.csv.pet.model;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonSetter;
-import com.net128.oss.web.lib.jpa.csv.util.RefMapping;
+import com.net128.oss.web.lib.jpa.csv.util.Props;
 import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -18,15 +15,15 @@ import javax.validation.constraints.NotNull;
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Pet extends Identifiable implements RefMapping {
+public class Pet extends Identifiable {
     @NotBlank
     private String name;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "species_id")
     @Fetch(FetchMode.JOIN)
-    @JsonIgnore
     @NotNull
+    @Props.RefMapping(labelField = "name")
     private Species species;
 
     @NotNull
@@ -35,20 +32,4 @@ public class Pet extends Identifiable implements RefMapping {
 
     @Transient
     private String speciesEnc;
-
-    @JsonGetter("species")
-    public String getSpeciesEnc() {
-        if (species != null)
-            speciesEnc = toRefMapping(species.getId(), species.getName());
-        return speciesEnc;
-    }
-
-    @JsonSetter("species")
-    public void setSpeciesEnc(String speciesEnc) {
-        if (speciesEnc != null) {
-            species = new Species();
-            species.setId(fromRefMapping(speciesEnc));
-        }
-        this.speciesEnc = speciesEnc;
-    }
 }
