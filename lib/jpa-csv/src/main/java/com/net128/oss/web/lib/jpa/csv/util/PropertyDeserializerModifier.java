@@ -14,6 +14,7 @@ import java.io.IOException;
 
 /*
 https://vkuzel.com/custom-property-de-serialization-not-driven-by-jackson-annotations
+https://www.wizzairprices.com/blog/java/jackson/customized-property-serialization-in-jackson.html
  */
 
 public class PropertyDeserializerModifier extends BeanDeserializerModifier {
