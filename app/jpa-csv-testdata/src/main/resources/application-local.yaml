@@ -1,0 +1,19 @@
+
+spring:
+  thymeleaf:
+    prefix: "file:app/jpa-csv-testdata/src/main/resources/static"
+    cache: false
+
+spring.devtools.restart.poll-interval: 2s
+spring.devtools.restart.quiet-period: 1s
+
+spring.cache.period: 0
+spring.web.resources:
+  cache-period: 0
+  static-locations:
+    - "file:src/main/resources/static/"
+    - "classpath:/static/"
+    - "file:app/jpa-csv-testdata/src/main/resources/static"
+    - "file:lib/jpa-csv/src/main/resources/static"
+
+logging.level.web: debug

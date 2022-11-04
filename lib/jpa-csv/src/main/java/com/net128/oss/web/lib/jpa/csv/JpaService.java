@@ -1,7 +1,7 @@
 package com.net128.oss.web.lib.jpa.csv;
 
 import com.net128.oss.web.lib.jpa.csv.util.Attribute;
-import com.net128.oss.web.lib.jpa.csv.util.JpaMapper;
+import com.net128.oss.web.lib.jpa.csv.util.EntityMapper;
 import com.net128.oss.web.lib.jpa.csv.util.Props;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,37 +13,37 @@ import java.util.stream.Collectors;
 
 @Service
 public class JpaService {
-    private final JpaMapper jpaMapper;
+    private final EntityMapper entityMapper;
     private final JpaCsvConfiguration jpaCsvConfiguration;
 
-    public JpaService(JpaMapper jpaMapper, JpaCsvConfiguration jpaCsvConfiguration) {
-        this.jpaMapper = jpaMapper;
+    public JpaService(EntityMapper entityMapper, JpaCsvConfiguration jpaCsvConfiguration) {
+        this.entityMapper = entityMapper;
         this.jpaCsvConfiguration = jpaCsvConfiguration;
     }
 
     public List<String> getEntities() {
-        return jpaMapper.getEntities();
+        return entityMapper.getEntities();
     }
 
     public Map<String, Attribute> getAttributes(String entity) {
-        return jpaMapper.getAttributes(entity);
+        return entityMapper.getAttributes(entity);
     }
 
     @SuppressWarnings("unchecked")
     public <T> int deleteIds(String entityName, List<Long> ids) {
-        Class<T> entityClass = (Class<T>) jpaMapper.getEntityClass(entityName);
+        Class<T> entityClass = (Class<T>) entityMapper.getEntityClass(entityName);
         JpaRepository<T, Long> jpaRepository =
-                (JpaRepository<T, Long>) jpaMapper.getEntityRepository(entityClass);
+                (JpaRepository<T, Long>) entityMapper.getEntityRepository(entityClass);
         jpaRepository.deleteAllById(ids);
         return ids.size();
     }
 
     public JpaService.Configuration getConfiguration() {
         var configuration = new JpaService.Configuration();
-        jpaMapper.getEntities().forEach(e -> {
-            var idFieldName = jpaMapper.getIdFieldName(e);
+        entityMapper.getEntities().forEach(e -> {
+            var idFieldName = entityMapper.getIdFieldName(e);
            // .get(e.toLowerCase());
-            var entity = jpaMapper.getEntityClass(e);
+            var entity = entityMapper.getEntityClass(e);
             var attributes = orderedAttributes(e);
 
             configuration.addEntity(
@@ -66,7 +66,7 @@ public class JpaService {
         if(attributeOrderOverrides0==null) attributeOrderOverrides0 = Collections.emptyList();
         var attributeOrderOverrides = attributeOrderOverrides0.stream()
             .map(String::toLowerCase).collect(Collectors.toList());
-        var attributeMap = jpaMapper.getAttributes(entity);
+        var attributeMap = entityMapper.getAttributes(entity);
         var attributeOrders =
             attributeMap.values().stream().map(a -> a.getName().toLowerCase()).collect(Collectors.toList());
 

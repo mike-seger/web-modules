@@ -22,8 +22,8 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/admin/csv")
-public class CsvController {
-	private final CsvService csvService;
+public class JpaCsvController {
+	private final JpaCsvService jpaCsvService;
 	private final JpaService jpaService;
 	private final String appName;
 
@@ -33,8 +33,8 @@ public class CsvController {
 	private final static String deleteFailedMsg = "Failed deleting: ";
 	private final String invalidEntityMessage;
 
-	public CsvController(CsvService csvService, JpaService jpaService, @Value("${spring.application.name}") String appName) {
-		this.csvService = csvService;
+	public JpaCsvController(JpaCsvService jpaCsvService, JpaService jpaService, @Value("${spring.application.name}") String appName) {
+		this.jpaCsvService = jpaCsvService;
 		this.jpaService = jpaService;
 		this.appName = appName;
 		this.invalidEntityMessage = "Invalid input parameters. Valid entities are:\n"+jpaService.getEntities();
@@ -90,7 +90,7 @@ public class CsvController {
 	) {
 		ResponseEntity<String> response;
 		try (InputStream is = new ByteArrayInputStream(csvData.getBytes())) {
-			var count = csvService.readCsv(is, entity, tabSeparated, deleteAll);
+			var count = jpaCsvService.readCsv(is, entity, tabSeparated, deleteAll);
 			response = ResponseEntity.status(HttpStatus.OK).body(uploadMsg+entity+" (count="+count+")");
 		} catch(Exception e) {
 			response = failedResponseEntity(entity, e);
@@ -113,7 +113,7 @@ public class CsvController {
 				throw new IllegalArgumentException("file.originalFileName must not be empty");
 			fileName = file.getOriginalFilename();
 			var entity = fileName.replaceAll("[.].*", "");
-			csvService.readCsv(is, entity, tabSeparated, true);
+			jpaCsvService.readCsv(is, entity, tabSeparated, true);
 			response = ResponseEntity.status(HttpStatus.OK).body(uploadMsg+fileName);
 		} catch(Exception e) {
 			response = failedResponseEntity(fileName, e);
@@ -162,12 +162,12 @@ public class CsvController {
 		var realEntities = entities.contains("*")? getEntities():entities;
 		if(!zippedSingleTable && realEntities.size() == 1) {
 			response.setContentType(tabSeparated?TEXT_TSV:TEXT_CSV);
-			csvService.writeCsv(os, realEntities.get(0), tabSeparated);
+			jpaCsvService.writeCsv(os, realEntities.get(0), tabSeparated);
 		} else {
 			var fileName = appName + "-data-export-" + timestampNow() + ".zip";
 			response.setContentType(APPLICATION_ZIP);
 			response.addHeader("Content-Disposition", "attachment; filename=\""+fileName+"\"");
-			csvService.writeAllCsvZipped(os, realEntities, tabSeparated);
+			jpaCsvService.writeAllCsvZipped(os, realEntities, tabSeparated);
 		}
 	}
 

@@ -1,0 +1,23 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "gradle",
+			"id": "/Users/michael/git/web-modulesapp:jpa-csv-testdata:bootRunjpa-csv-testdata",
+			"script": "app:jpa-csv-testdata:bootRun",
+			"description": "Runs this project as a Spring Boot application.",
+			"group": "application",
+			"project": "jpa-csv-testdata",
+			"buildFile": "/Users/michael/git/web-modules/app/jpa-csv-testdata/build.gradle",
+			"rootProject": "web-modules",
+			"projectFolder": "/Users/michael/git/web-modules",
+			"workspaceFolder": "/Users/michael/git/web-modules",
+			"args": "",
+			"javaDebug": false,
+			"problemMatcher": [
+				"$gradle"
+			],
+			"label": "gradle: app:jpa-csv-testdata:bootRun"
+		}
+	]
+}
