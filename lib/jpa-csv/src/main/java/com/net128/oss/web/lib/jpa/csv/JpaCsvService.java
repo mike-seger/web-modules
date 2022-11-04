@@ -2,16 +2,13 @@ package com.net128.oss.web.lib.jpa.csv;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.deser.BeanDeserializerFactory;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.BeanSerializerFactory;
-import com.fasterxml.jackson.databind.ser.SerializerFactory;
 import com.fasterxml.jackson.dataformat.csv.CsvFactory;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.net128.oss.web.lib.jpa.csv.util.JpaMapper;
+import com.net128.oss.web.lib.jpa.csv.util.EntityMapper;
 import com.net128.oss.web.lib.jpa.csv.util.PropertyDeserializerModifier;
 import com.net128.oss.web.lib.jpa.csv.util.PropertySerializerModifier;
 import lombok.extern.slf4j.Slf4j;
@@ -31,15 +28,15 @@ import java.util.zip.ZipOutputStream;
 
 @Service
 @Slf4j
-@ComponentScan(basePackageClasses = CsvService.class)
-public class CsvService {
+@ComponentScan(basePackageClasses = JpaCsvService.class)
+public class JpaCsvService {
 	private final CsvMapper readerMapper;
 	private final CsvSchema readerSchema ;
 	private final CsvSchema readerTsvSchema;
-	private final JpaMapper jpaMapper;
+	private final EntityMapper entityMapper;
 
-	public CsvService(JpaMapper jpaMapper) {
-		this.jpaMapper = jpaMapper;
+	public JpaCsvService(EntityMapper entityMapper) {
+		this.entityMapper = entityMapper;
 		readerMapper = csvMapper()
 			.enable(CsvParser.Feature.TRIM_SPACES)
 			.enable(CsvParser.Feature.SKIP_EMPTY_LINES)
@@ -80,14 +77,14 @@ public class CsvService {
 
 	public void writeCsv(OutputStream os, String entity, Boolean tabSeparated) throws IOException {
 		if(tabSeparated==null) tabSeparated=true;
-		var entityClass = jpaMapper.getEntityClass(entity);
-		var jpaRepository = jpaMapper.getEntityRepository(entityClass);
+		var entityClass = entityMapper.getEntityClass(entity);
+		var jpaRepository = entityMapper.getEntityRepository(entityClass);
 		var jsonFactory = new CsvFactory()
 			.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false)	;
 		var writerMapper = csvMapper().schemaFor(entityClass)
 			.withLineSeparator("\n").withHeader()
 			.withColumnReordering(true)
-			.sortedBy(jpaMapper.getAttributes(entity).keySet().toArray(new String[0]));
+			.sortedBy(entityMapper.getAttributes(entity).keySet().toArray(new String[0]));
 		if(tabSeparated) writerMapper = writerMapper.withColumnSeparator('\t').withoutQuoteChar();
 		try (var cos = os) {
 			try (var writer = configureMapper(new ObjectMapper(jsonFactory))
@@ -126,9 +123,9 @@ public class CsvService {
 			tabSeparated = svInputStream.isTsv();
 			inputStream = svInputStream;
 		}
-		Class<T> entityClass = (Class<T>) jpaMapper.getEntityClass(entityName);
+		Class<T> entityClass = (Class<T>) entityMapper.getEntityClass(entityName);
 		JpaRepository<T, Long> jpaRepository =
-			(JpaRepository<T, Long>) jpaMapper.getEntityRepository(entityClass);
+			(JpaRepository<T, Long>) entityMapper.getEntityRepository(entityClass);
 		if(Boolean.TRUE.equals(deleteAll)) jpaRepository.deleteAll();
 		return saveEntities(inputStream, jpaRepository, entityClass, tabSeparated);
 	}

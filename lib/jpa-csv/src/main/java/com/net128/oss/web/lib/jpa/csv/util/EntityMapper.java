@@ -17,14 +17,14 @@ import java.util.stream.Collectors;
 
 @Repository
 @Slf4j
-public class JpaMapper {
+public class EntityMapper {
 	private final EntityManager entityManager;
 	private final Map<String, Class<?>> entityClassMap;
 	private final Map<Class<?>, JpaRepository<?, Long>> entityRepoMap;
 	private final List<String> titleRegexes;
 
-	public JpaMapper(EntityManager entityManager, Set<JpaRepository<?, Long>> jpaRepositories,
-			 @Value("${com.net128.lib.spring.jpa.csv.util.title-format-regex:}") List<String> titleRegexes) {
+	public EntityMapper(EntityManager entityManager, Set<JpaRepository<?, Long>> jpaRepositories,
+						@Value("${com.net128.lib.spring.jpa.csv.util.title-format-regex:}") List<String> titleRegexes) {
 		this.entityManager = entityManager;
 		this.titleRegexes = titleRegexes;
 		entityClassMap = getEntityClassMap();
