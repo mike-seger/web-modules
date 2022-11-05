@@ -17,6 +17,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 @Service
+@Transactional
 @Slf4j
 @ComponentScan(basePackageClasses = JpaCsvService.class)
 public class JpaCsvService {
@@ -96,6 +98,7 @@ public class JpaCsvService {
 					try {
 						writer.write(e);
 						count.getAndIncrement();
+						if(count.get() < 3) log.debug(e.toString());
 					} catch (Exception ex) {
 						if (errors.isEmpty()) {
 							log.error("Failed to write entity", ex);

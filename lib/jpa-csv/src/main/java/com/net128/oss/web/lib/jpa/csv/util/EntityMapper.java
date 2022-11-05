@@ -24,7 +24,7 @@ public class EntityMapper {
 	private final List<String> titleRegexes;
 
 	public EntityMapper(EntityManager entityManager, Set<JpaRepository<?, Long>> jpaRepositories,
-						@Value("${com.net128.lib.spring.jpa.csv.util.title-format-regex:}") List<String> titleRegexes) {
+						@Value("${com.net128.oss.web.lib.jpa.csv.util.title-format-regex:}") List<String> titleRegexes) {
 		this.entityManager = entityManager;
 		this.titleRegexes = titleRegexes;
 		entityClassMap = getEntityClassMap();

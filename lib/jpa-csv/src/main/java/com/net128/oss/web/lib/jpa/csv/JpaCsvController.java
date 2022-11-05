@@ -1,13 +1,19 @@
 package com.net128.oss.web.lib.jpa.csv;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
 import com.net128.oss.web.lib.jpa.csv.util.Attribute;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,6 +49,7 @@ public class JpaCsvController {
 	@GetMapping(value="/{entity}.csv", produces = { TEXT_CSV })
 	public void getCsv(@PathVariable String entity, HttpServletResponse response) throws IOException {
 		getCsv(List.of(entity), false, false, response);
+		log.debug("Finished GET: "+entity);
 	}
 
 	@GetMapping(produces = { APPLICATION_ZIP, TEXT_TSV, TEXT_CSV, MediaType.TEXT_PLAIN_VALUE })
@@ -56,6 +63,7 @@ public class JpaCsvController {
 		Boolean zippedSingleTable,
 		HttpServletResponse response
 	) throws IOException {
+		response = noCache(response);
 		try (OutputStream os = response.getOutputStream()) {
 			try {
 				if (CollectionUtils.isEmpty(entities)) {
@@ -77,7 +85,7 @@ public class JpaCsvController {
 	}
 
 	@PutMapping(consumes = { TEXT_TSV, TEXT_CSV, MediaType.TEXT_PLAIN_VALUE })
-	public ResponseEntity<String> putCsv(
+	public ResponseEntity<ModResponse> putCsv(
 		@RequestParam("entity")
 		String entity,
 		@Schema( allowableValues = {"true", "false"}, description = "true: TSV output, false: CSV output" )
@@ -85,21 +93,27 @@ public class JpaCsvController {
 		Boolean tabSeparated,
 		@RequestParam(name="deleteAll", required = false)
 		Boolean deleteAll,
-		@RequestBody
+		@RequestParam(name="deleteIds", required = false)
+		List<Long> deleteIds,
+		@RequestBody(required = false)
 		String csvData
 	) {
-		ResponseEntity<String> response;
+		ResponseEntity<ModResponse> response = ResponseEntity.status(HttpStatus.OK).body(new ModResponse());
+		if(deleteIds!=null && deleteIds.size()>0) response = deleteIds(entity, deleteIds);
+		if(response.getStatusCode().value()!=200 || csvData==null) return response;
 		try (InputStream is = new ByteArrayInputStream(csvData.getBytes())) {
 			var count = jpaCsvService.readCsv(is, entity, tabSeparated, deleteAll);
-			response = ResponseEntity.status(HttpStatus.OK).body(uploadMsg+entity+" (count="+count+")");
+			response = ResponseEntity.status(HttpStatus.OK).body(
+				new ModResponse(HttpStatus.OK.value(), deleteIds.size(),count, uploadMsg+entity+" (count="+count+")"));
 		} catch(Exception e) {
 			response = failedResponseEntity(entity, e);
 		}
+		log.debug("Finished PUT: "+entity);
 		return response;
 	}
 
 	@PostMapping(consumes = { TEXT_TSV, TEXT_CSV, MediaType.TEXT_PLAIN_VALUE })
-	public ResponseEntity<String> postCsv(
+	public ResponseEntity<ModResponse> postCsv(
 		@Schema( allowableValues = {"true", "false"}, description = "true: TSV output, false: CSV output" )
 		@RequestParam(name="tabSeparated", required = false)
 		Boolean tabSeparated,
@@ -107,14 +121,15 @@ public class JpaCsvController {
 		MultipartFile file
 	) {
 		var fileName="";
-		ResponseEntity<String> response;
+		ResponseEntity<ModResponse> response;
 		try (InputStream is = file.getInputStream()) {
 			if(file.getOriginalFilename() == null)
 				throw new IllegalArgumentException("file.originalFileName must not be empty");
 			fileName = file.getOriginalFilename();
 			var entity = fileName.replaceAll("[.].*", "");
 			jpaCsvService.readCsv(is, entity, tabSeparated, true);
-			response = ResponseEntity.status(HttpStatus.OK).body(uploadMsg+fileName);
+			response = ResponseEntity.status(HttpStatus.OK).body(new ModResponse(
+					HttpStatus.OK.value(), null,null, uploadMsg+fileName));
 		} catch(Exception e) {
 			response = failedResponseEntity(fileName, e);
 		}
@@ -122,10 +137,10 @@ public class JpaCsvController {
 	}
 
 	@DeleteMapping
-	public ResponseEntity<String> deleteIds(
+	public ResponseEntity<ModResponse> deleteIds(
 		@RequestParam("entity")
 		String entity,
-		@RequestParam(name="id")
+		@RequestParam(name="ids")
 		List<Long> ids) {
 		var status = HttpStatus.OK;
 		String message;
@@ -134,11 +149,16 @@ public class JpaCsvController {
 			message = deleteMsg+n;
 		} catch(Exception e) {
 			message = deleteFailedMsg+"\n"+e.getMessage();
-			if(e instanceof ValidationException || e instanceof RuntimeJsonMappingException)
+			if(e instanceof ValidationException ||
+				e instanceof RuntimeJsonMappingException ||
+				e instanceof EmptyResultDataAccessException)
 				status = HttpStatus.BAD_REQUEST;
 			else status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
-		return ResponseEntity.status(status).body(message);
+
+		log.debug("Finished DELETE: "+entity);
+		return ResponseEntity.status(status).body(new ModResponse(
+			status.value(), status.value()==200?ids.size():0,null, message));
 	}
 
 	@GetMapping(path = "/entities")
@@ -171,7 +191,7 @@ public class JpaCsvController {
 		}
 	}
 
-	private ResponseEntity<String> failedResponseEntity(String entity, Throwable t) {
+	private ResponseEntity<ModResponse> failedResponseEntity(String entity, Throwable t) {
 		var message = uploadFailedMsg+entity;
 		var status = HttpStatus.BAD_REQUEST;
 		if(t instanceof ValidationException || t instanceof RuntimeJsonMappingException) {
@@ -180,7 +200,7 @@ public class JpaCsvController {
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 			log.error(message, t);
 		}
-		return ResponseEntity.status(status).body(message);
+		return ResponseEntity.status(status).body(new ModResponse(status.value(), null,null, message));
 	}
 
 	private void writeError(HttpServletResponse response, OutputStream os, int status, String message) throws IOException {
@@ -189,6 +209,24 @@ public class JpaCsvController {
 		var osw = new OutputStreamWriter(os);
 		osw.write(message);
 		osw.flush();
+	}
+
+	private HttpServletResponse noCache(HttpServletResponse response) {
+		response.addHeader("Cache-Control", "no-store");
+		response.addHeader("Pragma", "no-cache");
+		response.addHeader("Expires", "0");
+		return response;
+	}
+
+	@Data
+	@AllArgsConstructor
+	@NoArgsConstructor
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
+	public static class ModResponse {
+		private int status=HttpStatus.OK.value();
+		private Integer deleted;
+		private Integer saved;
+		private String message;
 	}
 
 	private String timestampNow() { return isoTimeStampNow()

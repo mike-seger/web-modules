@@ -29,3 +29,23 @@ spring.liquibase:
   url: ${spring.datasource.url}
   user: ${spring.datasource.username}
   password: ${spring.datasource.password}
+
+com.net128:
+  shared.web.main-package-pat: com.net128.lib.spring.jpa.csv
+  oss.web.lib.jpa.csv:
+    attribute-order-overrides:
+      person: firstName,lastName,address,city
+    util:
+      title-format-regex: >
+        Perc$; %,
+        perSqKm$;/㎢,
+        SqKm; ㎢,
+        Change$; Δ,
+        Change %; Δ%,
+        popPer;pop. /,
+        popUrban;pop.urban,
+        population; population,
+        a population;population,
+        countryNameEn;country (EN),
+        modificationDate;mod.date,
+        medAge;age x̄

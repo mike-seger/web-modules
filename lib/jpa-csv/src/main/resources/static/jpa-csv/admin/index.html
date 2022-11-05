@@ -70,7 +70,7 @@
             function autoAdjustColumnWidth(column, values) {
                 const w = getColumnWidth(column, values)
                 column.size = w+"px"
-                console.log("columnWidth "+column.size)
+                //console.log("columnWidth "+column.size)
             }
 
             function autoAdjustColumnWidths(grid) {
@@ -158,10 +158,10 @@
                 const responseMessage = await response.text()
                 const responseText = extractText(responseMessage)
                 if(response.status==200) {
-                    alert(responseText)
+                    //alert(responseText)
                     return true
                 } else {
-                    alert(responseText)
+                    //alert(responseText)
                     console.log(responseText)
                 }
                 return false;
@@ -179,41 +179,53 @@
                 }
             }
 
-            async function remoteDeleteRowIds(recordIds) {
-                if(recordIds.length==0) return true
-                console.log("deleting: "+recordIds)
-                let uri = remoteUrl(getRemoteBaseUri() + globalState.loadedEntity.deleteUri, false, false);
-                uri += "&id=" + recordIds
-                try {
-                    const response = await fetch(uri, { method: 'DELETE' });
-                    const success = await handleFetchTextResponse(response)
-                    return success
-                } catch(e) {
-                    alert(e.message)
-                    return false
-                }
-            }
+            // async function deleteRowIds(grid, recordIds) {
+            //     if(recordIds.length==0) return true
+            //     console.log("deleting: "+recordIds)
+            //     let uri = remoteUrl(getRemoteBaseUri() + globalState.loadedEntity.deleteUri, false, false)
+            //     const idField = globalState.loadedEntity.idField
+            //     const ids=recordIds.map(rid => {
+            //         const row = grid.get(rid)
+            //         console.log(row)
+            //         return row[idField]
+            //     } )
+            //     uri += "&ids=" + ids
+            //     try {
+            //         const response = await fetch(uri, { method: 'DELETE' });
+            //         const success = await handleFetchTextResponse(response)
+            //         return success
+            //     } catch(e) {
+            //         alert(e.message)
+            //         return false
+            //     }
+            // }
 
-            async function save(records) {
-                const recordIds = globalState.deleteRowIds
-                if(recordIds.length > 0 && !remoteDeleteRowIds(recordIds)) return
-                globalState.deleteRowIds = []
-                if(records.length==0) { loadEntity(globalState.loadedEntity); return }
-                const uri = remoteUrl(getRemoteBaseUri() + globalState.loadedEntity.putUri, false, false);
+            function save(grid) {
+                const records = grid.records
+                const idField = globalState.loadedEntity.idField
+                const deleteIds=globalState.deleteRowIds.map(rid => {
+                    const row = grid.get(rid)
+                    return row[idField]
+                } )
+
+                let uri = remoteUrl(getRemoteBaseUri() + globalState.loadedEntity.putUri, false, false)
+                uri += "&deleteIds=" + deleteIds
                 try {
                     const modRecords = modifiedRecords(records)
-                    if(modRecords.length==0) { loadEntity(globalState.loadedEntity); return }
-                    const response = await fetch(uri, {
+                    if(modRecords.length==0 && deleteIds==0) return false
+                    console.log(new Date().toISOString(), uri, "SAVE START")
+                    fetch(uri, {
                         method: 'PUT',
                         headers: { 'Content-type': 'text/csv' },
                         body: d3.csvFormat(modRecords),
-                    });
-                    const success = await handleFetchTextResponse(response)
-                    if(success || recordIds.length>0) loadEntity(globalState.loadedEntity)
+                    })
+                    .then(function(response) { handleFetchTextResponse(response); return response })
+                    .then(function() { loadEntity(globalState.loadedEntity) })
+                    console.log(new Date().toISOString(), uri, "SAVE DONE")
                 } catch(e) {
-                    if(recordIds.length>0) loadEntity(globalState.loadedEntity)
                     alert(e.message)
                 }
+                return true
             }
 
             function uploadFile(file) {
@@ -305,7 +317,22 @@
                 return result
             }
 
-            function deleteRows(grid) {
+            function unmarkRowsForDeletion(grid) {
+                const selection = grid.getSelection(true)
+                const recIds = [...new Set(selection.map(cell => Number(cell.recid)))]
+                let deleteSet = new Set(globalState.deleteRowIds)
+                recIds.forEach(id => { 
+                    let theClass = grid.records[id]?.w2ui?.class
+                    if (theClass ==  "row-deleted") {
+                        delete grid.records[id].w2ui.class
+                        deleteSet.delete(id)
+                    }
+                })
+                globalState.deleteRowIds = [...deleteSet]
+                grid.refresh()
+            }
+
+            function markRowsForDeletion(grid) {
                 const selection = grid.getSelection(true)
                 const recIds = [...new Set(selection.map(cell => Number(cell.recid)))]
                 let deleteSet = new Set(globalState.deleteRowIds)
@@ -371,7 +398,8 @@
                             { id: 'insertRowsBefore', text: 'Insert new rows before', icon: 'w2ui-icon-plus' },
                             { id: 'insertRowsAfter', text: 'Insert new rows after', icon: 'w2ui-icon-plus' },
                             { text: '--' },
-                            { id: 'deleteRows', text: 'Delete selected rows', icon: 'w2ui-icon-cross' },
+                            { id: 'markForDeletion', text: 'Mark selected rows for deletion', icon: 'w2ui-icon-cross' },
+                            { id: 'unmarkForDeletion', text: 'Unmark selected rows for deletion', icon: 'w2ui-icon-plus' },
                         ],
 
                         onDelete(event) {
@@ -385,8 +413,11 @@
                             const menuId = event.detail.menuItem.id
                             event.onComplete = function() {
                                 switch(menuId) {
-                                    case 'deleteRows':
-                                        deleteRows(grid)
+                                    case 'markForDeletion':
+                                        markRowsForDeletion(grid)
+                                        break;
+                                    case 'unmarkForDeletion':
+                                        unmarkRowsForDeletion(grid)
                                         break;
                                     case 'copySelection':
                                         navigator.clipboard.writeText(getSelectionText(this))
@@ -458,7 +489,8 @@
 
                 const csvUri = getRemoteBaseUri()+entity.getUri
                 const gridElement = document.getElementById("grid")
-                fetch(csvUri)
+                console.log(new Date().toISOString(), csvUri, "START")
+                fetch(csvUri, {cache: "no-store"})
                     .then(response => response.text())
                     .then(csv => {
                         let rawData = d3.csvParse(csv)
@@ -471,10 +503,11 @@
                         w2ui.grid.buffered = w2ui.grid.total
                         if(data.length==0) insertRows(grid)
                         autoAdjustColumnWidths(w2ui.grid)
-                        console.log("w2ui.grid.columns", w2ui.grid.columns)
+                        //console.log("w2ui.grid.columns", w2ui.grid.columns)
                         //w2ui.grid.searches.forEach(search => { search.operator = 'contains' })
                         w2ui.grid.render(gridElement)
                         w2ui.grid.focus()
+                        console.log(new Date().toISOString(), csvUri, data[0])
                     }) 
             }
 
@@ -538,7 +571,7 @@
                         switch(event.target.replace(/:.+/, '')){
                             case "save":
                                 console.log('save')
-                                save(w2ui.grid.records)
+                                save(w2ui.grid)
                                 break
 
                             case "upload":
@@ -582,7 +615,7 @@
                 const configUrl = getRemoteBaseUri() + getConfigUri()
                 const response = await fetch(configUrl)
                 const configuration = await response.json()
-                console.log(configuration)
+                //console.log(configuration)
                 globalState.entities = configuration.entities
                 createToolbar(globalState.entities)
             }

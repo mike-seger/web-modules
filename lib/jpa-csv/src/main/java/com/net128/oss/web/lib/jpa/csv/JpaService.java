@@ -35,6 +35,7 @@ public class JpaService {
         JpaRepository<T, Long> jpaRepository =
                 (JpaRepository<T, Long>) entityMapper.getEntityRepository(entityClass);
         jpaRepository.deleteAllById(ids);
+        jpaRepository.flush();
         return ids.size();
     }
 

@@ -16,4 +16,7 @@ spring.web.resources:
     - "file:app/jpa-csv-testdata/src/main/resources/static"
     - "file:lib/jpa-csv/src/main/resources/static"
 
-logging.level.web: debug
+#logging.level:
+#  web: debug
+#  com.net128.oss.web.lib.jpa.csv: debug
+#  com.net128.oss.web.lib.jpa.csv.util: info
