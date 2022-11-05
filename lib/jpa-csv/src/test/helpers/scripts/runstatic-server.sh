@@ -1,6 +1,7 @@
 #!/bin/bash
 
-dir=../../../main/resources/static
+wd=$(dirname "$0")
+dir=$wd/../../../main/resources/static
 cd $dir || (echo "Failed to find: $dir"; exit)
 #python3 -m http.server 8000 &
 npx http-server --server &
@@ -11,6 +12,6 @@ echo "Opening"
 
 wait
 
-echo http://localhost:8081/jpa-csv/admin/?rbase=http%3A%2F%2Flocalhost%3A8080%2Fapi%2Fv1%2Fadmin%2Fcsv
+echo http://localhost:8082/jpa-csv/admin/?rbase=http%3A%2F%2Flocalhost%3A8080%2Fapi%2Fv1%2Fadmin%2Fcsv
 
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT

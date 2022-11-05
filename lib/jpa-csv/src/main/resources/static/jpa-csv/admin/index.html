@@ -13,7 +13,8 @@
                 entities: null,
                 loadedEntity: null,
                 selectedEntityName: null,
-                delimFormat: 'TSV'
+                delimFormat: 'TSV',
+                deleteRowIds: []
             }
 
             const globalConst = {
@@ -178,20 +179,39 @@
                 }
             }
 
+            async function remoteDeleteRowIds(recordIds) {
+                if(recordIds.length==0) return true
+                console.log("deleting: "+recordIds)
+                let uri = remoteUrl(getRemoteBaseUri() + globalState.loadedEntity.deleteUri, false, false);
+                uri += "&id=" + recordIds
+                try {
+                    const response = await fetch(uri, { method: 'DELETE' });
+                    const success = await handleFetchTextResponse(response)
+                    return success
+                } catch(e) {
+                    alert(e.message)
+                    return false
+                }
+            }
+
             async function save(records) {
-                if(records.length==0) return
+                const recordIds = globalState.deleteRowIds
+                if(recordIds.length > 0 && !remoteDeleteRowIds(recordIds)) return
+                globalState.deleteRowIds = []
+                if(records.length==0) { loadEntity(globalState.loadedEntity); return }
                 const uri = remoteUrl(getRemoteBaseUri() + globalState.loadedEntity.putUri, false, false);
                 try {
                     const modRecords = modifiedRecords(records)
-                    if(modRecords.length==0) return
+                    if(modRecords.length==0) { loadEntity(globalState.loadedEntity); return }
                     const response = await fetch(uri, {
                         method: 'PUT',
                         headers: { 'Content-type': 'text/csv' },
                         body: d3.csvFormat(modRecords),
                     });
                     const success = await handleFetchTextResponse(response)
-                    if(success) loadEntity(globalState.loadedEntity)
+                    if(success || recordIds.length>0) loadEntity(globalState.loadedEntity)
                 } catch(e) {
+                    if(recordIds.length>0) loadEntity(globalState.loadedEntity)
                     alert(e.message)
                 }
             }
@@ -288,11 +308,13 @@
             function deleteRows(grid) {
                 const selection = grid.getSelection(true)
                 const recIds = [...new Set(selection.map(cell => Number(cell.recid)))]
-                grid.records = grid.records.filter(record => ! recIds.includes(record.recid))
-                grid.total = grid.records.length
-                grid.buffered = grid.total
+                let deleteSet = new Set(globalState.deleteRowIds)
+                recIds.forEach(id => { 
+                    deleteSet.add(id)
+                    grid.set(id, { w2ui: { class: "row-deleted" }}) 
+                })
+                globalState.deleteRowIds = [...deleteSet]
                 grid.refresh()
-                console.log("Hello")
             }
 
             function insertRows(grid, after) {
@@ -745,12 +767,10 @@
                 background-color: rgb(232, 249, 233) !important;
             }
 
-            body {
-                background: rgb(110, 110, 133);
-                padding: 5px;
+            .row-deleted .w2ui-grid-data * {
+                background-color: rgb(254, 227, 227);
+                border-color: rgb(254, 227, 227);
             }
-
-
         </style>
     </head>
 
