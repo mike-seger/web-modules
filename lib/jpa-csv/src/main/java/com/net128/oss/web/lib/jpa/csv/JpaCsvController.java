@@ -3,6 +3,7 @@ package com.net128.oss.web.lib.jpa.csv;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
 import com.net128.oss.web.lib.jpa.csv.util.Attribute;
+import com.net128.oss.web.lib.jpa.csv.util.EntityMapper;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,7 +14,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,8 +21,10 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @SuppressWarnings("unused")
 @Slf4j
@@ -38,8 +40,9 @@ public class JpaCsvController {
 	private final static String deleteMsg = "Successfully deleted items: ";
 	private final static String deleteFailedMsg = "Failed deleting: ";
 	private final String invalidEntityMessage;
+	private final Set<JpaCsvControllerEntityChangeListener> jpaCsvChangeListeners = new HashSet<>();
 
-	public JpaCsvController(JpaCsvService jpaCsvService, JpaService jpaService, @Value("${spring.application.name}") String appName) {
+	public JpaCsvController(JpaCsvService jpaCsvService, JpaService jpaService, EntityMapper entityMapper,  @Value("${spring.application.name}") String appName) {
 		this.jpaCsvService = jpaCsvService;
 		this.jpaService = jpaService;
 		this.appName = appName;
@@ -63,7 +66,7 @@ public class JpaCsvController {
 		Boolean zippedSingleTable,
 		HttpServletResponse response
 	) throws IOException {
-		response = noCache(response);
+		noCache(response);
 		try (OutputStream os = response.getOutputStream()) {
 			try {
 				if (CollectionUtils.isEmpty(entities)) {
@@ -107,6 +110,7 @@ public class JpaCsvController {
 				new ModResponse(HttpStatus.OK.value(),
 						deleteIds==null?null:deleteIds.size(),count,
 						uploadMsg+entity+" (count="+count+")"));
+			callJpaCsvControllerEntityChangeListeners(List.of(entity));
 		} catch(Exception e) {
 			response = failedResponseEntity(entity, e);
 		}
@@ -132,6 +136,7 @@ public class JpaCsvController {
 			jpaCsvService.readCsv(is, entity, tabSeparated, true);
 			response = ResponseEntity.status(HttpStatus.OK).body(new ModResponse(
 					HttpStatus.OK.value(), null,null, uploadMsg+fileName));
+			callJpaCsvControllerEntityChangeListeners(List.of(entity));
 		} catch(Exception e) {
 			response = failedResponseEntity(fileName, e);
 		}
@@ -149,6 +154,7 @@ public class JpaCsvController {
 		try {
 			var n = jpaService.deleteIds(entity, ids);
 			message = deleteMsg+n;
+			callJpaCsvControllerEntityChangeListeners(List.of(entity));
 		} catch(Exception e) {
 			message = deleteFailedMsg+"\n"+e.getMessage();
 			if(e instanceof ValidationException ||
@@ -213,11 +219,24 @@ public class JpaCsvController {
 		osw.flush();
 	}
 
-	private HttpServletResponse noCache(HttpServletResponse response) {
+	private void noCache(HttpServletResponse response) {
 		response.addHeader("Cache-Control", "no-store");
 		response.addHeader("Pragma", "no-cache");
 		response.addHeader("Expires", "0");
-		return response;
+	}
+
+	@SuppressWarnings("unused")
+	public void addJpaCsvChangeListener(JpaCsvControllerEntityChangeListener jpaCsvChangeListener) {
+		jpaCsvChangeListeners.add(jpaCsvChangeListener);
+	}
+
+	@SuppressWarnings("unused")
+	public void removeJpaCsvChangeListener(JpaCsvControllerEntityChangeListener jpaCsvChangeListener) {
+		jpaCsvChangeListeners.remove(jpaCsvChangeListener);
+	}
+
+	private void callJpaCsvControllerEntityChangeListeners(List<String> entities) {
+		jpaCsvChangeListeners.forEach(l -> l.changed(entities));
 	}
 
 	@Data

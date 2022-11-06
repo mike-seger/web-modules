@@ -16,14 +16,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -156,6 +153,7 @@ public class JpaCsvService {
 						}
 					}
 				}
+				jpaRepository.flush();
 				log.info("Saved {} items of {}", count, entityClass.getSimpleName());
 			}
 			return count;
@@ -193,23 +191,10 @@ public class JpaCsvService {
 	}
 
 	private <T extends ObjectMapper> T customPropertyDeSerialization(T mapper) {
-		Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
 		SimpleModule simpleModule = new SimpleModule()
-				.setSerializerModifier(new PropertySerializerModifier())
-				.setDeserializerModifier(new PropertyDeserializerModifier());
-		//builder.modules(simpleModule);
-		//builder.build();
-
-//		SimpleModule module = new SimpleModule();
-//		module.addDeserializer(Item.class, new ItemDeserializer());
+			.setSerializerModifier(new PropertySerializerModifier())
+			.setDeserializerModifier(new PropertyDeserializerModifier());
 		mapper.registerModule(simpleModule);
 		return mapper;
 	}
-
-//	private <T extends ObjectMapper> T customPropertySerialization(T mapper) {
-//		PropertySerializerModifier modifier = new PropertySerializerModifier();
-//		SerializerFactory sf = BeanSerializerFactory.instance.withSerializerModifier(modifier);
-//		mapper.setSerializerFactory(sf);
-//		return mapper;
-//	}
 }

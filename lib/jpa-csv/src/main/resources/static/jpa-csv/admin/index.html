@@ -23,9 +23,7 @@
                 hMargin: 10,
             }
 
-            const globalColumnClassses = {
-
-            }
+            const globalColumnClasses = {}
 
             function showMessage(title, message) {
                 w2popup.open({ title: title, text: message, showClose: false, }) }
@@ -104,13 +102,19 @@
                 })
             }
 
-            function styleColumns(grid) {
-                console.log(grid)
-                grid.box.querySelectorAll(".w2ui-col-header").forEach(
+            function refreshGrid(event) {
+                console.log(event)
+                event.done(function() { styleColumns(event.owner.box || event.detail.box) })
+               // styleColumns(event.owner.box || event.detail.box)
+            }
+
+            function styleColumns(gridBox) {
+                console.log(gridBox)
+                gridBox.querySelectorAll(".w2ui-col-header").forEach(
                     div => {
                         const title = div.textContent.trim()
                         console.log(title)
-                        const clazz = globalColumnClassses[globalState.loadedEntity][title]
+                        const clazz = globalColumnClasses[globalState.loadedEntity][title]
                         if(clazz) div.classList.add(clazz)
                     }
                 )
@@ -443,14 +447,16 @@
 
                         columnClick() {},
 
-                        onRender: function(event){
-                            event.done(function() { styleColumns(this) });
-                        },
+                        // onRender: function(event){
+                        //     event.done(function() { styleColumns(this.box) })
+                        // },
+                        onRender: refreshGrid,
+                        onRefresh: refreshGrid,
                     }
                 }
 
-                globalColumnClassses[globalState.loadedEntity] = {}
-                const entityColumnClasses = globalColumnClassses[globalState.loadedEntity]
+                globalColumnClasses[globalState.loadedEntity] = {}
+                const entityColumnClasses = globalColumnClasses[globalState.loadedEntity]
                 const columnDefs = entity.attributes.map(attribute => {
                     let type = 'text'
                     switch(attribute.type) {
