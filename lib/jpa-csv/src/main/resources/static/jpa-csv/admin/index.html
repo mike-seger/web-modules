@@ -5,7 +5,7 @@
         <link rel="stylesheet" type="text/css" href="https://rawgit.com/vitmalina/w2ui/master/dist/w2ui.css">
         <script src="https://cdn.jsdelivr.net/npm/d3-dsv@3"></script>
         <script type="module">
-            import { w2ui, w2toolbar, w2grid } 
+            import { w2ui, w2toolbar, w2grid, w2popup } 
                 from 'https://rawgit.com/vitmalina/w2ui/master/dist/w2ui.es6.js'
                 //from './w2ui/w2ui.es6.js'
 
@@ -22,6 +22,13 @@
                 numberFactor: 1.2,
                 hMargin: 10,
             }
+
+            const globalColumnClassses = {
+
+            }
+
+            function showMessage(title, message) {
+                w2popup.open({ title: title, text: message, showClose: false, }) }
 
             function stringWidth(text, font = "16px sans-serif") {
                 const canvas = document.createElement("canvas")
@@ -97,6 +104,18 @@
                 })
             }
 
+            function styleColumns(grid) {
+                console.log(grid)
+                grid.box.querySelectorAll(".w2ui-col-header").forEach(
+                    div => {
+                        const title = div.textContent.trim()
+                        console.log(title)
+                        const clazz = globalColumnClassses[globalState.loadedEntity][title]
+                        if(clazz) div.classList.add(clazz)
+                    }
+                )
+            }
+
             function isStatic() {
                 const urlParams = new URLSearchParams(window.location.search)
                 const isStatic = urlParams.get('static')
@@ -162,7 +181,13 @@
                     return true
                 } else {
                     //alert(responseText)
-                    console.log(responseText)
+                    let message=responseText
+                    console.log(message)
+                    // if(responseText.startsWith("{")) {
+                    //     message = message.replaceAll('\\n','\\\\n').replaceAll('\\"','\\\\"')
+                    //     message = JSON.stringify(JSON.parse(message), null, "\t")
+                    // }
+                    showMessage("An error occurred", message)
                 }
                 return false;
             }
@@ -172,33 +197,15 @@
                     const response = await fetch(uri, {
                         method: method,
                         body: body})
-                    const success = await handleFetchTextResponse(response);
-                    if(success) loadEntity(globalState.loadedEntity)
+                    const success = await handleFetchTextResponse(response)
+                    if(success) {
+                        loadEntity(globalState.loadedEntity)
+                        showMessage("Success", "Successfully uploaded")
+                    }
                 } catch(e) {
-                    alert(e.message);
+                    showMessage("An error occurred", e.message)
                 }
             }
-
-            // async function deleteRowIds(grid, recordIds) {
-            //     if(recordIds.length==0) return true
-            //     console.log("deleting: "+recordIds)
-            //     let uri = remoteUrl(getRemoteBaseUri() + globalState.loadedEntity.deleteUri, false, false)
-            //     const idField = globalState.loadedEntity.idField
-            //     const ids=recordIds.map(rid => {
-            //         const row = grid.get(rid)
-            //         console.log(row)
-            //         return row[idField]
-            //     } )
-            //     uri += "&ids=" + ids
-            //     try {
-            //         const response = await fetch(uri, { method: 'DELETE' });
-            //         const success = await handleFetchTextResponse(response)
-            //         return success
-            //     } catch(e) {
-            //         alert(e.message)
-            //         return false
-            //     }
-            // }
 
             function save(grid) {
                 const records = grid.records
@@ -223,7 +230,7 @@
                     .then(function() { loadEntity(globalState.loadedEntity) })
                     console.log(new Date().toISOString(), uri, "SAVE DONE")
                 } catch(e) {
-                    alert(e.message)
+                    showMessage("An error occurred", e.message)
                 }
                 return true
             }
@@ -240,7 +247,7 @@
                     uri = getRemoteBaseUri() + entity.putUri
                     tabSeparated = false;
                 } else {
-                    alert("Unsupported file type: "+file.type)
+                    showMessage("An error occurred","Unsupported file type: "+file.type)
                     return;
                 }
 
@@ -434,10 +441,16 @@
                             navigator.clipboard.writeText(getSelectionText(this))
                         },
 
-                        columnClick() {}
+                        columnClick() {},
+
+                        onRender: function(event){
+                            event.done(function() { styleColumns(this) });
+                        },
                     }
                 }
 
+                globalColumnClassses[globalState.loadedEntity] = {}
+                const entityColumnClasses = globalColumnClassses[globalState.loadedEntity]
                 const columnDefs = entity.attributes.map(attribute => {
                     let type = 'text'
                     switch(attribute.type) {
@@ -450,7 +463,8 @@
                         field: attribute.columnName, 
                         text: attribute.title,
                         sortable: true, 
-                        editable: { type: type }
+                        editable: { type: type },
+                        //style: "background-color: green;",
                     }
 
                     if(type === 'list') {
@@ -473,6 +487,7 @@
                     } else if(! (type === 'text')) {
                         columnDefinition.render = type
                         columnDefinition.editable.type = type
+                        entityColumnClasses[attribute.title.trim()] = "grid-column-title-right"
                     }
                     if(attribute.hidden) columnDefinition.hidden = true
                     if(attribute.id || attribute.readOnly)
@@ -503,6 +518,7 @@
                         w2ui.grid.buffered = w2ui.grid.total
                         if(data.length==0) insertRows(grid)
                         autoAdjustColumnWidths(w2ui.grid)
+
                         //console.log("w2ui.grid.columns", w2ui.grid.columns)
                         //w2ui.grid.searches.forEach(search => { search.operator = 'contains' })
                         w2ui.grid.render(gridElement)
@@ -803,6 +819,27 @@
             .row-deleted .w2ui-grid-data * {
                 background-color: rgb(254, 227, 227);
                 border-color: rgb(254, 227, 227);
+            }
+
+            .w2ui-msg-text {
+                width: 75%;
+                display: block;
+                justify-content: left;
+                text-align: left;
+                padding-left: 10px;
+                position: relative;
+                line-height: 1.3;
+            }
+
+            .w2ui-popup {
+                left: calc((100% - 650px)/2) !important;
+                width: 650px !important;
+                height: 250px !important;
+            }
+
+            .grid-column-title-right {
+                text-align: right;
+                margin-right: -15px;
             }
         </style>
     </head>

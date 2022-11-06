@@ -1,6 +1,7 @@
 package com.net128.oss.web.lib.jpa.csv;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.csv.CsvFactory;
@@ -173,6 +174,7 @@ public class JpaCsvService {
 		final DeserializationConfig newConfig = originalConfig
 			.with(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
 			.with(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES);
+		mapper.enable(JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS.mappedFeature());
 		mapper.setConfig(newConfig);
 		mapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
 

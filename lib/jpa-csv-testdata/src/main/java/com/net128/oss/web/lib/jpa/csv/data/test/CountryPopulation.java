@@ -32,6 +32,7 @@ public class CountryPopulation extends Identifiable {
 	@Column(nullable = false)
 	private int areaSqKm;
 
+	//TODO check if serialization of null leads to NaM which cannot be deserialized
 	@Column
 	private Integer migrants;
 

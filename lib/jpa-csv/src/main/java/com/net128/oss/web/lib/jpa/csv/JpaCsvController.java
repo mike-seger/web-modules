@@ -104,7 +104,9 @@ public class JpaCsvController {
 		try (InputStream is = new ByteArrayInputStream(csvData.getBytes())) {
 			var count = jpaCsvService.readCsv(is, entity, tabSeparated, deleteAll);
 			response = ResponseEntity.status(HttpStatus.OK).body(
-				new ModResponse(HttpStatus.OK.value(), deleteIds.size(),count, uploadMsg+entity+" (count="+count+")"));
+				new ModResponse(HttpStatus.OK.value(),
+						deleteIds==null?null:deleteIds.size(),count,
+						uploadMsg+entity+" (count="+count+")"));
 		} catch(Exception e) {
 			response = failedResponseEntity(entity, e);
 		}
