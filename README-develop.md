@@ -5,6 +5,9 @@ VERSION=0.2.0 ./gradlew -i clean publish | tee /tmp/1
 
 # Nexus
 https://repo1.maven.org/maven2/com/net128/oss/web/lib/web-modules-jpa-csv/
+https://oss.sonatype.org/
+https://search.maven.org/search?q=a:web-modules-jpa-csv
+https://oss.sonatype.org/#nexus-search;quick~com.net128.oss.web
 
 # Links
 https://devanshuchandra.medium.com/maven-central-publishing-using-gradle-and-gpg-signing-47b216179dd6

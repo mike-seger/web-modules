@@ -1,5 +1,6 @@
 package com.net128.oss.web.lib.jpa.csv.data.test;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.net128.oss.web.lib.jpa.csv.util.Props;
 import lombok.*;
 
@@ -11,6 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @Setter
+@JsonPropertyOrder({"myId","city","address","firstName","lastName","country"})
 public class Person {
 	@Props.Hidden
 	@Id

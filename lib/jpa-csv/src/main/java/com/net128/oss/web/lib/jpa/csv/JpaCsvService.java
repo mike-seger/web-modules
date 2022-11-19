@@ -84,7 +84,9 @@ public class JpaCsvService {
 		var writerMapper = csvMapper().schemaFor(entityClass)
 			.withLineSeparator("\n").withHeader()
 			.withColumnReordering(true)
-			.sortedBy(entityMapper.getAttributes(entity).keySet().toArray(new String[0]));
+			//.sortedBy(entityMapper.getAttributes(entity).keySet().toArray(new String[0]))
+			;
+
 		if(tabSeparated) writerMapper = writerMapper.withColumnSeparator('\t').withoutQuoteChar();
 		try (var cos = os) {
 			try (var writer = configureMapper(new ObjectMapper(jsonFactory))
@@ -170,13 +172,16 @@ public class JpaCsvService {
 	private ObjectMapper configureMapper(ObjectMapper mapper) {
 		final DeserializationConfig originalConfig = mapper.getDeserializationConfig();
 		final DeserializationConfig newConfig = originalConfig
+
+		//.with(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
 			.with(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
 			.with(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES);
 		mapper.enable(JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS.mappedFeature());
 		mapper.setConfig(newConfig);
 		mapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
 
-		return customPropertyDeSerialization(mapper).disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+		return customPropertyDeSerialization(mapper)
+			.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
 			.findAndRegisterModules()
 			.registerModule(new JavaTimeModule())
 			.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)

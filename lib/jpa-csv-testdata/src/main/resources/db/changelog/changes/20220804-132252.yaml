@@ -184,6 +184,11 @@ databaseChangeLog:
               nullable: false
             name: sub_region_code
             type: CHAR(3)
+        - column:
+            constraints:
+              nullable: true
+            name: modified
+            type: datetime
     - createTable:
         tableName: person
         columns:

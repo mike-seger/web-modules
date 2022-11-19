@@ -13,7 +13,7 @@ import javax.persistence.Entity;
 @Getter
 @Setter
 @Props.Sortable
-public class CountryCode extends Identifiable {
+public class CountryCode extends Audited {
 	@Column(nullable = false)
 	private String name;
 

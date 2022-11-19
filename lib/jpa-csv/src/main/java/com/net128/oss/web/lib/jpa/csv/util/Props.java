@@ -31,6 +31,10 @@ public class Props {
     @Retention(RetentionPolicy.RUNTIME)
     public @interface ReadOnly{}
 
+    @Target({ TYPE_USE })
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface TailFieldOrder{}
+
     public static boolean isAnnotatedClass(Class<?> clazz, Class<?> annotationClass) {
         try {
             return Arrays.stream(clazz.getDeclaredAnnotations())
@@ -51,6 +55,10 @@ public class Props {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public static boolean isTailFieldOrder(Class<?> clazz) {
+        return isAnnotatedClass(clazz, TailFieldOrder.class);
     }
 
     public static boolean isSortable(Class<?> clazz) {

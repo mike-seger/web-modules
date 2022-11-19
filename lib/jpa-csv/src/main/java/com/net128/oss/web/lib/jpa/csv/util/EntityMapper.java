@@ -8,10 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import java.lang.reflect.Array;
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,35 +21,48 @@ public class EntityMapper {
 	private final List<String> titleRegexes;
 
 	public EntityMapper(EntityManager entityManager, Set<JpaRepository<?, Long>> jpaRepositories,
-						@Value("${com.net128.oss.web.lib.jpa.csv.util.title-format-regex:}") List<String> titleRegexes) {
+			@Value("${com.net128.oss.web.lib.jpa.csv.util.title-format-regex:}") List<String> titleRegexes) {
 		this.entityManager = entityManager;
 		this.titleRegexes = titleRegexes;
 		entityClassMap = getEntityClassMap();
 		entityRepoMap =	jpaRepositories.stream().collect(Collectors.toMap(this::getEntity, j -> j));
 	}
 
+	public List<String> getFieldNames(String entity) {
+		return getFieldNames(getEntityClass(entity));
+	}
+
+	public List<String> getFieldNames(Class<?> clazz) {
+		List<String> fields = new ArrayList<>();
+		while (clazz != Object.class) {
+			var clazzFields = Arrays.stream(clazz.getDeclaredFields())
+				.map(Field::getName).collect(Collectors.toList());
+			if(Props.isTailFieldOrder(clazz)) fields.addAll(clazzFields);
+			else fields.addAll(0, clazzFields);
+			clazz = clazz.getSuperclass();
+		}
+		return fields.stream().distinct().collect(Collectors.toList());
+	}
+
 	public LinkedHashMap<String, Attribute> getAttributes(String entity) {
 		var idFieldName = getIdFieldName(entity);
 		var metaAttributes = getMetaAttributes(entity);
-		var fieldOrder = Arrays.stream(getEntityClass(entity).getDeclaredFields())
-			.map(f -> f.getName().toLowerCase()).collect(Collectors.toList());
-		@SuppressWarnings("rawtypes")
-		var attributeComparator = (Comparator<javax.persistence.metamodel.Attribute>) (a1, a2) -> {
-			var pos1 = fieldOrder.indexOf(a1.getName().toLowerCase());
-			var pos2 = fieldOrder.indexOf(a2.getName().toLowerCase());
-			return Integer.compare(pos1, pos2);
-		};
-		var result = metaAttributes.stream()
-				.sorted(/*Comparator.comparing(javax.persistence.metamodel.Attribute::getName)*/attributeComparator).collect(
-			Collectors.toMap(
-				javax.persistence.metamodel.Attribute::getName,
-				a -> new Attribute(a, titleRegexes, a.getName().equals(idFieldName)), (v1,v2) -> v1, LinkedHashMap::new));
-		if(result.containsKey(idFieldName)) {
-			var id = result.remove(idFieldName);
-			var old = result;
-			result = new LinkedHashMap<>();
-			result.put(id.name, id);
-			result.putAll(old);
+		var clazz = getEntityClass(entity);
+		var fieldNames =  getFieldNames(clazz);
+		@SuppressWarnings("Convert2MethodRef")
+		var metaFieldMap = metaAttributes.stream()
+			.collect(Collectors.toMap(a -> a.getName(), a -> a));
+		var result = new LinkedHashMap<String, Attribute>();
+		fieldNames.forEach(name -> {
+			var attr = metaFieldMap.get(name);
+			if(attr!=null) {
+				metaFieldMap.remove(name);
+				result.put(name, new Attribute(attr, titleRegexes, attr.getName().equals(idFieldName)));
+			}
+		});
+		if(metaFieldMap.size()>0) {
+			throw new RuntimeException(String.format(
+				"Unexpected error: Could not map %s with fields: %s", entity, metaFieldMap.keySet()));
 		}
 		return result;
 	}
