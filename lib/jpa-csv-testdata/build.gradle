@@ -11,6 +11,8 @@ dependencies {
 
     implementation 'org.liquibase:liquibase-core:4.17.0'
 
+    implementation 'org.hibernate.validator:hibernate-validator:8.0.0.Final'
+
     implementation project(':lib:jpa-csv')
 
     annotationProcessor "org.projectlombok:lombok"

@@ -1,7 +1,7 @@
 package com.net128.oss.web.lib.jpa.csv.util;
 
 import com.net128.oss.web.lib.jpa.csv.Identifiable;
-import com.net128.oss.web.lib.jpa.csv.ValidationException;
+import com.net128.oss.web.lib.jpa.csv.JpaCsvValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -78,7 +78,7 @@ public class EntityMapper {
 	public Class<?> getEntityClass(String entity) {
 		var entityClass = entityClassMap.get(entity);
 		if(entityClass == null)
-			throw new ValidationException("Unable to find entity class for: "+entity);
+			throw new JpaCsvValidationException("Unable to find entity class for: "+entity);
 		return entityClass;
 	}
 
@@ -104,7 +104,7 @@ public class EntityMapper {
 			if(Identifiable.class.isAssignableFrom(entityClass)) {
 				return entityRepoMap.get(Identifiable.class);
 			}
-			throw new ValidationException("Unable to get repository for entity class: " + entityClass.getSimpleName());
+			throw new JpaCsvValidationException("Unable to get repository for entity class: " + entityClass.getSimpleName());
 		}
 		return repo;
 	}

@@ -17,7 +17,6 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 import java.util.*;
@@ -26,7 +25,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 @Service
-@Transactional
 @Slf4j
 @ComponentScan(basePackageClasses = JpaCsvService.class)
 public class JpaCsvService {
@@ -84,7 +82,7 @@ public class JpaCsvService {
 		var writerMapper = csvMapper().schemaFor(entityClass)
 			.withLineSeparator("\n").withHeader()
 			.withColumnReordering(true)
-			//.sortedBy(entityMapper.getAttributes(entity).keySet().toArray(new String[0]))
+			.sortedBy(entityMapper.getFieldNames(entity).toArray(new String[0]))
 			;
 
 		if(tabSeparated) writerMapper = writerMapper.withColumnSeparator('\t').withoutQuoteChar();
@@ -111,7 +109,7 @@ public class JpaCsvService {
 					log.info("Loaded {} items of {}", count.get(), entityClass.getSimpleName());
 				} else {
 					var message = String.format("Failed to load %d items", items.size() * count.get());
-					throw new ValidationException(message);
+					throw new JpaCsvValidationException(message);
 				}
 				writer.flush();
 			}
@@ -147,7 +145,7 @@ public class JpaCsvService {
 						count++;
 					} catch(Exception e) {
 						if(e instanceof javax.validation.ValidationException || (e.getMessage()!=null && e.getMessage().toLowerCase(Locale.ROOT).contains("constraint"))) {
-							throw new ValidationException(String.format(
+							throw new JpaCsvValidationException(String.format(
 									"On input line %d:\nAttempted to save: %s.\nEncountered error: %s",
 									count+2, item, e.getMessage()));
 						} else {

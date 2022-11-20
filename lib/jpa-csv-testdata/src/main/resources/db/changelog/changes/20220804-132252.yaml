@@ -52,7 +52,7 @@ databaseChangeLog:
             constraints:
               nullable: false
             name: iso_country
-            type: VARCHAR(255)
+            type: VARCHAR(2)
         - column:
             constraints:
               nullable: false

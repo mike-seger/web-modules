@@ -105,7 +105,6 @@
             function refreshGrid(event) {
                 console.log(event)
                 event.done(function() { styleColumns(event.owner.box || event.detail.box) })
-               // styleColumns(event.owner.box || event.detail.box)
             }
 
             function styleColumns(gridBox) {
@@ -231,7 +230,10 @@
                         body: d3.csvFormat(modRecords),
                     })
                     .then(function(response) { handleFetchTextResponse(response); return response })
-                    .then(function() { loadEntity(globalState.loadedEntity) })
+                    .then(function(response) { 
+                        if(response.status === 200)
+                            loadEntity(globalState.loadedEntity) 
+                    })
                     console.log(new Date().toISOString(), uri, "SAVE DONE")
                 } catch(e) {
                     showMessage("An error occurred", e.message)

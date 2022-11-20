@@ -10,21 +10,24 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 import java.io.*;
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @SuppressWarnings("unused")
 @Slf4j
@@ -76,7 +79,7 @@ public class JpaCsvController {
 					writeCsv(os, entities, tabSeparated, zippedSingleTable, response);
 				}
 			}  catch(Exception e) {
-				if(e instanceof ValidationException)
+				if(e instanceof JpaCsvValidationException)
 					writeError(response, os, HttpServletResponse.SC_BAD_REQUEST, invalidEntityMessage);
 				else {
 					writeError(response, os, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
@@ -87,6 +90,7 @@ public class JpaCsvController {
 		}
 	}
 
+	@Transactional
 	@PutMapping(consumes = { TEXT_TSV, TEXT_CSV, MediaType.TEXT_PLAIN_VALUE })
 	public ResponseEntity<ModResponse> putCsv(
 		@RequestParam("entity")
@@ -111,6 +115,8 @@ public class JpaCsvController {
 						deleteIds==null?null:deleteIds.size(),count,
 						uploadMsg+entity+" (count="+count+")"));
 			callJpaCsvControllerEntityChangeListeners(List.of(entity));
+		} catch(ValidationException| DataIntegrityViolationException e) {
+			throw e;
 		} catch(Exception e) {
 			response = failedResponseEntity(entity, e);
 		}
@@ -118,6 +124,7 @@ public class JpaCsvController {
 		return response;
 	}
 
+	@Transactional
 	@PostMapping(consumes = { TEXT_TSV, TEXT_CSV, MediaType.TEXT_PLAIN_VALUE })
 	public ResponseEntity<ModResponse> postCsv(
 		@Schema( allowableValues = {"true", "false"}, description = "true: TSV output, false: CSV output" )
@@ -137,12 +144,15 @@ public class JpaCsvController {
 			response = ResponseEntity.status(HttpStatus.OK).body(new ModResponse(
 					HttpStatus.OK.value(), null,null, uploadMsg+fileName));
 			callJpaCsvControllerEntityChangeListeners(List.of(entity));
+		} catch(ConstraintViolationException e) {
+			throw e;
 		} catch(Exception e) {
 			response = failedResponseEntity(fileName, e);
 		}
 		return response;
 	}
 
+	@Transactional
 	@DeleteMapping
 	public ResponseEntity<ModResponse> deleteIds(
 		@RequestParam("entity")
@@ -155,9 +165,12 @@ public class JpaCsvController {
 			var n = jpaService.deleteIds(entity, ids);
 			message = deleteMsg+n;
 			callJpaCsvControllerEntityChangeListeners(List.of(entity));
+		} catch(ConstraintViolationException e) {
+			throw e;
 		} catch(Exception e) {
 			message = deleteFailedMsg+"\n"+e.getMessage();
 			if(e instanceof ValidationException ||
+				e instanceof JpaCsvValidationException ||
 				e instanceof RuntimeJsonMappingException ||
 				e instanceof EmptyResultDataAccessException)
 				status = HttpStatus.BAD_REQUEST;
@@ -202,13 +215,45 @@ public class JpaCsvController {
 	private ResponseEntity<ModResponse> failedResponseEntity(String entity, Throwable t) {
 		var message = uploadFailedMsg+entity;
 		var status = HttpStatus.BAD_REQUEST;
-		if(t instanceof ValidationException || t instanceof RuntimeJsonMappingException) {
+		if(t instanceof JpaCsvValidationException || t instanceof RuntimeJsonMappingException) {
 			message += "\n" + t.getMessage();
 		} else {
-			status = HttpStatus.INTERNAL_SERVER_ERROR;
 			log.error(message, t);
 		}
-		return ResponseEntity.status(status).body(new ModResponse(status.value(), null,null, message));
+		throw new CsvUpdateException(message);
+	}
+
+	static class CsvUpdateException extends RuntimeException { CsvUpdateException(String message) { super(message); }}
+
+	@ExceptionHandler({ DataIntegrityViolationException.class})
+	public ResponseEntity<Map<String, Object>> yourExceptionHandler(DataIntegrityViolationException e) {
+		Map<String, Object> response = new LinkedHashMap<>();
+		response.put("message", e.getMessage());
+		var cause = e.getCause();
+		while(cause!=null) {
+			response.put("cause", cause.getMessage());
+			cause = cause.getCause();
+		}
+		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler({ ConstraintViolationException.class})
+	public ResponseEntity<Map<String, Object>> yourExceptionHandler(ConstraintViolationException e) {
+		Map<String, Object> response = new HashMap<>();
+		Map<String, String> errors = new HashMap<>();
+		Set<ConstraintViolation<?>> constraintViolations = e.getConstraintViolations();
+
+		for (ConstraintViolation<?> constraintViolation : constraintViolations) {
+			errors.put(constraintViolation.getPropertyPath().toString() , constraintViolation.getMessage());
+		}
+
+		response.put("error", errors);
+		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler({CsvUpdateException.class, ValidationException.class})
+	ResponseEntity<?> handleCsvUpdateException(Exception ex, WebRequest request) {
+		return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 
 	private void writeError(HttpServletResponse response, OutputStream os, int status, String message) throws IOException {
