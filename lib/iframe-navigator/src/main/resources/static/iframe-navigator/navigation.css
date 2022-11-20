@@ -1,5 +1,6 @@
 :root {
     --sidebar-width: 150px;
+    --sidebar-switcher-width: 16px;
 }
 
 body { 
@@ -24,12 +25,18 @@ h3 {
     padding: 5px 0 0 8px;
 }
 
+#sidenav h1, #sidenav h2, #sidenav h3  {
+    white-space: nowrap;
+    user-select: none;
+}
+
 #sidenav a {
     padding: 6px 8px 6px 8px;
     text-decoration: none;
     font-size: 15px;
     color: #adadad;
     display: block;
+    user-select: none;
 }
 
 #sidenav a:hover {
@@ -38,6 +45,10 @@ h3 {
 
 #sidenav a.selected {
     color: #83a2ff;
+}
+
+#sidenav.mini * {
+    display: none;
 }
 
 #main {
@@ -64,4 +75,28 @@ h3 {
 @media screen and (max-height: 450px) {
     #sidenav {padding-top: 5px;}
     #sidenav a {font-size: 18px;}
+}
+
+#sidenav-switcher {
+    width: var(--sidebar-switcher-width);
+    height: var(--sidebar-switcher-width);
+    position: absolute;
+    top: 0;
+    left: calc(var(--sidebar-width) - var(--sidebar-switcher-width));
+    z-index: 1000;
+    background-color: white;
+    clip-path: polygon(100% 0, 0 0, 100% 100%);
+}
+
+#sidenav.mini {
+    --sidebar-width: 8px;
+}
+
+#sidenav-switcher.mini {
+    clip-path: none;
+    display: block;
+    background-color: #222222;
+    width: 8px;
+    left: 0;
+    height: calc(100vh);
 }
