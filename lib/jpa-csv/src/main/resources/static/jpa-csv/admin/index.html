@@ -176,6 +176,22 @@
                 return text
             }
 
+            function formatJsonResponse(responseText) {
+                let message=responseText.trim()
+                if(message.startsWith("{")) {
+                    //message = message.replaceAll('\\n','\\\\n').replaceAll('\"','\\"')
+                    message = JSON.stringify(JSON.parse(message), null, "\t")
+                    message = message.replace(/^[{}]$/gm, '')
+                    message = message.replace(/^\t/gm, '')
+                    message = message.replace(/^}$/gm, '')
+                    message = message.replace(/^"error": {$/gm, '')
+                    message = message.replace(/{$/gm, '')
+                    message = message.replace(/["]/gm, '')
+                    message = message.replace(/\\/gm, '')
+                    message = message.replace(/^\t*/gm, '')
+                }
+                return message.trim()
+            }
             async function handleFetchTextResponse(response) {
                 const responseMessage = await response.text()
                 const responseText = extractText(responseMessage)
@@ -183,14 +199,8 @@
                     //alert(responseText)
                     return true
                 } else {
-                    //alert(responseText)
-                    let message=responseText
-                    console.log(message)
-                    // if(responseText.startsWith("{")) {
-                    //     message = message.replaceAll('\\n','\\\\n').replaceAll('\\"','\\\\"')
-                    //     message = JSON.stringify(JSON.parse(message), null, "\t")
-                    // }
-                    showMessage("An error occurred", message)
+                    console.log(responseText)
+                    showMessage("An error occurred", formatJsonResponse(responseText))
                 }
                 return false;
             }
@@ -525,7 +535,20 @@
                 })
 
                 let grid = new w2grid(config.grid)
+
                 //grid.on('*', (event) => { console.log(event) })
+
+                grid.on('keydown', (event) => { 
+                    console.log(event)
+                    let ev = event.detail.originalEvent
+                    if(ev.ctrlKey || ev.metaKey) {
+                        if(ev.key.toLowerCase()==='z') {
+                            console.log('undo')
+                            updateSelectionText(w2ui.grid, null)
+                            event.preventDefault()
+                        }
+                    }
+                })
 
                 w2ui.grid.columns = columnDefs
                 w2ui.grid.lineNumberWidth = 58
@@ -868,6 +891,8 @@
                 padding-left: 10px;
                 position: relative;
                 line-height: 1.3;
+                height: calc(100% - 35px);
+                white-space: pre-wrap;
             }
 
             .w2ui-popup {
