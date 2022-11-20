@@ -305,14 +305,29 @@
                     recids.forEach(recid => grid.refreshRow(recid))
                 }
 
-            function deleteSelectionText(grid) {
+            function updateSelectionText(grid, text) {
                 const selection = grid.getSelection(true)
                 const columnIndexes = [...new Set(selection.map(cell => Number(cell.column)))].sort((a,b) => a-b)
                 const indexes = [...new Set(selection.map(cell => Number(cell.index)))].sort((a,b) => a-b)
-                indexes.forEach(index => 
+                indexes.forEach(index => {
                     columnIndexes.forEach(column => { 
-                        grid.editChange({ type: 'custom', value: null}, index, column) })      
-                )
+                        if(text===null) {
+                            //text = grid.records[index][grid.columns[column].field]
+                            if(grid.records[index].w2ui) {
+                                if(grid.records[index].w2ui.changes) {
+                                    let field = grid.columns[column].field
+                                    delete grid.records[index].w2ui.changes[field]
+                                    grid.refreshCell(grid.records[index], field)
+                                }
+                                //delete grid.records[index].w2ui
+                                
+                                //grid.refreshRow(grid.records[index].recid)
+                            }
+                        }
+                        else grid.editChange({ type: 'custom', value: text}, index, column) 
+                    }) 
+                    grid.refreshRow(grid.records[index].recid)
+                })
             }
 
             function getSelectionText(grid) {
@@ -416,7 +431,7 @@
                         ],
 
                         onDelete(event) {
-                            deleteSelectionText(this)
+                            updateSelectionText(this, "")
                             refreshSelection(this) 
                             event.preventDefault()
                         },
@@ -524,7 +539,7 @@
                         w2ui.grid.records = data
                         w2ui.grid.total = w2ui.grid.records.length
                         w2ui.grid.buffered = w2ui.grid.total
-                        if(data.length==0) insertRows(grid)
+                        if(data.length==0) insertRows(w2ui.grid)
                         autoAdjustColumnWidths(w2ui.grid)
 
                         //console.log("w2ui.grid.columns", w2ui.grid.columns)
@@ -581,6 +596,11 @@
                         },
                         { type: 'break' },
                         { type: 'button',
+                            id: 'undo',
+                            style: iconButtonStyle,
+                            text: '&#xe90d;'
+                        },
+                        { type: 'button',
                             id: 'refresh',
                             style: iconButtonStyle,
                             text: '&#xe908;'
@@ -607,6 +627,11 @@
                                 console.log('download')
                                 downloadSvFile(globalState.selectedEntityName, 
                                     globalState.delimFormat, w2ui.grid.records)
+                                break
+
+                            case "undo":
+                                console.log('undo')
+                                updateSelectionText(w2ui.grid, null)
                                 break
 
                             case "refresh":
