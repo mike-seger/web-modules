@@ -6,6 +6,7 @@ import lombok.*;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.PositiveOrZero;
 
 @Entity
 @ToString
@@ -20,5 +21,6 @@ public class Car extends Identifiable {
 
 	@Column(nullable = false)
 	@NotNull
+	@PositiveOrZero
 	private double totalPrice;
 }

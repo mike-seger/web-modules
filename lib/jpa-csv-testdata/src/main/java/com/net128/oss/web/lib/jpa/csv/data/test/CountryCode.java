@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.validation.constraints.Pattern;
 
 @Entity
 @ToString
@@ -18,9 +19,11 @@ public class CountryCode extends Audited {
 	private String name;
 
 	@Column(nullable = false)
+	@Pattern(regexp="[A-Z]{2}")
 	private String alpha2;
 
 	@Column(nullable = false)
+	@Pattern(regexp="[A-Z]{3}")
 	private String alpha3;
 
 	@Column(nullable = false)

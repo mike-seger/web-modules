@@ -30,7 +30,7 @@ public class City extends Identifiable {
 	private String country;
 
 	@Column(nullable = false)
-	@Pattern(regexp="[A-Z][A-Z]")
+	@Pattern(regexp="[A-Z]{2}")
 	private String isoCountry;
 
 	@Column(nullable = false)
