@@ -312,16 +312,12 @@
                 indexes.forEach(index => {
                     columnIndexes.forEach(column => { 
                         if(text===null) {
-                            //text = grid.records[index][grid.columns[column].field]
                             if(grid.records[index].w2ui) {
                                 if(grid.records[index].w2ui.changes) {
                                     let field = grid.columns[column].field
                                     delete grid.records[index].w2ui.changes[field]
-                                    grid.refreshCell(grid.records[index], field)
+                                    //grid.refreshCell(grid.records[index], field)
                                 }
-                                //delete grid.records[index].w2ui
-                                
-                                //grid.refreshRow(grid.records[index].recid)
                             }
                         }
                         else grid.editChange({ type: 'custom', value: text}, index, column) 
@@ -362,12 +358,22 @@
 
             function markRowsForDeletion(grid) {
                 const selection = grid.getSelection(true)
-                const recIds = [...new Set(selection.map(cell => Number(cell.recid)))]
+                //const recIds = [...new Set(selection.map(cell => Number(cell.recid)))]
+                const indexes = [...new Set(selection.map(cell => Number(cell.index)))]
+                let idField = globalState.loadedEntity.idField
                 let deleteSet = new Set(globalState.deleteRowIds)
-                recIds.forEach(id => { 
-                    deleteSet.add(id)
-                    grid.set(id, { w2ui: { class: "row-deleted" }}) 
+                let immediateDeleteSet = new Set()
+                indexes.forEach(index => { 
+                    let record = grid.records[index]
+                    let id = record.recid
+                    if(record[idField]) {
+                        deleteSet.add(id)
+                        grid.set(id, { w2ui: { class: "row-deleted" }}) 
+                    } else if(record[idField] === null) {
+                        immediateDeleteSet.add(id)
+                    }
                 })
+                grid.remove(...immediateDeleteSet)
                 globalState.deleteRowIds = [...deleteSet]
                 grid.refresh()
             }
