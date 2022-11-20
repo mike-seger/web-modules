@@ -4,10 +4,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.time.ZonedDateTime;
+import java.sql.Time;
+import java.time.*;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -52,9 +50,17 @@ public class Attribute {
 		} else if (javaType.equals(Instant.class)
 				||javaType.equals(ZonedDateTime.class)
 				||javaType.equals(OffsetDateTime.class)
+				||javaType.equals(LocalDateTime.class)
 			) {
 			type = AttributeType.DateTime;
-		} else if (javaType.equals(Date.class) || javaType.equals(LocalDate.class)) {
+		} else if (javaType.equals(Time.class)
+				|| javaType.equals(OffsetTime.class)
+				|| javaType.equals(LocalTime.class)
+			) {
+			type = AttributeType.Time;
+		} else if (javaType.equals(Date.class)
+				|| javaType.equals(LocalDate.class)
+			) {
 			type = AttributeType.Date;
 		} else type = AttributeType.String;
 		hidden = Props.isHiddenField(attribute.getJavaMember().getDeclaringClass(), name);
