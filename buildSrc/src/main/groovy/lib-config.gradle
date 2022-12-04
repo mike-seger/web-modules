@@ -7,9 +7,10 @@ tasks.jar {
 publishing {
     publications {
         mavenJava(MavenPublication) {
+            from components.java
+
             groupId = 'com.net128.oss.web.lib'
 
-            artifact tasks.named("jar")
             artifact sourcesJar
             artifact javadocJar
 
