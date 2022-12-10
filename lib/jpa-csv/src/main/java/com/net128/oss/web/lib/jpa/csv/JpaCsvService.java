@@ -34,6 +34,8 @@ public class JpaCsvService {
 	private final CsvSchema readerSchema ;
 	private final CsvSchema readerTsvSchema;
 	private final EntityMapper entityMapper;
+	private final List<SaveListener> preSaveListeners;
+	private final List<SaveListener> postSaveListeners;
 
 	public JpaCsvService(EntityMapper entityMapper) {
 		this.entityMapper = entityMapper;
@@ -46,6 +48,8 @@ public class JpaCsvService {
 		readerSchema = CsvSchema.emptySchema()
 			.withHeader().withLineSeparator(new String(CsvSchema.DEFAULT_LINEFEED));
 		readerTsvSchema = readerSchema.withColumnSeparator('\t').withoutQuoteChar();
+		preSaveListeners = new ArrayList<>();
+		postSaveListeners = new ArrayList<>();
 	}
 
 	public void writeAllCsvZipped(OutputStream os,
@@ -133,40 +137,87 @@ public class JpaCsvService {
 		return saveEntities(inputStream, jpaRepository, entityClass, tabSeparated);
 	}
 
+	public interface SaveListener {
+		<T> void listen(Class<T> entityClass, JpaRepository<T, Long> jpaRepository, List<T> entities);
+	}
+
+	@SuppressWarnings("unused")
+	public void addPreSaveListener(SaveListener preSaveListener) {
+		preSaveListeners.add(preSaveListener);
+	}
+
+	@SuppressWarnings("unused")
+	public void addPostSaveListener(SaveListener postSaveListener) {
+		postSaveListeners.add(postSaveListener);
+	}
+
 	private <T> int saveEntities(InputStream inputStream, JpaRepository<T, Long> jpaRepository,
 			 Class<T> entityClass, boolean tabSeparated) throws IOException {
 		try (InputStream is = inputStream) {
 			var reader = genericCsvReader(entityClass, is, tabSeparated);
 			var count = 0;
-			if (reader != null) {
-				while (reader.hasNext()) {
-					T item = null;
-					try {
-						item = reader.next();
-						jpaRepository.save(item);
-						count++;
-					} catch(Exception e) {
-						if(e instanceof javax.validation.ValidationException || (e.getMessage()!=null && e.getMessage().toLowerCase(Locale.ROOT).contains("constraint"))) {
-							throw new JpaCsvValidationException(String.format(
-									"On input line %d:\nAttempted to save: %s.\nEncountered error: %s",
-									count+2, item, e.getMessage()));
-						} else {
-							throw e;
-						}
+			var readErrors = new ArrayList<String>();
+			var items = new ArrayList<T>();
+			while (reader.hasNext()) {
+				T item = null;
+				try {
+					item = reader.next();
+					items.add(item);
+					count++;
+				} catch (Exception e) {
+					readErrors.add("Data line: " + count + ", item: " + item + ", error: " + e.getMessage());
+				}
+			}
+
+			if(readErrors.size()>0) {
+				throw new JpaCsvValidationException("Error reading CSV data: " + String.join("\n", readErrors));
+			}
+
+			for(var l : preSaveListeners) {
+				l.listen(entityClass, jpaRepository, items);
+			}
+
+			count = 0;
+			var persistErrors = new ArrayList<String>();
+			for(T item : items) {
+				try {
+					jpaRepository.save(item);
+					count++;
+				} catch(Exception e) {
+					if(e instanceof javax.validation.ValidationException || (e.getMessage()!=null && e.getMessage().toLowerCase(Locale.ROOT).contains("constraint"))) {
+						persistErrors.add(String.format(
+							"On data line %d:\nAttempted to save: %s.\nEncountered error: %s",
+							count+1, item, e.getMessage()));
+					} else {
+						throw e;
 					}
 				}
-				jpaRepository.flush();
-				log.info("Saved {} items of {}", count, entityClass.getSimpleName());
 			}
+
+			if(persistErrors.size()>0) {
+				throw new JpaCsvValidationException("Error persisting CSV data: " + String.join("\n", persistErrors));
+			}
+
+			jpaRepository.flush();
+
+			for(var l : postSaveListeners) {
+				l.listen(entityClass, jpaRepository, items);
+			}
+
+			log.info("Saved {} items of {}", count, entityClass.getSimpleName());
 			return count;
 		}
 	}
 
 	private <T> MappingIterator<T> genericCsvReader(Class<T> clazz,
 			InputStream inputStream, boolean tabSeparated) throws IOException {
-		return readerMapper.readerFor(clazz)
+		MappingIterator<T> result = readerMapper.readerFor(clazz)
 			.with(tabSeparated?readerTsvSchema:readerSchema)
 			.readValues(inputStream);
+		if(result == null) {
+			throw new IOException("Cannot find csvReader for: "+clazz.getName());
+		}
+		return result;
 	}
 
 	private ObjectMapper configureMapper(ObjectMapper mapper) {

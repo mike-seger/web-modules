@@ -1,0 +1,5 @@
+city,population,iso_country,country,geo_id,latitude,longitude,modified
+Shanghai,22315474,CN,China,1796236,31.22222,121.45806,2021-09-20
+Beijing,18960744,CN,China,1816670,39.9075,116.39723,2022-03-07
+Shenzhen,17494398,CN,China,1795565,22.54554,114.0683,2022-03-09
+Guangzhou,16096724,CN,China,1809858,23.11667,113.25,2022-03-09
