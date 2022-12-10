@@ -16,6 +16,7 @@ public abstract class Identifiable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
