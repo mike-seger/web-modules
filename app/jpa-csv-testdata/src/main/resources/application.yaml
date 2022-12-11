@@ -49,3 +49,5 @@ com.net128:
         countryNameEn;country (EN),
         modificationDate;mod.date,
         medAge;age x̄
+
+browser: chrome
