@@ -5,11 +5,8 @@ import lombok.SneakyThrows;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
-
 @LazyComponent
-public class IndexPage extends AppPage {
+public class NavigationPage extends AppPage {
 
 	@FindBy(xpath = "//h3")
 	public WebElement title;
@@ -20,6 +17,6 @@ public class IndexPage extends AppPage {
 
 	@SneakyThrows
 	@Override public boolean isAt() {
-		return wait.withTimeout(Duration.of(1, ChronoUnit.SECONDS)).until((d) -> title.isDisplayed());
+		return wait.until((d) -> title.isDisplayed());
 	}
 }

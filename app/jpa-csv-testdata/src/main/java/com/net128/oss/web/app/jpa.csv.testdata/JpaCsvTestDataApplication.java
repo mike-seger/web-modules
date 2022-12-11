@@ -12,7 +12,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import javax.validation.constraints.NotNull;
 
 @SpringBootApplication
-//@EnableAspectJAutoProxy
 @Import({JpaCsv.class, JpaCsvTestData.class, JpaCsvControllerEntityChangeLogger.class})
 public class JpaCsvTestDataApplication {
 	public static void main(String[] args) {

@@ -30,7 +30,7 @@ public abstract class BasePage {
         PageFactory.initElements(this.driver, this);
     }
     public abstract boolean isAt();
-    public <T> void waitElement(T elementAttr) {
+    public <T> T waitElement(T elementAttr) {
         if (elementAttr
             .getClass()
             .getName()
@@ -39,8 +39,10 @@ public abstract class BasePage {
         } else {
             wait.until(ExpectedConditions.visibilityOf((WebElement) elementAttr));
         }
+        return elementAttr;
     }
-    public <T> void waitElements(T elementAttr) {
+    public <T> T we(T elementAttr) { return waitElement(elementAttr); }
+    public <T> T waitElements(T elementAttr) {
         if (elementAttr
             .getClass()
             .getName()
@@ -49,6 +51,7 @@ public abstract class BasePage {
         } else {
             wait.until(ExpectedConditions.visibilityOfAllElements((WebElement) elementAttr));
         }
+        return elementAttr;
     }
     //Click Method by using JAVA Generics (You can use both By or Web element)
     public <T> void click(T elementAttr) {

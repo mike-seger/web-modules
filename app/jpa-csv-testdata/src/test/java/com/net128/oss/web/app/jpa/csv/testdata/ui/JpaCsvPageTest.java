@@ -1,6 +1,5 @@
 package com.net128.oss.web.app.jpa.csv.testdata.ui;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -9,14 +8,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Execution(ExecutionMode.CONCURRENT)
-@Slf4j
-public class IndexPageTest extends AppPageTest {
+public class JpaCsvPageTest extends AppPageTest {
     @Autowired
-    private IndexPage indexPage;
+    private JpaCsvPage page;
 
     @Test
     public void openTest() {
-        indexPage.open();
-        assertTrue(indexPage.isAt());
+        page.open();
+        assertTrue(page.isAt());
+    }
+
+    @Test
+    public void loadEntityTest() {
+        page.open();
+        page.loadCountryEntity();
     }
 }
