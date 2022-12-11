@@ -1,6 +1,5 @@
 package com.net128.oss.web.app.jpa.csv.testdata.ui;
 
-import com.net128.oss.web.lib.support.selenium.BasePage;
 import com.net128.oss.web.lib.support.selenium.annotation.LazyComponent;
 import lombok.SneakyThrows;
 import org.openqa.selenium.WebElement;
