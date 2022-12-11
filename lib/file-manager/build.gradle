@@ -4,11 +4,12 @@ plugins {
     id 'lib-config'
 }
 
+ext['jackson.version'] = '2.14.1'
+
 dependencies {
     implementation "org.springframework.boot:spring-boot-starter-web"
 
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.1'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'net.sf.jmimemagic:jmimemagic:0.1.5'
     implementation 'org.zeroturnaround:zt-zip:1.14'
     implementation 'commons-fileupload:commons-fileupload:1.4'

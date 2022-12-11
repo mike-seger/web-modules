@@ -2,13 +2,15 @@ plugins {
 	id 'multimodule-config'
 }
 
+ext['jackson.version'] = '2.14.1'
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation "org.springframework.boot:spring-boot-starter-actuator"
 	implementation "org.springframework.boot:spring-boot-starter-data-jpa"
 	implementation "org.springframework.boot:spring-boot-starter-validation"
 
-	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.13.4'
+	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv'
 
 	implementation 'org.liquibase:liquibase-core:4.17.0'
 

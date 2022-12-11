@@ -14,7 +14,6 @@ dependencies {
     implementation 'javax.persistence:javax.persistence-api'
     implementation 'org.springframework.data:spring-data-jpa'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     api 'com.fasterxml.jackson.core:jackson-annotations'
 
     implementation "commons-io:commons-io:2.11.0"
@@ -29,10 +28,8 @@ dependencies {
     compileOnly "org.projectlombok:lombok"
     annotationProcessor "org.projectlombok:lombok"
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation "org.springframework.boot:spring-boot-starter-data-jpa"
-    testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
     testImplementation 'org.assertj:assertj-core:3.23.1'
     testImplementation 'com.h2database:h2:2.1.214'
 }

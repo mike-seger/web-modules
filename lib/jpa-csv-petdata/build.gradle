@@ -9,11 +9,8 @@ dependencies {
     implementation 'org.springframework.data:spring-data-jpa'
     implementation 'javax.persistence:javax.persistence-api'
 
-    implementation "org.hibernate.validator:hibernate-validator:6.2.0.Final"
+    implementation "org.hibernate.validator:hibernate-validator:8.0.0.Final"
     implementation 'org.liquibase:liquibase-core:4.17.0'
-
-    //implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.4'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.13.4'
 
     implementation project(':lib:jpa-csv')
 
