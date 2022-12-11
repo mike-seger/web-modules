@@ -1,6 +1,6 @@
-package com.net128.oss.web.app.jpa.csv.testdata.ui.framework.util;
+package com.net128.oss.web.lib.support.selenium.util;
 
-import com.net128.oss.web.app.jpa.csv.testdata.ui.framework.annotation.LazyComponent;
+import com.net128.oss.web.lib.support.selenium.annotation.LazyComponent;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.springframework.beans.factory.annotation.Autowired;

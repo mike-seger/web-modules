@@ -1,6 +1,6 @@
 package com.net128.oss.web.lib.support.selenium;
 
-import com.net128.oss.web.app.jpa.csv.testdata.ui.framework.util.LogUtil;
+import com.net128.oss.web.lib.support.selenium.util.LogUtil;
 import lombok.SneakyThrows;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -10,10 +10,12 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
 
+@ComponentScan(basePackageClasses = {BaseTest.class} )
 public abstract class BasePage {
     @Autowired
     protected WebDriver driver;

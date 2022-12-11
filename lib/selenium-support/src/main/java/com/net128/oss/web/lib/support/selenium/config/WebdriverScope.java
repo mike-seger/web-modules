@@ -1,4 +1,4 @@
-package com.net128.oss.web.app.jpa.csv.testdata.ui.framework.config;
+package com.net128.oss.web.lib.support.selenium.config;
 
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;

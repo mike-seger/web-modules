@@ -1,6 +1,6 @@
-package com.net128.oss.web.app.jpa.csv.testdata.ui.framework.config;
+package com.net128.oss.web.lib.support.selenium.config;
 
-import com.net128.oss.web.app.jpa.csv.testdata.ui.framework.annotation.LazyComponent;
+import com.net128.oss.web.lib.support.selenium.annotation.LazyComponent;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;

@@ -1,7 +1,7 @@
-package com.net128.oss.web.app.jpa.csv.testdata.ui.framework.config;
+package com.net128.oss.web.lib.support.selenium.config;
 
-import com.net128.oss.web.app.jpa.csv.testdata.ui.framework.annotation.LazyConfiguration;
-import com.net128.oss.web.app.jpa.csv.testdata.ui.framework.annotation.WebdriverScopeBean;
+import com.net128.oss.web.lib.support.selenium.annotation.LazyConfiguration;
+import com.net128.oss.web.lib.support.selenium.annotation.WebdriverScopeBean;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeOptions;

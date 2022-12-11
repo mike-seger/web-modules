@@ -1,4 +1,4 @@
-package com.net128.oss.web.app.jpa.csv.testdata.ui.framework.config;
+package com.net128.oss.web.lib.support.selenium.config;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;

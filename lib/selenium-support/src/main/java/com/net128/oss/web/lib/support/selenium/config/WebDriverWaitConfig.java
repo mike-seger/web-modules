@@ -1,6 +1,6 @@
-package com.net128.oss.web.app.jpa.csv.testdata.ui.framework.config;
+package com.net128.oss.web.lib.support.selenium.config;
 
-import com.net128.oss.web.app.jpa.csv.testdata.ui.framework.annotation.LazyConfiguration;
+import com.net128.oss.web.lib.support.selenium.annotation.LazyConfiguration;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;

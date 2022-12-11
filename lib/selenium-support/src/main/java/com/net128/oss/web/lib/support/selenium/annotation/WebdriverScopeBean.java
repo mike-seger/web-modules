@@ -1,4 +1,4 @@
-package com.net128.oss.web.app.jpa.csv.testdata.ui.framework.annotation;
+package com.net128.oss.web.lib.support.selenium.annotation;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;

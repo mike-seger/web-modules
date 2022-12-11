@@ -1,7 +1,8 @@
-package com.net128.oss.web.app.jpa.csv.testdata.ui.framework.config;
+package com.net128.oss.web.lib.support.selenium.config;
 
-import com.net128.oss.web.app.jpa.csv.testdata.ui.framework.annotation.LazyConfiguration;
-import com.net128.oss.web.app.jpa.csv.testdata.ui.framework.annotation.WebdriverScopeBean;
+import com.net128.oss.web.lib.support.selenium.annotation.LazyConfiguration;
+import com.net128.oss.web.lib.support.selenium.annotation.WebdriverScopeBean;
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
@@ -10,7 +11,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
-import io.github.bonigarcia.wdm.WebDriverManager;
 
 @Profile("!grid")
 @LazyConfiguration
