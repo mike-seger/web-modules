@@ -1,4 +1,4 @@
-package com.net128.oss.web.app.jpa.csv.testdata.ui.framework;
+package com.net128.oss.web.lib.support.selenium;
 
 import com.net128.oss.web.app.jpa.csv.testdata.ui.framework.util.LogUtil;
 import lombok.SneakyThrows;

@@ -1,6 +1,6 @@
 package com.net128.oss.web.app.jpa.csv.testdata.ui;
 
-import com.net128.oss.web.app.jpa.csv.testdata.ui.framework.BaseTest;
+import com.net128.oss.web.lib.support.selenium.BaseTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;

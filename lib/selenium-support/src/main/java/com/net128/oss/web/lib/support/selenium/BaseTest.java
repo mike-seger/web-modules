@@ -1,7 +1,7 @@
-package com.net128.oss.web.app.jpa.csv.testdata.ui.framework;
+package com.net128.oss.web.lib.support.selenium;
 
 import com.net128.oss.web.app.jpa.csv.testdata.ui.framework.annotation.LazyAutowired;
-import com.net128.oss.web.app.jpa.csv.testdata.ui.framework.annotation.SeleniumTest;
+import com.net128.oss.web.lib.support.selenium.annotation.SeleniumTest;
 import lombok.Getter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

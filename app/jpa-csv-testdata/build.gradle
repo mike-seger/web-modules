@@ -14,6 +14,7 @@ dependencies {
 	implementation project(':lib:jpa-csv-testdata')
 	implementation project(':lib:iframe-navigator')
 
+	testImplementation project(':lib:selenium-support')
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.assertj:assertj-core:3.23.1'
 	testImplementation 'org.seleniumhq.selenium:selenium-java:4.7.1'

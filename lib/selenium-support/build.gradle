@@ -1,0 +1,20 @@
+plugins {
+    id "multimodule-config"
+    id 'publish-helper'
+    id 'lib-config'
+    id 'java-library'
+}
+
+group = "com.net128.oss.web.lib.support.selenium"
+
+dependencies {
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+
+    implementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework:spring-beans:5.3.24'
+    implementation 'org.springframework:spring-context:5.3.24'
+    implementation 'org.assertj:assertj-core:3.23.1'
+    implementation 'org.seleniumhq.selenium:selenium-java:4.7.1'
+    implementation 'io.github.bonigarcia:webdrivermanager:5.3.1'
+}

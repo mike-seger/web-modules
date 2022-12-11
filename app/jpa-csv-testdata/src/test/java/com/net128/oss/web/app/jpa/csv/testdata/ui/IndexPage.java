@@ -1,6 +1,6 @@
 package com.net128.oss.web.app.jpa.csv.testdata.ui;
 
-import com.net128.oss.web.app.jpa.csv.testdata.ui.framework.BasePage;
+import com.net128.oss.web.lib.support.selenium.BasePage;
 import com.net128.oss.web.app.jpa.csv.testdata.ui.framework.annotation.LazyComponent;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;

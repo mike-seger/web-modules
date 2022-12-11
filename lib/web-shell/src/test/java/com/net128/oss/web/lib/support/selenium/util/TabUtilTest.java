@@ -1,4 +1,4 @@
-package com.net128.oss.web.lib.util;
+package com.net128.oss.web.lib.support.selenium.util;
 
 import com.net128.oss.web.webshell.util.TabUtils;
 import org.junit.jupiter.api.Assertions;

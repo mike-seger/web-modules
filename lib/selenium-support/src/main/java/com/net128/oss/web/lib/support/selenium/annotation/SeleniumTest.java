@@ -1,7 +1,6 @@
-package com.net128.oss.web.app.jpa.csv.testdata.ui.framework.annotation;
+package com.net128.oss.web.lib.support.selenium.annotation;
 
-import com.net128.oss.web.app.jpa.csv.testdata.JpaCsvTestDataApplication;
-import com.net128.oss.web.app.jpa.csv.testdata.ui.framework.BaseTest;
+import com.net128.oss.web.lib.support.selenium.BaseTest;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
@@ -15,7 +14,7 @@ import java.lang.annotation.Target;
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {JpaCsvTestDataApplication.class})
-@ComponentScan(basePackageClasses = {JpaCsvTestDataApplication.class, BaseTest.class} )
+@SpringBootTest
+@ComponentScan(basePackageClasses = {BaseTest.class} )
 public @interface SeleniumTest {
 }
