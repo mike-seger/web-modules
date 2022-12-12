@@ -41,7 +41,7 @@ public abstract class BasePage {
         }
         return elementAttr;
     }
-    public <T> T we(T elementAttr) { return waitElement(elementAttr); }
+    public <T> T w4(T elementAttr) { return waitElement(elementAttr); }
     public <T> T waitElements(T elementAttr) {
         if (elementAttr
             .getClass()
