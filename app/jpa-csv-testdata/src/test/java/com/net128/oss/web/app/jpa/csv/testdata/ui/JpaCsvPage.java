@@ -1,6 +1,7 @@
 package com.net128.oss.web.app.jpa.csv.testdata.ui;
 
 import com.net128.oss.web.lib.support.selenium.annotation.LazyComponent;
+import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
@@ -47,9 +48,8 @@ public class JpaCsvPage extends AppPage {
 		actions.contextClick(cell2).perform();
 		w4(insertNewRowsBefore).click();
 		assertEquals("", w4(cell2).getText());
-		cell2.click();
+		w4(cell2).click();
 		enterRowValues(cellValues);
-		cell1.click();
 		assertEquals(cellValues.get(0), cell2.getText());
 	}
 
