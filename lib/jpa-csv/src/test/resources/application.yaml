@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:jpa-csv
+    url: jdbc:h2:mem:jpa-csv;DB_CLOSE_ON_EXIT=FALSE
     username: sa
     password: sa
 
