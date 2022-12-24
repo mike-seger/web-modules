@@ -15,14 +15,15 @@ h3 {
 
 #sidenav {
     height: 100%;
-    width: calc(var(--sidebar-width) - 8px);
+    /*width: calc(var(--sidebar-width) - 8px); */
+    width: fit-content;
     position: fixed;
     z-index: 1;
     top: 0;
     left: 0;
     background-color: #111;
     overflow-x: hidden;
-    padding: 5px 0 0 8px;
+    padding: 5px 15px 0 8px;
 }
 
 #sidenav h1, #sidenav h2, #sidenav h3  {
