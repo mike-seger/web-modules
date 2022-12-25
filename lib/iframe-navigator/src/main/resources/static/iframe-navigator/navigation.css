@@ -6,6 +6,7 @@
 body { 
     font-family: "Lato", sans-serif; 
     color: white;
+    background-color: black;
 }
 
 h3 {
@@ -71,6 +72,8 @@ h3 {
     width: 100%;
     height: 100%;
     display: block;
+    color: black;
+    background-color: white;
 }
 
 @media screen and (max-height: 450px) {
