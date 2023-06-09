@@ -1,17 +1,27 @@
 dependencies {
     liquibaseRuntime 'org.liquibase:liquibase-core:4.22.0'
-    liquibaseRuntime 'com.h2database:h2:2.1.214'
-    liquibaseRuntime(sourceSets.getByName("main").compileClasspath)
+    //liquibaseRuntime 'com.h2database:h2:2.1.214'
+    liquibaseRuntime sourceSets.main.compileClasspath
+    liquibaseRuntime sourceSets.main.runtimeClasspath
+    liquibaseRuntime files('src/main')
+    liquibaseRuntime sourceSets.main.output
 }
+
+liquibaseDiff.dependsOn compileJava
+liquibaseDiffChangeLog.dependsOn compileJava
+liquibaseGenerateChangelog.dependsOn compileJava
+def ts= new Date().format("yyyyMMdd-HHmmss")
+
+//             url 'jdbc:h2:mem:testdb'
 
 liquibase {
     activities {
         main {
-            changeLogFile 'src/main/resources/db/changelog/db.changelog-master.yaml'
-            url 'jdbc:h2:mem:testdb'
+            changeLogFile "src/main/resources/db/changelog/changes/${ts}.yaml"
+            url 'jdbc:h2:file:./.data/diff'
             username 'sa'
             password ''
-            referenceUrl 'jdbc:h2:mem:testdb'
+            referenceUrl 'jdbc:h2:file:./.data/diff'
             referenceUsername 'sa'
             referencePassword ''
         }

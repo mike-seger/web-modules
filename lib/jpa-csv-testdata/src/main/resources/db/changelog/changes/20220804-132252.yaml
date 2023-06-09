@@ -189,40 +189,40 @@ databaseChangeLog:
               nullable: true
             name: modified
             type: datetime
-#    - createTable:
-#        tableName: person
-#        columns:
-#        - column:
-#            autoIncrement: true
-#            startWith: 1
-#            constraints:
-#              nullable: false
-#              primaryKey: true
-#              primaryKeyName: personPK
-#            name: my_id
-#            type: BIGINT
-#        - column:
-#            constraints:
-#              nullable: false
-#            name: address
-#            type: VARCHAR(255)
-#        - column:
-#            constraints:
-#              nullable: false
-#            name: city
-#            type: VARCHAR(255)
-#        - column:
-#            constraints:
-#              nullable: false
-#            name: country
-#            type: VARCHAR(255)
-#        - column:
-#            constraints:
-#              nullable: false
-#            name: first_name
-#            type: VARCHAR(255)
-#        - column:
-#            constraints:
-#              nullable: false
-#            name: last_name
-#            type: VARCHAR(255)
+    - createTable:
+        tableName: person
+        columns:
+        - column:
+            autoIncrement: true
+            startWith: 1
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: personPK
+            name: my_id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: address
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: city
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: country
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: first_name
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: last_name
+            type: VARCHAR(255)
