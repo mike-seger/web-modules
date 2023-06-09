@@ -13,8 +13,8 @@ local.properties
 # Project exclude paths
 /buildSrc/build/
 
-.data/*
-.data/.keep
+.data
+!.data/.keep
 
 *.log
 *~
