@@ -11,7 +11,7 @@ import javax.validation.constraints.NotBlank;
 @Entity
 @ToString
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @Getter
 @Setter
 @JsonPropertyOrder({"myId","city","address","firstName","lastName","country"})
@@ -23,11 +23,7 @@ public class Person {
 
 	@Column(nullable = false)
 	@NotBlank
-	private String city;
-
-	@Column(nullable = false)
-	@NotBlank
-	private String address;
+	private Address address;
 
 	@Column(nullable = false)
 	@NotBlank
@@ -36,9 +32,4 @@ public class Person {
 	@Column(nullable = false)
 	@NotBlank
 	private String lastName;
-
-	@Column(nullable = false)
-	@NotNull
-	@Enumerated(EnumType.STRING)
-	private Country country;
 }

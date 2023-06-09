@@ -51,3 +51,5 @@ com.net128:
         medAge;age x̄
 
 browser: chrome
+
+server.port: 8081
