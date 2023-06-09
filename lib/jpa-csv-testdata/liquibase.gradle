@@ -1,14 +1,21 @@
-
+dependencies {
+    liquibaseRuntime 'org.liquibase:liquibase-core:4.22.0'
+    liquibaseRuntime 'com.h2database:h2:2.1.214'
+    liquibaseRuntime(sourceSets.getByName("main").compileClasspath)
+}
 
 liquibase {
     activities {
         main {
-            changeLogFile 'src/main/resources/db/changelog/db.changelog.yaml'
+            changeLogFile 'src/main/resources/db/changelog/db.changelog-master.yaml'
             url 'jdbc:h2:mem:testdb'
             username 'sa'
             password ''
+            referenceUrl 'jdbc:h2:mem:testdb'
+            referenceUsername 'sa'
+            referencePassword ''
         }
 
-        runList =  project.ext.runList
+        //runList =  project.ext.runList
     }
 }

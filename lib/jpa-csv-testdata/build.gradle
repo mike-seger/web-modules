@@ -10,9 +10,6 @@ dependencies {
     implementation 'org.springframework.data:spring-data-jpa'
     implementation 'javax.persistence:javax.persistence-api'
 
-    liquibaseRuntime 'org.liquibase:liquibase-core:4.22.0'
-    liquibaseRuntime 'com.h2database:h2:2.1.214'
-
     implementation 'org.hibernate.validator:hibernate-validator:8.0.0.Final'
 
     implementation project(':lib:jpa-csv')
@@ -24,17 +21,4 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j:8.0.31'
 }
 
-liquibase {
-    activities {
-        main {
-            changeLogFile 'src/main/resources/db/changelog/db.changelog-master.yaml'
-            url 'jdbc:h2:mem:testdb'
-            username 'sa'
-            password ''
-        }
-
-        //runList =  project.ext.runList
-    }
-}
-
-//apply from: "liquibase.gradle"
+apply from: "liquibase.gradle"
