@@ -1,15 +1,12 @@
 databaseChangeLog:
-- logicalFilePath: 20220804-132252.yaml
 - changeSet:
-    id: 1659619377113-1
-    author: adminux
+    id: 1686358971672-1
+    author: michael (generated)
     changes:
     - createTable:
-        tableName: car
         columns:
         - column:
             autoIncrement: true
-            startWith: 1
             constraints:
               nullable: false
               primaryKey: true
@@ -25,13 +22,16 @@ databaseChangeLog:
             constraints:
               nullable: false
             name: total_price
-            type: DOUBLE
+            type: DOUBLE PRECISION
+        tableName: car
+- changeSet:
+    id: 1686358971672-2
+    author: michael (generated)
+    changes:
     - createTable:
-        tableName: city
         columns:
         - column:
             autoIncrement: true
-            startWith: 1
             constraints:
               nullable: false
               primaryKey: true
@@ -46,16 +46,6 @@ databaseChangeLog:
         - column:
             constraints:
               nullable: false
-            name: population
-            type: BIGINT
-        - column:
-            constraints:
-              nullable: false
-            name: iso_country
-            type: VARCHAR(2)
-        - column:
-            constraints:
-              nullable: false
             name: country
             type: VARCHAR(255)
         - column:
@@ -66,24 +56,90 @@ databaseChangeLog:
         - column:
             constraints:
               nullable: false
+            name: iso_country
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
             name: latitude
-            type: DOUBLE
+            type: DOUBLE PRECISION
         - column:
             constraints:
               nullable: false
             name: longitude
-            type: DOUBLE
+            type: DOUBLE PRECISION
         - column:
             constraints:
               nullable: false
             name: modified
             type: date
+        - column:
+            constraints:
+              nullable: false
+            name: population
+            type: BIGINT
+        tableName: city
+- changeSet:
+    id: 1686358971672-3
+    author: michael (generated)
+    changes:
     - createTable:
-        tableName: country_population
         columns:
         - column:
             autoIncrement: true
-            startWith: 1
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: country_codePK
+            name: id
+            type: BIGINT
+        - column:
+            name: modified
+            type: TIMESTAMP
+        - column:
+            constraints:
+              nullable: false
+            name: alpha2
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: alpha3
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: region
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: region_code
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: sub_region
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: sub_region_code
+            type: VARCHAR(255)
+        tableName: country_code
+- changeSet:
+    id: 1686358971672-4
+    author: michael (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
             constraints:
               nullable: false
               primaryKey: true
@@ -102,7 +158,7 @@ databaseChangeLog:
             type: VARCHAR(255)
         - column:
             name: fert_rate
-            type: DOUBLE
+            type: DOUBLE PRECISION
         - column:
             name: med_age
             type: INT
@@ -120,81 +176,32 @@ databaseChangeLog:
             name: pop_per_sq_km
             type: INT
         - column:
+            name: pop_urban_perc
+            type: DOUBLE PRECISION
+        - column:
             constraints:
               nullable: false
             name: population
             type: BIGINT
         - column:
-            name: pop_urban_perc
-            type: DOUBLE
-        - column:
             constraints:
               nullable: false
             name: world_perc
-            type: DOUBLE
+            type: DOUBLE PRECISION
         - column:
             constraints:
               nullable: false
             name: year_change_perc
-            type: DOUBLE
+            type: DOUBLE PRECISION
+        tableName: country_population
+- changeSet:
+    id: 1686358971672-5
+    author: michael (generated)
+    changes:
     - createTable:
-        tableName: country_code
         columns:
         - column:
             autoIncrement: true
-            startWith: 1
-            constraints:
-              nullable: false
-              primaryKey: true
-              primaryKeyName: country_codePK
-            name: id
-            type: BIGINT
-        - column:
-            constraints:
-              nullable: false
-            name: name
-            type: VARCHAR(255)
-        - column:
-            constraints:
-              nullable: false
-            name: alpha2
-            type: CHAR(2)
-        - column:
-              constraints:
-                nullable: false
-              name: alpha3
-              type: CHAR(3)
-        - column:
-            constraints:
-              nullable: false
-            name: region
-            type: VARCHAR(255)
-        - column:
-            constraints:
-              nullable: false
-            name: sub_region
-            type: VARCHAR(255)
-        - column:
-            constraints:
-              nullable: false
-            name: region_code
-            type: CHAR(3)
-        - column:
-            constraints:
-              nullable: false
-            name: sub_region_code
-            type: CHAR(3)
-        - column:
-            constraints:
-              nullable: true
-            name: modified
-            type: datetime
-    - createTable:
-        tableName: person
-        columns:
-        - column:
-            autoIncrement: true
-            startWith: 1
             constraints:
               nullable: false
               primaryKey: true
@@ -202,19 +209,13 @@ databaseChangeLog:
             name: my_id
             type: BIGINT
         - column:
-            constraints:
-              nullable: false
-            name: address
-            type: VARCHAR(255)
-        - column:
-            constraints:
-              nullable: false
             name: city
             type: VARCHAR(255)
         - column:
-            constraints:
-              nullable: false
             name: country
+            type: VARCHAR(255)
+        - column:
+            name: street
             type: VARCHAR(255)
         - column:
             constraints:
@@ -226,3 +227,5 @@ databaseChangeLog:
               nullable: false
             name: last_name
             type: VARCHAR(255)
+        tableName: person
+
