@@ -12,7 +12,7 @@ databaseChangeLog:
             tableName: car
         - loadData:
             relativeToChangelogFile: true
-            file: ../data/CITY.csv
+            file: ../data/CITY.csv.gz
             separator: ','
             quotchar: '"'
             tableName: city
