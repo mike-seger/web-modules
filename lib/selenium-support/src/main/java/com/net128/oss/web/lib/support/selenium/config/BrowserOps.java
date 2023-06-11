@@ -14,6 +14,7 @@ import java.util.logging.Level;
 public class BrowserOps {
     public ChromeOptions getChromeOptions() {
         ChromeOptions chromeOptions = new ChromeOptions();
+        chromeOptions.addArguments("--remote-allow-origins=*");
         LoggingPreferences logPrefs = new LoggingPreferences();
         logPrefs.enable(LogType.BROWSER, Level.ALL);
         chromeOptions.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
