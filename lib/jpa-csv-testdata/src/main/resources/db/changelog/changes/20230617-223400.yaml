@@ -1,0 +1,63 @@
+databaseChangeLog:
+  - logicalFilePath: 20230617-223400.yaml
+  - changeSet:
+      id: inheritance tables
+      author: adminux
+      changes:
+        - createTable:
+            tableName: Y
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: yattr1
+                  type: varchar(255)
+              - column:
+                  name: yattr2
+                  type: varchar(255)
+        - createTable:
+            tableName: X
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: xattr1
+                  type: varchar(255)
+              - column:
+                  name: xattr2
+                  type: varchar(255)
+        - addForeignKeyConstraint:
+            baseTableName: X
+            baseColumnNames: id
+            constraintName: FK_X_Y
+            referencedTableName: Y
+            referencedColumnNames: id
+        - createTable:
+            tableName: W
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: wattr1
+                  type: varchar(255)
+              - column:
+                  name: wattr2
+                  type: varchar(255)
+        - addForeignKeyConstraint:
+            baseTableName: W
+            baseColumnNames: id
+            constraintName: FK_W_Y
+            referencedTableName: Y
+            referencedColumnNames: id

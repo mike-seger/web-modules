@@ -94,7 +94,7 @@ public class EntityMapper {
 
 	private Map<String, Class<?>> getEntityClassMap() {
 		return entityManager.getMetamodel().getEntities()
-			.stream().collect(Collectors.toMap(
+			.stream().filter(e -> !Props.isHiddenClass(e.getJavaType())).collect(Collectors.toMap(
 				e -> NameUtil.camel2Snake(e.getName()), javax.persistence.metamodel.Type::getJavaType));
 	}
 

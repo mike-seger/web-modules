@@ -69,6 +69,10 @@ public class Props {
         return isAnnotatedField(clazz, ReadOnly.class, field);
     }
 
+    public static boolean isHiddenClass(Class<?> clazz) {
+        return isAnnotatedClass(clazz, Hidden.class);
+    }
+
     public static boolean isHiddenField(Class<?> clazz, String field) {
         return isAnnotatedField(clazz, Hidden.class, field);
     }
