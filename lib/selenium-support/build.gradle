@@ -15,7 +15,8 @@ dependencies {
     implementation 'org.springframework:spring-beans:5.3.24'
     implementation 'org.springframework:spring-context:5.3.24'
     implementation 'org.assertj:assertj-core:3.23.1'
-    implementation 'org.seleniumhq.selenium:selenium-java:4.10.0'
-    implementation 'io.github.bonigarcia:webdrivermanager:5.3.3'
+
+    implementation 'org.seleniumhq.selenium:selenium-java:4.11.0'
+    implementation 'io.github.bonigarcia:webdrivermanager:5.5.0'
     implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
 }

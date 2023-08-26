@@ -5,6 +5,8 @@ import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PositiveOrZero;
 
@@ -14,13 +16,17 @@ import javax.validation.constraints.PositiveOrZero;
 @NoArgsConstructor(force = true)
 @Getter
 @Setter
-public class Car extends Identifiable {
+public class Employee extends Identifiable {
 	@Column(nullable = false)
 	@NotBlank
-	private String brand;
+	private String name;
 
 	@Column(nullable = false)
 	@NotNull
 	@PositiveOrZero
-	private double totalPrice;
+	private double salary;
+
+	@ManyToOne
+	@JoinColumn(referencedColumnName = "name")
+	private Department department;
 }
