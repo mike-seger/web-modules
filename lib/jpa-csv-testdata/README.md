@@ -10,7 +10,7 @@ https://www.geeksforgeeks.org/how-to-implement-aop-in-spring-boot-application/
 
 ## Sync DB
 ```
-../../gradlew liquibaseUpdate -Prunlist=update
+../../gradlew liquibaseUpdate -PrunList=update
 ```
 
 ### Generate DB diff from java entiities

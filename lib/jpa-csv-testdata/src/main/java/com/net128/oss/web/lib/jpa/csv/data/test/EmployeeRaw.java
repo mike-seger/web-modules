@@ -11,8 +11,6 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Table(name = "employee")
-public class Employee extends EmployeeBase {
-	@ManyToOne
-	@JoinColumn(name = "departmentId", referencedColumnName = "departmentId")
-	private Department department;
+public class EmployeeRaw extends EmployeeBase {
+	private Long departmentId;
 }

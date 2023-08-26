@@ -13,6 +13,10 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Setter
 public class Department extends Identifiable {
+	@Column(nullable = false, unique = true)
+	@NotBlank
+	private Long departmentId;
+
 	@Column(nullable = false)
 	@NotBlank
 	private String name;
