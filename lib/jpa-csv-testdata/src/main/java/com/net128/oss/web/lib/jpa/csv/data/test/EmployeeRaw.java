@@ -12,5 +12,6 @@ import javax.persistence.*;
 @Setter
 @Table(name = "employee")
 public class EmployeeRaw extends EmployeeBase {
+	@Column
 	private Long departmentId;
 }
