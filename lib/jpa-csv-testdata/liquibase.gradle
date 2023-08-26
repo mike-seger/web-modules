@@ -1,7 +1,7 @@
 dependencies {
-    liquibaseRuntime 'org.liquibase:liquibase-core:4.22.0'
+    liquibaseRuntime 'org.liquibase:liquibase-core:4.23.1'
     liquibaseRuntime 'org.liquibase:liquibase-groovy-dsl:3.0.3'
-    liquibaseRuntime 'org.liquibase.ext:liquibase-hibernate5:4.22.0'
+    liquibaseRuntime 'org.liquibase.ext:liquibase-hibernate5:4.23.1'
     liquibaseRuntime 'info.picocli:picocli:4.7.4'
     liquibaseRuntime sourceSets.main.allSource
     liquibaseRuntime sourceSets.main.compileClasspath
@@ -12,16 +12,35 @@ dependencies {
 liquibaseDiff.dependsOn compileJava
 liquibaseDiffChangeLog.dependsOn compileJava
 liquibaseGenerateChangelog.dependsOn compileJava
+
 def ts= new Date().format("yyyyMMdd-HHmmss")
+def dbUrl = 'jdbc:h2:file:./.data/diff'
+def dbUser = 'sa'
+def dbPassword = ''
+def dbDriver = 'org.h2.Driver'
 
 liquibase {
     activities {
         main {
             changeLogFile "src/main/resources/db/changelog/changes/${ts}.yaml"
-            url 'jdbc:h2:file:./.data/diff'
-            username 'sa'
-            password ''
-            referenceUrl 'hibernate:spring:com.net128.oss.web.lib.jpa.csv.data.test?dialect=org.hibernate.dialect.H2Dialect&hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy&hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy'
+            url dbUrl
+            username dbUser
+            password dbPassword
+            driver dbDriver
+            referenceUrl 'hibernate:spring:com.net128.oss.web.lib.jpa.csv.data.test?' +
+                'dialect=org.hibernate.dialect.H2Dialect&' +
+                'hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy&' +
+                'hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy'
         }
+        update {
+            url dbUrl
+            username dbUser
+            password dbPassword
+            driver dbDriver
+            changeLogFile 'db/changelog/db.changelog-master.yaml'
+        }
+        runList = 'main, update'
     }
 }
+
+//test.dependsOn(processResources)
