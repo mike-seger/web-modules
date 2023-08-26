@@ -53,3 +53,8 @@ com.net128:
 browser: chrome
 
 server.port: 8081
+
+springdoc.swagger-ui:
+  urls-primary-name: com.net128.oss.web.app.jpa.csv.testdata
+  extra-package-paths: >
+    com.net128.oss.web.lib.jpa.csv

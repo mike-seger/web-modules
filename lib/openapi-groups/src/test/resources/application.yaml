@@ -1,0 +1,8 @@
+spring.application.name: openapi-groups.test
+
+springdoc.swagger-ui.path: /
+
+springdoc.swagger-ui:
+  urls-primary-name: com.net128.oss.web.lib.openapi.groups
+  extra-package-paths: >
+    otherpackage

@@ -34,4 +34,6 @@ include('app:jpa-csv-testdata')
 include('lib:jpa-csv-petdata')
 include('app:jpa-csv-petdata')
 
+include('lib:openapi-groups')
+
 include('lib:selenium-support')

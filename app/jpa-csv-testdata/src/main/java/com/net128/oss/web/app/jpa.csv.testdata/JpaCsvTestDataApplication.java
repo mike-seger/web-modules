@@ -2,6 +2,7 @@ package com.net128.oss.web.app.jpa.csv.testdata;
 
 import com.net128.oss.web.lib.jpa.csv.JpaCsv;
 import com.net128.oss.web.lib.jpa.csv.data.test.JpaCsvTestData;
+import com.net128.oss.web.lib.openapi.groups.GroupedOpenApiConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +13,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import javax.validation.constraints.NotNull;
 
 @SpringBootApplication
-@Import({JpaCsv.class, JpaCsvTestData.class, JpaCsvControllerEntityChangeLogger.class})
+@Import({
+	JpaCsv.class,
+	JpaCsvTestData.class,
+	JpaCsvControllerEntityChangeLogger.class,
+	GroupedOpenApiConfiguration.class,
+})
 public class JpaCsvTestDataApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(JpaCsvTestDataApplication.class, args);

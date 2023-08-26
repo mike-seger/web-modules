@@ -12,6 +12,7 @@ dependencies {
 
 	implementation project(':lib:jpa-csv')
 	implementation project(':lib:jpa-csv-testdata')
+	implementation project(':lib:openapi-groups')
 	implementation project(':lib:iframe-navigator')
 
 	testImplementation project(':lib:selenium-support')

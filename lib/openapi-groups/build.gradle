@@ -1,0 +1,33 @@
+plugins {
+    id "multimodule-config"
+    id 'publish-helper'
+    id 'lib-config'
+    id 'java-library'
+}
+
+group = "com.net128.oss.web.lib.openapi.groups"
+
+dependencies {
+    implementation 'javax.servlet:javax.servlet-api'
+
+    implementation 'org.springframework.boot:spring-boot'
+
+    implementation "commons-io:commons-io:2.11.0"
+    implementation 'org.reflections:reflections:0.10.2'
+
+    implementation 'org.hibernate.validator:hibernate-validator:8.0.0.Final'
+    implementation 'org.glassfish:jakarta.el:5.0.0-M1'
+
+    //implementation 'org.slf4j:slf4j-api:1.7.26'
+
+    implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
+    implementation 'org.springdoc:springdoc-openapi-data-rest:1.7.0'
+
+    compileOnly "org.projectlombok:lombok"
+    annotationProcessor "org.projectlombok:lombok"
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.assertj:assertj-core:3.23.1'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-web'
+}

@@ -14,7 +14,7 @@ import javax.persistence.*;
 @Table(name = "employee")
 @Props.Hidden
 public class Employee extends EmployeeBase {
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "departmentId", referencedColumnName = "departmentId")
 	private Department department;
 }
