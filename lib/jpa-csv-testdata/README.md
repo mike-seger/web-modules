@@ -8,9 +8,17 @@ https://www.geeksforgeeks.org/how-to-implement-aop-in-spring-boot-application/
 - https://github.com/liquibase/liquibase-hibernate/wiki
 - https://forum.liquibase.org/t/gradle-ejb-hibernate-cannot-diffchangelog/4744
 
+## Sync DB
+```
+../../gradlew liquibaseUpdate -Prunlist=update
+```
 
-# Commands
-
+### Generate DB diff from java entiities
 ```
 ../../gradlew liquibaseDiffChangeLog
+```
+
+## Initialize DB
+```
+rm .data/*
 ```
