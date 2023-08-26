@@ -1,0 +1,71 @@
+databaseChangeLog:
+- changeSet:
+    id: 1693056599822-1
+    author: michael (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: departmentPK
+            name: id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        tableName: department
+- changeSet:
+    id: 1693056599822-2
+    author: michael (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: employeePK
+            name: id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: salary
+            type: DOUBLE PRECISION
+        - column:
+            name: department_name
+            type: VARCHAR(255)
+        tableName: employee
+- changeSet:
+    id: 1693056599822-3
+    author: michael (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: name
+        constraintName: UK_1t68827l97cwyxo9r1u6t4p7d
+        tableName: department
+- changeSet:
+    id: 1693056599822-4
+    author: michael (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: department_name
+        baseTableName: employee
+        constraintName: FKl40vjp1eu7dkhs4nvi2nplkra
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: name
+        referencedTableName: department
+        validate: true
+
