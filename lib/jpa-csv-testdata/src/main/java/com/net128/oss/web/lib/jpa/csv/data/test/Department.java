@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @ToString
@@ -14,7 +15,7 @@ import javax.validation.constraints.NotBlank;
 @Setter
 public class Department extends Identifiable {
 	@Column(nullable = false, unique = true)
-	@NotBlank
+	@NotNull
 	private Long departmentId;
 
 	@Column(nullable = false)
