@@ -7,7 +7,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PositiveOrZero;
 
-@Entity
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor(force = true)

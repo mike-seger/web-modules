@@ -1,0 +1,76 @@
+databaseChangeLog:
+- changeSet:
+    id: 1693059143623-1
+    author: michael (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: departmentPK
+            name: id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: department_id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        tableName: department
+- changeSet:
+    id: 1693059143623-2
+    author: michael (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: employeePK
+            name: id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: salary
+            type: DOUBLE PRECISION
+        - column:
+            name: department_id
+            type: BIGINT
+        tableName: employee
+- changeSet:
+    id: 1693059143623-3
+    author: michael (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: department_id
+        constraintName: UK_21ujm2eubctgc9x652n0esnwa
+        tableName: department
+- changeSet:
+    id: 1693059143623-4
+    author: michael (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: department_id
+        baseTableName: employee
+        constraintName: FKbejtwvg9bxus2mffsm3swj3u9
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: department_id
+        referencedTableName: department
+        validate: true
+
