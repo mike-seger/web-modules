@@ -18,7 +18,7 @@ public class Department extends Identifiable {
 	@NotNull
 	private Long departmentId;
 
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	@NotBlank
 	private String name;
 }

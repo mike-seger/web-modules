@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - logicalFilePath: 20230828-210000.yaml
+  - changeSet:
+      id: load data 20230828-210000
+      author: adminux
+      changes:
+        - loadData:
+            relativeToChangelogFile: true
+            file: ../data/DEPARTMENT.csv
+            separator: ','
+            quotchar: '"'
+            tableName: department
+        - loadData:
+            relativeToChangelogFile: true
+            file: ../data/EMPLOYEE.csv
+            separator: ','
+            quotchar: '"'
+            tableName: employee
