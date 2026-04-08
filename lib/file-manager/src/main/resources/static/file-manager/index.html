@@ -23,7 +23,7 @@
 
 <div id="zoom-control">
     <label for="zoom-slider">Zoom</label>
-    <input type="range" id="zoom-slider" min="0.5" max="4" step="0.05" value="1">
+    <input type="range" id="zoom-slider" min="0.7" max="2" step="0.05" value="1">
     <span id="zoom-value">100%</span>
 </div>
 
@@ -115,7 +115,10 @@ function applyZoom(value) {
 
 (function initZoom() {
     const saved = localStorage.getItem('fm-zoom');
-    applyZoom(saved ? parseFloat(saved) : 1);
+    const min = parseFloat(zoomSlider.min);
+    const max = parseFloat(zoomSlider.max);
+    const val = saved ? Math.min(max, Math.max(min, parseFloat(saved))) : 1;
+    applyZoom(val);
 })();
 
 zoomSlider.addEventListener('input', () => applyZoom(parseFloat(zoomSlider.value)));
