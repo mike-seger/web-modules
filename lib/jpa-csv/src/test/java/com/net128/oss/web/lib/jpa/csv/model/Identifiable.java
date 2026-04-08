@@ -3,10 +3,10 @@ package com.net128.oss.web.lib.jpa.csv.model;
 import com.net128.oss.web.lib.jpa.csv.util.Props;
 import lombok.Data;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 import java.util.Objects;
 
 @MappedSuperclass

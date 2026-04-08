@@ -12,8 +12,8 @@ project.ext.appId = project.gradle.toString().split("'")[1].toString() +
 group = 'com.net128.oss.web'
 version = System.getProperty("VERSION", System.getenv("VERSION") ?: '0.0.1-SNAPSHOT')
 
-sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 javadoc.options.addStringOption('Xdoclint:none', '-quiet')
 
@@ -25,11 +25,11 @@ test {
 }
 
 dependencies {
-    compileOnly 'org.projectlombok:lombok:1.18.28'
-    annotationProcessor 'org.projectlombok:lombok:1.18.28'
+    compileOnly 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.projectlombok:lombok:1.18.34'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testCompileOnly 'org.projectlombok:lombok:1.18.28'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.28'
+    testCompileOnly 'org.projectlombok:lombok:1.18.34'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
 }
 
 task javadocJar(type: Jar) {

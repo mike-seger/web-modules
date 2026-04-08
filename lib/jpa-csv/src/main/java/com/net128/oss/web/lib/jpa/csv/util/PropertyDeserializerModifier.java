@@ -22,6 +22,7 @@ public class PropertyDeserializerModifier extends BeanDeserializerModifier {
     @Override
     public BeanDeserializerBuilder updateBuilder(DeserializationConfig config, BeanDescription beanDesc, BeanDeserializerBuilder builder) {
         beanDesc.findProperties().forEach(bd -> {
+            if (bd.getField() == null) return;
             var refMappingAnnotation = bd.getField().getAnnotated().getAnnotation(Props.RefMapping.class);
             if (refMappingAnnotation != null) {
                 JsonDeserializer<?> deserializer =

@@ -3,11 +3,11 @@ package com.net128.oss.web.lib.jpa.csv.model;
 import com.net128.oss.web.lib.jpa.csv.util.Props;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Pattern;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
 
 @Entity

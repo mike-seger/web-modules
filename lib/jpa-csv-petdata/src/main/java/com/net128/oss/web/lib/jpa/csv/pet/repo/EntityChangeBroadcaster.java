@@ -3,9 +3,9 @@ package com.net128.oss.web.lib.jpa.csv.pet.repo;
 import com.net128.oss.web.lib.jpa.csv.pet.model.Identifiable;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.persistence.PostPersist;
-import javax.persistence.PostRemove;
-import javax.persistence.PostUpdate;
+import jakarta.persistence.PostPersist;
+import jakarta.persistence.PostRemove;
+import jakarta.persistence.PostUpdate;
 import java.util.LinkedList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;

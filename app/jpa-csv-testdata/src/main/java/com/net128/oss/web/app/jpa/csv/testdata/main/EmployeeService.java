@@ -4,7 +4,7 @@ import com.net128.oss.web.lib.jpa.csv.data.test.Employee;
 import com.net128.oss.web.lib.jpa.csv.data.test.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.List;
 
 @Service

@@ -4,7 +4,7 @@ import com.net128.oss.web.lib.jpa.csv.data.test.Employee;
 import com.net128.oss.web.lib.jpa.csv.data.test.EmployeeRepository;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.List;
 
 @RestController

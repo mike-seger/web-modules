@@ -1,5 +1,6 @@
 package com.net128.oss.web.app.jpa.csv.testdata.ui;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -9,6 +10,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Tag("selenium")
 @Execution(ExecutionMode.CONCURRENT)
 public class JpaCsvPageTest extends AppPageTest {
     @Autowired

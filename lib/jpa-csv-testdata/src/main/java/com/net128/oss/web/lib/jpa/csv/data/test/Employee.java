@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.net128.oss.web.lib.jpa.csv.util.Props;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @ToString

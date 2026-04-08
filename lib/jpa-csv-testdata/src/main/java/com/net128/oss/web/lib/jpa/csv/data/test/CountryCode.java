@@ -3,9 +3,9 @@ package com.net128.oss.web.lib.jpa.csv.data.test;
 import com.net128.oss.web.lib.jpa.csv.util.Props;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.validation.constraints.Pattern;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.validation.constraints.Pattern;
 
 @Entity
 @ToString

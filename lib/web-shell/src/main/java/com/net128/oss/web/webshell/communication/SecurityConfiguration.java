@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -17,7 +19,7 @@ public class SecurityConfiguration {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().antMatchers("/**");
+        return (web) -> web.ignoring().requestMatchers("/**");
     }
 
     @Bean
@@ -35,21 +37,21 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public FilterRegistrationBean corsFilterRegistrationBean(CorsConfigurationSource corsConfigurationSource){
+    public FilterRegistrationBean<CorsFilter> corsFilterRegistrationBean(CorsConfigurationSource corsConfigurationSource){
         CorsFilter corsFilter = new CorsFilter(corsConfigurationSource);
-        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+        FilterRegistrationBean<CorsFilter> filterRegistrationBean = new FilterRegistrationBean<>();
         filterRegistrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE);
         filterRegistrationBean.setFilter(corsFilter);
         return filterRegistrationBean;
     }
 
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        // Here configure all security stuff
-        http.authorizeRequests().anyRequest().permitAll()
-                .and().cors(); // .crs().disable() to disable cors
-        http.headers().frameOptions().sameOrigin();
+        http
+            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+            .cors(cors -> {})
+            .csrf(AbstractHttpConfigurer::disable)
+            .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
 
         return http.build();
     }

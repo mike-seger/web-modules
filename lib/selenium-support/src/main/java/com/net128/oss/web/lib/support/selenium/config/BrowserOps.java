@@ -6,18 +6,19 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.logging.LoggingPreferences;
-import org.openqa.selenium.remote.CapabilityType;
 
 import java.util.logging.Level;
 
 @LazyComponent
 public class BrowserOps {
+    private static final String LOGGING_PREFS = "goog:loggingPrefs";
+
     public ChromeOptions getChromeOptions() {
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.addArguments("--remote-allow-origins=*");
         LoggingPreferences logPrefs = new LoggingPreferences();
         logPrefs.enable(LogType.BROWSER, Level.ALL);
-        chromeOptions.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
+        chromeOptions.setCapability(LOGGING_PREFS, logPrefs);
         return chromeOptions;
     }
 
@@ -30,7 +31,7 @@ public class BrowserOps {
         logPrefs.enable(LogType.DRIVER, Level.ALL);
         firefoxOptions
             .setProfile(firefoxProfile)
-            .setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
+            .setCapability("moz:loggingPrefs", logPrefs);
         return firefoxOptions;
     }
 }

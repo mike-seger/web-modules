@@ -2,11 +2,11 @@ package com.net128.oss.web.lib.jpa.csv.data.test;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.net128.oss.web.lib.jpa.csv.util.Props;
-import com.sun.istack.NotNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @ToString

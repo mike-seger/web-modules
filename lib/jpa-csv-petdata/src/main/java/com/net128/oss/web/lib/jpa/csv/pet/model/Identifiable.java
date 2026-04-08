@@ -3,7 +3,7 @@ package com.net128.oss.web.lib.jpa.csv.pet.model;
 import com.net128.oss.web.lib.jpa.csv.pet.repo.EntityChangeBroadcaster;
 import lombok.Data;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @MappedSuperclass
 @Data

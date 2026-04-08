@@ -4,9 +4,9 @@ import com.net128.oss.web.lib.jpa.csv.util.Props;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.PreUpdate;
+import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PreUpdate;
 import java.time.Instant;
 
 @EqualsAndHashCode(callSuper = true)

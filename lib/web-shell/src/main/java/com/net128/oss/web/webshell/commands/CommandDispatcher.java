@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.zeroturnaround.exec.ProcessExecutor;
 import org.zeroturnaround.exec.ProcessResult;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;

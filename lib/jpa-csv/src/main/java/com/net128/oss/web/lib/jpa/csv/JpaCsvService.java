@@ -181,10 +181,12 @@ public class JpaCsvService {
 			var persistErrors = new ArrayList<String>();
 			for(T item : items) {
 				try {
+					// Hibernate 6: IDENTITY strategy requires null ID for persist()
+					nullifyGeneratedId(item);
 					jpaRepository.save(item);
 					count++;
 				} catch(Exception e) {
-					if(e instanceof javax.validation.ValidationException || (e.getMessage()!=null && e.getMessage().toLowerCase(Locale.ROOT).contains("constraint"))) {
+					if(e instanceof jakarta.validation.ValidationException || (e.getMessage()!=null && e.getMessage().toLowerCase(Locale.ROOT).contains("constraint"))) {
 						persistErrors.add(String.format(
 							"On data line %d:\nAttempted to save: %s.\nEncountered error: %s",
 							count+1, item, e.getMessage()));
@@ -252,5 +254,25 @@ public class JpaCsvService {
 			.setDeserializerModifier(new PropertyDeserializerModifier());
 		mapper.registerModule(simpleModule);
 		return mapper;
+	}
+
+	/**
+	 * Hibernate 6 does not allow persist() or merge() on entities with
+	 * GenerationType.IDENTITY that already have a non-null ID.
+	 * This method nullifies the @Id field if it uses @GeneratedValue.
+	 */
+	private static <T> void nullifyGeneratedId(T entity) {
+		for (Class<?> clazz = entity.getClass(); clazz != null && clazz != Object.class; clazz = clazz.getSuperclass()) {
+			for (var field : clazz.getDeclaredFields()) {
+				if (field.isAnnotationPresent(jakarta.persistence.Id.class)
+						&& field.isAnnotationPresent(jakarta.persistence.GeneratedValue.class)) {
+					try {
+						field.setAccessible(true);
+						field.set(entity, null);
+					} catch (Exception ignored) {}
+					return;
+				}
+			}
+		}
 	}
 }

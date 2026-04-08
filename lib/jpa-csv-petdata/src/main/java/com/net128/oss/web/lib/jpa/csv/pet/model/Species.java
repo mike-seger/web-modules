@@ -2,8 +2,8 @@ package com.net128.oss.web.lib.jpa.csv.pet.model;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.validation.constraints.NotBlank;
+import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @ToString

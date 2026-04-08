@@ -9,6 +9,7 @@ bin
 .externalNativeBuild
 .cxx
 local.properties
+/tmp
 
 # Project exclude paths
 /buildSrc/build/

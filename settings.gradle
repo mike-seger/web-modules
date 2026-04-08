@@ -26,7 +26,6 @@ include('lib:web-shell')
 include('app:web-shell')
 
 include('lib:jpa-csv')
-include('app:jpa-csv')
 
 include('lib:jpa-csv-testdata')
 include('app:jpa-csv-testdata')

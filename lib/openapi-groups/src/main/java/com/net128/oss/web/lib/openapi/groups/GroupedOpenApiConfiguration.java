@@ -2,8 +2,8 @@ package com.net128.oss.web.lib.openapi.groups;
 
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
-import org.springdoc.core.GroupedOpenApi;
-import org.springdoc.core.SwaggerUiConfigProperties;
+import org.springdoc.core.models.GroupedOpenApi;
+import org.springdoc.core.properties.SwaggerUiConfigProperties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.annotation.Bean;

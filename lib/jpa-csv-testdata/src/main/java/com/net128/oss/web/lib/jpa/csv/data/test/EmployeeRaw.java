@@ -2,7 +2,7 @@ package com.net128.oss.web.lib.jpa.csv.data.test;
 
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @ToString

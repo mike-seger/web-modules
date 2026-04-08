@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @SpringBootApplication
 @Import({

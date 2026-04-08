@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -71,7 +71,7 @@ public class EntityMapper {
 		return entityClassMap.keySet().stream().sorted().collect(Collectors.toList());
 	}
 
-	private Set<javax.persistence.metamodel.Attribute<?,?>> getMetaAttributes(String entity) {
+	private Set<jakarta.persistence.metamodel.Attribute<?,?>> getMetaAttributes(String entity) {
 		return getEntityMetaData(getEntityClass(entity));
 	}
 
@@ -88,14 +88,14 @@ public class EntityMapper {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Set	<javax.persistence.metamodel.Attribute<?, ?>> getEntityMetaData(Class<?> entityClass) {
-		return (Set<javax.persistence.metamodel.Attribute<?, ?>>) entityManager.getMetamodel().entity(entityClass).getAttributes();
+	private Set	<jakarta.persistence.metamodel.Attribute<?, ?>> getEntityMetaData(Class<?> entityClass) {
+		return (Set<jakarta.persistence.metamodel.Attribute<?, ?>>) entityManager.getMetamodel().entity(entityClass).getAttributes();
 	}
 
 	private Map<String, Class<?>> getEntityClassMap() {
 		return entityManager.getMetamodel().getEntities()
 			.stream().filter(e -> !Props.isHiddenClass(e.getJavaType())).collect(Collectors.toMap(
-				e -> NameUtil.camel2Snake(e.getName()), javax.persistence.metamodel.Type::getJavaType));
+				e -> NameUtil.camel2Snake(e.getName()), jakarta.persistence.metamodel.Type::getJavaType));
 	}
 
 	public JpaRepository<?, Long> getEntityRepository(Class<?> entityClass) {

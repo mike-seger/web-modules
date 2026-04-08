@@ -26,7 +26,7 @@ public class Attribute {
 
 	boolean isId;
 
-	Attribute(javax.persistence.metamodel.Attribute<?, ?> attribute, List<String> titleRegexes, boolean isId) {
+	Attribute(jakarta.persistence.metamodel.Attribute<?, ?> attribute, List<String> titleRegexes, boolean isId) {
 		name = attribute.getName();
 		columnName = NameUtil.camel2Snake(name).toLowerCase();
 		title = name;

@@ -1,23 +1,20 @@
 dependencies {
-    liquibaseRuntime 'org.liquibase:liquibase-core:4.23.1'
+    liquibaseRuntime 'org.liquibase:liquibase-core'
     liquibaseRuntime 'org.liquibase:liquibase-groovy-dsl:3.0.3'
-    liquibaseRuntime 'org.liquibase.ext:liquibase-hibernate5:4.22.0'
-    liquibaseRuntime 'info.picocli:picocli:4.7.4'
+    liquibaseRuntime 'org.liquibase.ext:liquibase-hibernate6:4.29.2'
+    liquibaseRuntime 'info.picocli:picocli:4.7.6'
     liquibaseRuntime sourceSets.main.allSource
-    liquibaseRuntime sourceSets.main.compileClasspath
-    liquibaseRuntime sourceSets.main.runtimeClasspath
+    liquibaseRuntime files(sourceSets.main.compileClasspath)
+    liquibaseRuntime files(sourceSets.main.runtimeClasspath)
     liquibaseRuntime sourceSets.main.output
 }
 
-liquibaseDiff.dependsOn compileJava
-liquibaseDiffChangeLog.dependsOn compileJava
-liquibaseGenerateChangelog.dependsOn compileJava
 def ts= new Date().format("yyyyMMdd-HHmmss")
 def dbUrl = 'jdbc:h2:file:./.data/diff'
 def dbUser = 'sa'
 def dbPassword = ''
 def dbDriver = 'org.h2.Driver'
-def dbReferenceUrl = 'hibernate:spring:com.net128.oss.web.lib.jpa.csv.data.test?dialect=org.hibernate.dialect.H2Dialect&hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy&hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy'
+def dbReferenceUrl = 'hibernate:spring:com.net128.oss.web.lib.jpa.csv.data.test?dialect=org.hibernate.dialect.H2Dialect&hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy&hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy'
 
 
 liquibase {
@@ -42,4 +39,7 @@ liquibase {
     }
 }
 
-liquibaseUpdate.dependsOn(processResources)
+tasks.matching { it.name == 'liquibaseDiff' }.configureEach { dependsOn compileJava }
+tasks.matching { it.name == 'liquibaseDiffChangeLog' }.configureEach { dependsOn compileJava }
+tasks.matching { it.name == 'liquibaseGenerateChangelog' }.configureEach { dependsOn compileJava }
+tasks.matching { it.name == 'liquibaseUpdate' }.configureEach { dependsOn processResources }
