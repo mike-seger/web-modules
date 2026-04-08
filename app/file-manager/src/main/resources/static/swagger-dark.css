@@ -1,0 +1,256 @@
+/* =============================================
+   Swagger UI — Dark Navy Theme
+   Matches the file-manager dark theme palette
+   ============================================= */
+:root {
+    --swg-bg:           #0d1117;
+    --swg-card:         #151c2c;
+    --swg-card2:        #1c2438;
+    --swg-border:       #243044;
+    --swg-text:         #e0e6ed;
+    --swg-muted:        #546178;
+    --swg-accent:       #6c7ee1;
+    --swg-accent-hover: #8b9bf0;
+    --swg-delete:       #df4d4d;
+    --swg-get:          #2d6a9f;
+    --swg-post:         #2d7a4f;
+    --swg-put:          #7a5c1e;
+    --swg-patch:        #4a6741;
+    --swg-radius:       6px;
+}
+
+/* ── Page background ── */
+html, body { background: var(--swg-bg) !important; }
+.swagger-ui { color: var(--swg-text) !important; }
+
+/* ── Topbar ── */
+.swagger-ui .topbar {
+    background: #0a0d13 !important;
+    border-bottom: 1px solid var(--swg-border);
+}
+.swagger-ui .topbar .download-url-wrapper input {
+    background: var(--swg-card) !important;
+    color: var(--swg-text) !important;
+    border-color: var(--swg-border) !important;
+    border-radius: var(--swg-radius) !important;
+}
+.swagger-ui .topbar .download-url-wrapper .download-url-button {
+    background: var(--swg-accent) !important;
+    color: #fff !important;
+    border-radius: var(--swg-radius) !important;
+}
+
+/* ── Info / title section ── */
+.swagger-ui .info { background: transparent !important; }
+.swagger-ui .info .title,
+.swagger-ui .info h1,
+.swagger-ui .info h2,
+.swagger-ui .info h3 { color: var(--swg-text) !important; }
+.swagger-ui .info .base-url,
+.swagger-ui .info a { color: var(--swg-accent) !important; }
+.swagger-ui .info a:hover { color: var(--swg-accent-hover) !important; }
+.swagger-ui .info p,
+.swagger-ui .renderedMarkdown p { color: var(--swg-muted) !important; }
+.swagger-ui .required { color: #ff7b72 !important; }
+.swagger-ui .version-stamp { background: var(--swg-card2) !important; }
+
+/* ── Scheme/server select bar ── */
+.swagger-ui .scheme-container {
+    background: var(--swg-card) !important;
+    border-bottom: 1px solid var(--swg-border) !important;
+    box-shadow: none !important;
+}
+.swagger-ui .scheme-container .schemes > label { color: var(--swg-muted) !important; }
+.swagger-ui select {
+    background: var(--swg-card2) !important;
+    color: var(--swg-text) !important;
+    border: 1px solid var(--swg-border) !important;
+    border-radius: var(--swg-radius) !important;
+}
+
+/* ── Tag / operation group headers ── */
+.swagger-ui .opblock-tag {
+    color: var(--swg-text) !important;
+    border-bottom: 1px solid var(--swg-border) !important;
+}
+.swagger-ui .opblock-tag:hover,
+.swagger-ui .opblock-tag small { color: var(--swg-muted) !important; }
+.swagger-ui .opblock-tag-section h3 svg { fill: var(--swg-muted) !important; }
+
+/* ── Operation blocks ── */
+.swagger-ui .opblock {
+    background: var(--swg-card) !important;
+    border: 1px solid var(--swg-border) !important;
+    border-radius: var(--swg-radius) !important;
+    box-shadow: none !important;
+    margin: 4px 0 !important;
+}
+.swagger-ui .opblock .opblock-summary {
+    border-bottom: 1px solid var(--swg-border) !important;
+}
+.swagger-ui .opblock .opblock-summary-description,
+.swagger-ui .opblock .opblock-summary-path,
+.swagger-ui .opblock .opblock-summary-path__deprecated,
+.swagger-ui .opblock .opblock-summary-path a { color: var(--swg-text) !important; }
+
+/* ── HTTP method badges ── */
+.swagger-ui .opblock.opblock-get    { background: rgba(45,106,159,.10) !important; border-color: #2d6a9f !important; }
+.swagger-ui .opblock.opblock-post   { background: rgba(45,122,79,.10)  !important; border-color: #2d7a4f !important; }
+.swagger-ui .opblock.opblock-put    { background: rgba(122,92,30,.10)  !important; border-color: #7a5c1e !important; }
+.swagger-ui .opblock.opblock-patch  { background: rgba(74,103,65,.10)  !important; border-color: #4a6741 !important; }
+.swagger-ui .opblock.opblock-delete { background: rgba(223,77,77,.10)  !important; border-color: var(--swg-delete) !important; }
+.swagger-ui .opblock.opblock-get    .opblock-summary-method { background: var(--swg-get)    !important; }
+.swagger-ui .opblock.opblock-post   .opblock-summary-method { background: var(--swg-post)   !important; }
+.swagger-ui .opblock.opblock-put    .opblock-summary-method { background: var(--swg-put)    !important; }
+.swagger-ui .opblock.opblock-patch  .opblock-summary-method { background: var(--swg-patch)  !important; }
+.swagger-ui .opblock.opblock-delete .opblock-summary-method { background: var(--swg-delete) !important; }
+
+/* ── Operation block body (expanded) ── */
+.swagger-ui .opblock-body { background: var(--swg-card2) !important; }
+.swagger-ui .opblock-section-header {
+    background: var(--swg-card) !important;
+    border-bottom: 1px solid var(--swg-border) !important;
+}
+.swagger-ui .opblock-section-header h4,
+.swagger-ui .opblock-section-header label { color: var(--swg-muted) !important; }
+.swagger-ui .opblock-description-wrapper p,
+.swagger-ui .opblock-external-docs-wrapper p,
+.swagger-ui .opblock-title_normal p { color: var(--swg-muted) !important; }
+
+/* ── Parameters table ── */
+.swagger-ui table { background: transparent !important; }
+.swagger-ui table thead tr th,
+.swagger-ui table thead tr td {
+    color: var(--swg-muted) !important;
+    border-bottom: 1px solid var(--swg-border) !important;
+}
+.swagger-ui table tbody tr td {
+    color: var(--swg-text) !important;
+    border-bottom: 1px solid var(--swg-border) !important;
+}
+.swagger-ui .parameter__name,
+.swagger-ui .parameter__type,
+.swagger-ui .parameter__deprecated { color: var(--swg-text) !important; }
+.swagger-ui .parameter__in { color: var(--swg-muted) !important; }
+.swagger-ui .prop-type { color: var(--swg-accent) !important; }
+
+/* ── Inputs / textareas ── */
+.swagger-ui input[type=text],
+.swagger-ui input[type=password],
+.swagger-ui input[type=search],
+.swagger-ui input[type=email],
+.swagger-ui textarea {
+    background: var(--swg-bg) !important;
+    color: var(--swg-text) !important;
+    border: 1px solid var(--swg-border) !important;
+    border-radius: var(--swg-radius) !important;
+}
+.swagger-ui input[type=text]:focus,
+.swagger-ui textarea:focus {
+    border-color: var(--swg-accent) !important;
+    outline: none !important;
+}
+
+/* ── Buttons ── */
+.swagger-ui .btn { border-radius: var(--swg-radius) !important; }
+.swagger-ui .btn.execute {
+    background: var(--swg-accent) !important;
+    border-color: var(--swg-accent) !important;
+    color: #fff !important;
+}
+.swagger-ui .btn.execute:hover {
+    background: var(--swg-accent-hover) !important;
+    border-color: var(--swg-accent-hover) !important;
+}
+.swagger-ui .btn.try-out__btn {
+    color: var(--swg-accent) !important;
+    border-color: var(--swg-accent) !important;
+    background: transparent !important;
+}
+.swagger-ui .btn.try-out__btn:hover,
+.swagger-ui .btn.try-out__btn.cancel { background: var(--swg-card2) !important; }
+.swagger-ui .btn.authorize {
+    color: var(--swg-accent) !important;
+    border-color: var(--swg-accent) !important;
+    background: transparent !important;
+}
+.swagger-ui .btn.authorize svg { fill: var(--swg-accent) !important; }
+
+/* ── Responses / curl / request-url ── */
+.swagger-ui .responses-inner { background: var(--swg-card2) !important; }
+.swagger-ui .response-col_status { color: var(--swg-text) !important; }
+.swagger-ui .response-col_description { color: var(--swg-muted) !important; }
+.swagger-ui .curl-command,
+.swagger-ui .request-url {
+    background: var(--swg-bg) !important;
+    border: 1px solid var(--swg-border) !important;
+    border-radius: var(--swg-radius) !important;
+}
+.swagger-ui .curl-command h4,
+.swagger-ui .request-url h4 { color: var(--swg-muted) !important; }
+.swagger-ui .curl { color: var(--swg-text) !important; }
+.swagger-ui .request-url pre { color: var(--swg-text) !important; }
+
+/* ── Response body / code blocks ── */
+.swagger-ui .highlight-code,
+.swagger-ui .microlight {
+    background: var(--swg-bg) !important;
+    color: var(--swg-text) !important;
+    border-radius: var(--swg-radius) !important;
+}
+.swagger-ui .response-body pre,
+.swagger-ui .example__section pre,
+.swagger-ui code {
+    background: var(--swg-bg) !important;
+    color: var(--swg-text) !important;
+}
+
+/* ── Models section ── */
+.swagger-ui section.models {
+    border: 1px solid var(--swg-border) !important;
+    border-radius: var(--swg-radius) !important;
+}
+.swagger-ui section.models h4 {
+    color: var(--swg-text) !important;
+    border-bottom: 1px solid var(--swg-border) !important;
+    background: var(--swg-card) !important;
+}
+.swagger-ui section.models .model-container {
+    background: var(--swg-card) !important;
+    border-radius: var(--swg-radius) !important;
+    margin: 4px 0 !important;
+}
+.swagger-ui section.models .model-container:hover { background: var(--swg-card2) !important; }
+.swagger-ui .model-title,
+.swagger-ui .model { color: var(--swg-text) !important; }
+.swagger-ui .model-toggle::after { background: var(--swg-muted) !important; }
+.swagger-ui table.model tr.property-row td { color: var(--swg-text) !important; }
+.swagger-ui .prop-format { color: var(--swg-muted) !important; }
+
+/* ── Auth modal ── */
+.swagger-ui .dialog-ux .modal-ux {
+    background: var(--swg-card) !important;
+    border: 1px solid var(--swg-border) !important;
+    border-radius: var(--swg-radius) !important;
+}
+.swagger-ui .dialog-ux .modal-ux-header {
+    background: var(--swg-card2) !important;
+    border-bottom: 1px solid var(--swg-border) !important;
+}
+.swagger-ui .dialog-ux .modal-ux-header h3 { color: var(--swg-text) !important; }
+.swagger-ui .dialog-ux .modal-ux-content {
+    background: var(--swg-card) !important;
+    color: var(--swg-text) !important;
+}
+.swagger-ui .dialog-ux .modal-ux-content p,
+.swagger-ui .dialog-ux .modal-ux-content h4 { color: var(--swg-muted) !important; }
+
+/* ── Scrollbar ── */
+.swagger-ui ::-webkit-scrollbar { width: 6px; height: 6px; }
+.swagger-ui ::-webkit-scrollbar-track { background: var(--swg-bg); }
+.swagger-ui ::-webkit-scrollbar-thumb { background: var(--swg-border); border-radius: 3px; }
+.swagger-ui ::-webkit-scrollbar-thumb:hover { background: var(--swg-muted); }
+
+/* ── Copy-to-clipboard ── */
+.swagger-ui .copy-to-clipboard { background: var(--swg-card2) !important; }
+.swagger-ui .copy-to-clipboard button { background: transparent !important; }

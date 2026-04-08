@@ -42,7 +42,14 @@
 <script>
 'use strict';
 
-const apiUri = 'api?path=';
+const API = {
+    list:     'api/list?path=',
+    download: 'api/download?path=',
+    zip:      'api/zip?path=',
+    view:     'api/view?path=',
+    delete:   'api/delete?path=',
+    upload:   'api/upload?path='
+};
 const fmUri = '?path=';
 const ZOOM_BASE = 1.05; /* 100% displayed = 1.05× CSS scale */
 
@@ -80,13 +87,10 @@ function formatSize(bytes) {
     return (i === 0 ? val : val.toFixed(2)) + ' ' + units[i];
 }
 
-function timeAgo(dateArray) {
-    if (!dateArray) return '';
-    /* dateArray from Java LocalDateTime JSON: [year, month, day, hour, minute, second, nano] */
-    const d = Array.isArray(dateArray)
-        ? new Date(dateArray[0], dateArray[1] - 1, dateArray[2],
-                    dateArray[3] || 0, dateArray[4] || 0, dateArray[5] || 0)
-        : new Date(dateArray);
+function timeAgo(dateVal) {
+    if (!dateVal) return '';
+    const d = new Date(dateVal);
+    if (isNaN(d.getTime())) return '';
     const seconds = Math.floor((Date.now() - d.getTime()) / 1000);
     if (seconds < 60) return 'just now';
     const intervals = [
@@ -139,7 +143,7 @@ function uploadFiles(files, targetPath) {
     for (const file of files) {
         formData.append('file', file);
     }
-    const url = apiUri + encodePath(targetPath);
+    const url = API.upload + encodePath(targetPath);
     fetch(url, { method: 'POST', body: formData })
         .then(() => loadDirectory(currentPath))
         .catch(err => console.error('Upload failed:', err));
@@ -201,7 +205,7 @@ function requestDelete(deleteUrl, fileName) {
 confirmOk.addEventListener('click', () => {
     confirmOverlay.classList.remove('visible');
     if (pendingDeleteUrl) {
-        fetch(pendingDeleteUrl)
+        fetch(pendingDeleteUrl, { method: 'DELETE' })
             .then(() => { pendingDeleteUrl = null; loadDirectory(currentPath); })
             .catch(err => { pendingDeleteUrl = null; console.error('Delete failed:', err); });
     }
@@ -232,7 +236,7 @@ function createItemTools(fileUri, fileName, isDirectory, isWritable, hasChildren
 
     const dl = document.createElement('a');
     dl.classList.add('download', 'mi');
-    dl.href = apiUri + fileUri + (isDirectory ? '&zip' : '');
+    dl.href = isDirectory ? (API.zip + fileUri) : (API.download + fileUri);
     dl.title = 'Download';
     dl.textContent = 'download';
     tools.appendChild(dl);
@@ -240,7 +244,7 @@ function createItemTools(fileUri, fileName, isDirectory, isWritable, hasChildren
     if (!isDirectory) {
         const vw = document.createElement('a');
         vw.classList.add('view', 'mi');
-        vw.href = apiUri + fileUri + '&view';
+        vw.href = API.view + fileUri;
         vw.target = '_blank';
         vw.title = 'View';
         vw.textContent = 'open_in_new';
@@ -255,7 +259,7 @@ function createItemTools(fileUri, fileName, isDirectory, isWritable, hasChildren
         del.textContent = 'delete';
         del.addEventListener('click', e => {
             e.preventDefault();
-            requestDelete(apiUri + fileUri + '&delete', fileName);
+            requestDelete(API.delete + fileUri, fileName);
         });
         tools.appendChild(del);
     }
@@ -394,7 +398,7 @@ function createBreadCrumb(parentInfos, name) {
 
 /* ===== Directory loading (no history push) ===== */
 function loadDirectory(path) {
-    fetch(apiUri + encodePath(path))
+    fetch(API.list + encodePath(path))
         .then(r => r.json())
         .then(data => {
             currentWritable = data.isWritable;
