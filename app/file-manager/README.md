@@ -11,6 +11,10 @@ A file manager providing a file system explorer and the capability to up- and do
 
 Then open [http://localhost:8080/file-manager/index.html](http://localhost:8080/file-manager/index.html) in your browser.
 
+### API
+
+A Swagger UI is available at [Swagger-UI](http://localhost:8080/file-manager/swagger-ui/index.html).
+
 ## Overview
 
 [file-manager](https://github.com/mike-seger/web-modules/tree/master/file-manager) comes in two flavours:
@@ -50,13 +54,6 @@ Java 17+ on any major OS. Tested on:
 
 Any modern browser (Chrome, Firefox, Safari, Edge).
 
-## Sample Screenshots
+## Sample Screenshot
 
-### Mac OS
-![Mac OS](doc/images/screenshot-brave-macos.png)
-
-### Linux
-![Linux](doc/images/screenshot-firefox-ubuntu.png)
-
-### Windows
-![Windows](doc/images/screenshot-chrome-windows.png)
+![File Manager](doc/images/screenshot.png)
