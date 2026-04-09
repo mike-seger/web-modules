@@ -10,7 +10,13 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9'
-    implementation 'net.sf.jmimemagic:jmimemagic:0.1.5'
+    implementation('net.sf.jmimemagic:jmimemagic:0.1.5') {
+        exclude group: 'log4j', module: 'log4j'
+        exclude group: 'commons-io', module: 'commons-io'
+        exclude group: 'xerces', module: 'xercesImpl'
+        exclude group: 'xml-apis', module: 'xml-apis'
+        exclude group: 'oro', module: 'oro'
+    }
     implementation 'org.zeroturnaround:zt-zip:1.17'
 }
 

@@ -57,3 +57,23 @@ Any modern browser (Chrome, Firefox, Safari, Edge).
 ## Sample Screenshot
 
 ![File Manager](doc/images/screenshot.png)
+
+
+## Download the app using gradle
+
+Example **build.gradle**
+```bash
+plugins { id 'java' }
+repositories { mavenCentral() }
+configurations { download }
+dependencies { download 'com.net128.oss.web.app:web-modules-app-file-manager:0.3.0' }
+tasks.register('downloadJar', Copy) {
+    from configurations.download
+    into layout.buildDirectory.dir('jars')
+}
+```
+
+Then run:
+```bash
+./gradlew downloadJar
+```
