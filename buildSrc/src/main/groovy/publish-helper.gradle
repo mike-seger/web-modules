@@ -1,19 +1,2 @@
-// https://petrakeas.medium.com/publish-a-multi-module-java-android-library-to-maven-central-github-ci-automation-at-2021-4f98a311df2a
-
-publishing {
-    repositories {
-        maven {
-            name = version.endsWith('SNAPSHOT') ? "ossrh" : "ossrhSnapshot"
-            def releasesRepoUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
-            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-            credentials {
-                username = project.ext.properties.ossrhUsername
-                password = project.ext.properties.ossrhPassword
-            }
-        }
-    }
-}
-
-
+// Publishing repositories managed by io.github.gradle-nexus.publish-plugin in root build.gradle
 

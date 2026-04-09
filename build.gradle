@@ -10,6 +10,7 @@ plugins {
 	id 'maven-publish'
 	id 'org.springframework.boot' version '3.5.12'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'io.github.gradle-nexus.publish-plugin' version '2.0.0'
 }
 
 tasks.bootJar { enabled = false}
@@ -21,3 +22,16 @@ idea {
 		downloadSources = true
 	}
 }
+
+nexusPublishing {
+	repositories {
+		sonatype {
+			nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
+			snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
+			username = findProperty("ossrhUsername")
+			password = findProperty("ossrhPassword")
+			packageGroup = "com.net128.oss"
+		}
+	}
+}
+
